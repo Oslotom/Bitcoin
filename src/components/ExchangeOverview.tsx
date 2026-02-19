@@ -2,27 +2,57 @@ import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
 import { ExchangeIcon } from './icons';
 
-const exchanges = [
+import { Exchange } from '../types';
+
+const exchanges: { name: Exchange; icon: Exchange; description: string; rating: number; link: string }[] = [
   {
-    name: 'Firi',
-    icon: 'Firi',
+    name: Exchange.Firi,
+    icon: Exchange.Firi,
     description: 'En norsk-basert børs som gjør det enkelt og trygt å kjøpe og selge kryptovaluta med NOK. Regulert av Finanstilsynet.',
     rating: 4.8,
     link: 'https://firi.com',
   },
   {
-    name: 'Coinbase',
-    icon: 'Coinbase',
+    name: Exchange.Coinbase,
+    icon: Exchange.Coinbase,
     description: 'En av verdens største og mest anerkjente børser. Tilbyr et bredt utvalg av kryptovaluta og er kjent for sitt brukervennlige grensesnitt.',
     rating: 4.5,
     link: 'https://www.coinbase.com',
   },
   {
-    name: 'Binance',
-    icon: 'Binance',
+    name: Exchange.Binance,
+    icon: Exchange.Binance,
     description: 'Verdens største kryptobørs målt i handelsvolum. Tilbyr avanserte handelsverktøy og et enormt utvalg av digitale eiendeler.',
     rating: 4.2,
     link: 'https://www.binance.com',
+  },
+  {
+    name: Exchange.Kraken,
+    icon: Exchange.Kraken,
+    description: 'En av de eldste og mest respekterte kryptobørsene, kjent for sin sikkerhet og avanserte handelsfunksjoner.',
+    rating: 4.6,
+    link: 'https://www.kraken.com',
+  },
+  {
+    name: Exchange.NBX,
+    icon: Exchange.NBX,
+    description: 'Norsk Bitcoin Exchange er en regulert norsk kryptobørs, som tilbyr enkel handel med kryptovaluta i NOK.',
+    rating: 4.3,
+    link: 'https://nbx.com',
+  },
+  {
+    name: Exchange.CryptoCom,
+    icon: Exchange.CryptoCom,
+    description: 'En global kryptoplattform med et bredt spekter av tjenester, inkludert kjøp, salg, staking og et eget debetkort.',
+    rating: 4.0,
+    link: 'https://crypto.com',
+  },
+  {
+    name: Exchange.BuyBitcoin,
+    icon: Exchange.BuyBitcoin,
+    description: 'Forenkler kjøp av Bitcoin med ulike betalingsmetoder, med fokus på brukervennlighet for nye brukere.',
+    rating: 3.9,
+    link: 'https://buybitcoin.com',
   },
 ];
 

@@ -12,10 +12,16 @@ interface ResultsTableProps {
   crypto: CryptoCurrency;
 }
 
-const PLATFORM_DATA = {
-    Coinbase: { link: 'https://www.coinbase.com' },
-    Binance: { link: 'https://www.binance.com' },
-    Firi: { link: 'https://firi.com' },
+
+
+const PLATFORM_DATA: Record<Exchange, { link: string }> = {
+    [Exchange.Coinbase]: { link: 'https://www.coinbase.com' },
+    [Exchange.Binance]: { link: 'https://www.binance.com' },
+    [Exchange.Firi]: { link: 'https://firi.com' },
+    [Exchange.Kraken]: { link: 'https://www.kraken.com' },
+    [Exchange.NBX]: { link: 'https://nbx.com' },
+    [Exchange.CryptoCom]: { link: 'https://crypto.com' },
+    [Exchange.BuyBitcoin]: { link: 'https://buybitcoin.com' },
 }
 
 const TableHeader = () => (
