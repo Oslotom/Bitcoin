@@ -1,6 +1,6 @@
 export type CryptoCurrency = 'BTC';
 
-export type Exchange = 'Coinbase' | 'Binance' | 'Firi';
+export type Exchange = 'Coinbase' | 'Binance' | 'Firi' | 'Kraken' | 'NBX' | 'CryptoCom' | 'BuyBitcoin';
 
 export interface PriceData {
   price: number;

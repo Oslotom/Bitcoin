@@ -5,7 +5,7 @@ const COINBASE_API_URL = 'https://api.coinbase.com/v2/prices';
 const BINANCE_API_URL = 'https://api.binance.com/api/v3/ticker/price';
 const FIRI_API_URL = 'https://api.firi.com/v2/markets/BTCNOK/ticker';
 const KRAKEN_API_URL = 'https://api.kraken.com/0/public/Ticker';
-const CRYPTOCOM_API_URL = 'https://exchange-api.crypto.com/exchange/v1/public/get-tickers';
+const CRYPTOCOM_API_URL = 'https://api.crypto.com/exchange/v1/public/get-tickers';
 const NBX_API_URL = 'https://api.nbx.com/tickers';
 
 // Configurable fees and spreads
@@ -19,8 +19,8 @@ export const FEES = {
     spread: 0.001, // 0.1%
   },
   [Exchange.Firi]: {
-    trade: 0.005, // 0.5%
-    spread: 0.002, // 0.2% (estimat)
+    trade: 0.007, // 0.7%
+    spread: 0, // 0.0% (estimat)
   },
   [Exchange.Kraken]: {
     trade: 0.0026, // 0.26% (Kraken Pro fee tier 1 for maker/taker)
@@ -31,8 +31,8 @@ export const FEES = {
     spread: 0.001,  // 0.1% (estimated spread)
   },
   [Exchange.CryptoCom]: {
-    trade: 0.004,  // 0.4% (Crypto.com fee tier 1 for maker/taker)
-    spread: 0.0015,  // 0.15% (estimated spread)
+    trade: 0.005,  // 0.5% 
+    spread: 0, 
   },
   [Exchange.BuyBitcoin]: {
     trade: 0.01,   // 1.0%
@@ -92,7 +92,22 @@ export const getBinancePrice = async (crypto: CryptoCurrency): Promise<number> =
 export const getFiriPrice = async (): Promise<number> => {
   try {
     const response = await axios.get(FIRI_API_URL);
-    return parseFloat(response.data.last);
+    const ask = parseFloat(response.data?.ask);
+    if (Number.isFinite(ask) && ask > 0) {
+      return ask;
+    }
+
+    const last = parseFloat(response.data?.last);
+    if (Number.isFinite(last) && last > 0) {
+      return last;
+    }
+
+    const bid = parseFloat(response.data?.bid);
+    if (Number.isFinite(bid) && bid > 0 && Number.isFinite(ask) && ask > 0) {
+      return (bid + ask) / 2;
+    }
+
+    throw new Error('Invalid ticker payload from Firi.');
   } catch (error) {
     console.error('Error fetching Firi price:', error);
     throw new Error('Kunne ikke hente pris fra Firi.');
@@ -136,8 +151,23 @@ export const getNbxPrice = async (): Promise<number> => {
 
 export const getCryptoComPrice = async (): Promise<number> => {
   try {
-    const response = await axios.get(`${CRYPTOCOM_API_URL}?instrument_name=BTC_USDT`);
-    const priceInUsd = parseFloat(response.data.result.data[0].a); // 'a' is the price of the latest trade
+    const response = await axios.get(CRYPTOCOM_API_URL);
+    const tickers = response.data?.result?.data ?? response.data?.data ?? [];
+    const btcTicker = tickers.find((ticker: any) => {
+      const instrument = ticker.instrument_name ?? ticker.instrumentName ?? ticker.i;
+      return instrument === 'BTC_USDT';
+    });
+
+    if (!btcTicker) {
+      throw new Error('BTC_USDT ticker not found on Crypto.com');
+    }
+
+    const rawPrice = btcTicker.last_price ?? btcTicker.lastPrice ?? btcTicker.a ?? btcTicker.p;
+    const priceInUsd = parseFloat(rawPrice);
+    if (!Number.isFinite(priceInUsd)) {
+      throw new Error('Invalid BTC_USDT price on Crypto.com');
+    }
+
     const usdNokRate = await getUsdNokRate();
     return priceInUsd * usdNokRate;
   } catch (error) {

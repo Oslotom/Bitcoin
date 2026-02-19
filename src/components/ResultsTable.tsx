@@ -142,7 +142,7 @@ export default function ResultsTable({ results, isLoading, error, crypto }: Resu
                   </td>
                   <td className="text-right p-4 font-semibold text-indigo-400 whitespace-nowrap"><CountUp end={result.cryptoAmount} decimals={6} duration={1} separator=" " decimal="," /></td>
                   <td className="text-right p-4 text-gray-300 whitespace-nowrap"><CountUp end={result.effectivePrice} decimals={0} duration={1} separator=" " decimal="," /> NOK</td>
-                  <td className="text-right p-4 text-gray-300 whitespace-nowrap"><CountUp end={result.feeInNok} decimals={2} duration={1} prefix="~ " separator=" " decimal="," /> NOK</td>
+                  <td className="text-right p-4 text-gray-300 whitespace-nowrap"><CountUp end={result.feeInNok} decimals={0} duration={1} prefix="~ " separator=" " decimal="," /> NOK</td>
                   <td className="p-4 text-right">
                     <a href={PLATFORM_DATA[result.exchange].link} target="_blank" rel="noopener noreferrer" className="bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-500 transition-all duration-200 text-sm">
                         Kjøp nå
