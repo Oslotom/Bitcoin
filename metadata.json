@@ -1,0 +1,5 @@
+{
+  "name": "Crypto Price Compare (Norge)",
+  "description": "En enkel og rask nettside for å sammenligne kryptopriser mellom Coinbase og Binance i norske kroner.",
+  "requestFramePermissions": []
+}
