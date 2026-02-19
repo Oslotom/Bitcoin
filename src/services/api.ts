@@ -4,6 +4,9 @@ import { CryptoCurrency, Exchange } from '../types';
 const COINBASE_API_URL = 'https://api.coinbase.com/v2/prices';
 const BINANCE_API_URL = 'https://api.binance.com/api/v3/ticker/price';
 const FIRI_API_URL = 'https://api.firi.com/v2/markets/BTCNOK/ticker';
+const KRAKEN_API_URL = 'https://api.kraken.com/0/public/Ticker';
+const CRYPTOCOM_API_URL = 'https://exchange-api.crypto.com/exchange/v1/public/get-tickers';
+const NBX_API_URL = 'https://api.nbx.com/tickers';
 
 // Configurable fees and spreads
 export const FEES = {
@@ -20,16 +23,16 @@ export const FEES = {
     spread: 0.002, // 0.2% (estimat)
   },
   [Exchange.Kraken]: {
-    trade: 0.0026, // 0.26%
-    spread: 0.003,  // 0.3% (simulated)
+    trade: 0.0026, // 0.26% (Kraken Pro fee tier 1 for maker/taker)
+    spread: 0.001,  // 0.1% (estimated spread)
   },
   [Exchange.NBX]: {
-    trade: 0.005,  // 0.5%
-    spread: 0.008,  // 0.8% (simulated)
+    trade: 0.0034,  // 0.34% (NBX competitive fee for BTC/NOK)
+    spread: 0.001,  // 0.1% (estimated spread)
   },
   [Exchange.CryptoCom]: {
-    trade: 0.004,  // 0.4%
-    spread: 0.006,  // 0.6% (simulated)
+    trade: 0.004,  // 0.4% (Crypto.com fee tier 1 for maker/taker)
+    spread: 0.0015,  // 0.15% (estimated spread)
   },
   [Exchange.BuyBitcoin]: {
     trade: 0.01,   // 1.0%
@@ -97,16 +100,50 @@ export const getFiriPrice = async (): Promise<number> => {
 };
 
 // Simulated price fetching for new exchanges
+const getUsdNokRate = async (): Promise<number> => {
+  try {
+    const response = await axios.get(`${COINBASE_API_URL}/USD-NOK/spot`);
+    return parseFloat(response.data.data.amount);
+  } catch (error) {
+    console.error('Error fetching USD-NOK rate from Coinbase:', error);
+    throw new Error('Kunne ikke hente USD-NOK vekslingskurs.');
+  }
+}
+
 export const getKrakenPrice = async (): Promise<number> => {
-  return new Promise(resolve => setTimeout(() => resolve(simulatePrice(280000, 320000)), 300));
+  try {
+    const response = await axios.get(`${KRAKEN_API_URL}?pair=XBTUSD`);
+    const priceInUsd = parseFloat(response.data.result.XXBTZUSD.c[0]); // 'c' is the last trade closed price
+    const usdNokRate = await getUsdNokRate();
+    return priceInUsd * usdNokRate;
+  } catch (error) {
+    console.error('Error fetching Kraken price:', error);
+    throw new Error('Kunne ikke hente pris fra Kraken.');
+  }
 };
 
 export const getNbxPrice = async (): Promise<number> => {
-  return new Promise(resolve => setTimeout(() => resolve(simulatePrice(285000, 325000)), 350));
+  try {
+    const response = await axios.get(NBX_API_URL);
+    const btcNokTicker = response.data.find((t: any) => t.id === 'BTC-NOK');
+    if (!btcNokTicker) throw new Error('BTC-NOK ticker not found on NBX');
+    return parseFloat(btcNokTicker.lastTradePrice);
+  } catch (error) {
+    console.error('Error fetching NBX price:', error);
+    throw new Error('Kunne ikke hente pris fra NBX.');
+  }
 };
 
 export const getCryptoComPrice = async (): Promise<number> => {
-  return new Promise(resolve => setTimeout(() => resolve(simulatePrice(275000, 315000)), 400));
+  try {
+    const response = await axios.get(`${CRYPTOCOM_API_URL}?instrument_name=BTC_USDT`);
+    const priceInUsd = parseFloat(response.data.result.data[0].a); // 'a' is the price of the latest trade
+    const usdNokRate = await getUsdNokRate();
+    return priceInUsd * usdNokRate;
+  } catch (error) {
+    console.error('Error fetching Crypto.com price:', error);
+    throw new Error('Kunne ikke hente pris fra Crypto.com.');
+  }
 };
 
 export const getBuyBitcoinPrice = async (): Promise<number> => {
