@@ -45,6 +45,13 @@ const NbxIcon = () => (
     </svg>
 );
 
+const BareBitcoinIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="12" fill="#F7931A"/>
+        <path d="M8 7.5H12.4C14.1 7.5 15.2 8.4 15.2 9.8C15.2 10.7 14.8 11.3 14.1 11.6C15 11.9 15.5 12.6 15.5 13.6C15.5 15.2 14.2 16.2 12.2 16.2H8V7.5ZM10.1 10.9H12.1C12.8 10.9 13.2 10.6 13.2 10C13.2 9.4 12.8 9.1 12.1 9.1H10.1V10.9ZM10.1 14.6H12.3C13.1 14.6 13.5 14.3 13.5 13.7C13.5 13.1 13.1 12.7 12.3 12.7H10.1V14.6Z" fill="white"/>
+    </svg>
+);
+
 const RevolutIcon = () => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="12" fill="#111111"/>
@@ -122,6 +129,8 @@ export const ExchangeIcon = ({ exchange }: { exchange: Exchange }) => {
             return <KrakenIcon />;
         case 'NBX':
             return <NbxIcon />;
+        case 'Bare Bitcoin':
+            return <BareBitcoinIcon />;
         case 'Revolut':
             return <RevolutIcon />;
         case 'Crypto.com':

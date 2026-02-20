@@ -4,7 +4,7 @@ import Header from './components/Header';
 import ExchangeOverview from './components/ExchangeOverview';
 import ResultsTable from './components/ResultsTable';
 import VippsComparisonSection from './components/VippsComparisonSection';
-import { getCoinbasePrice, getBinancePrice, getFiriPrice, getKrakenPrice, getNbxPrice, getRevolutPrice, getCryptoComPrice, getBuyBitcoinPrice, FEES } from './services/api';
+import { getCoinbasePrice, getBinancePrice, getFiriPrice, getKrakenPrice, getNbxPrice, getBareBitcoinPrice, getRevolutPrice, getCryptoComPrice, getBuyBitcoinPrice, FEES } from './services/api';
 import { ComparisonResult, CryptoCurrency, Exchange } from './types';
 
 export default function App() {
@@ -21,12 +21,13 @@ export default function App() {
     setLastAmount(amount);
 
     try {
-      const [coinbasePrice, binancePrice, firiPrice, krakenPrice, nbxPrice, revolutPrice, cryptoComPrice, buyBitcoinPrice] = await Promise.allSettled([
+      const [coinbasePrice, binancePrice, firiPrice, krakenPrice, nbxPrice, bareBitcoinPrice, revolutPrice, cryptoComPrice, buyBitcoinPrice] = await Promise.allSettled([
         getCoinbasePrice(CryptoCurrency.BTC),
         getBinancePrice(CryptoCurrency.BTC),
         getFiriPrice(),
         getKrakenPrice(),
         getNbxPrice(),
+        getBareBitcoinPrice(),
         getRevolutPrice(),
         getCryptoComPrice(),
         getBuyBitcoinPrice(),
@@ -60,6 +61,7 @@ export default function App() {
       processResult(Exchange.Firi, firiPrice);
       processResult(Exchange.Kraken, krakenPrice);
       processResult(Exchange.NBX, nbxPrice);
+      processResult(Exchange.BareBitcoin, bareBitcoinPrice);
       processResult(Exchange.Revolut, revolutPrice);
       processResult(Exchange.CryptoCom, cryptoComPrice);
       processResult(Exchange.BuyBitcoin, buyBitcoinPrice);

@@ -8,6 +8,7 @@ const FIRI_MARKETS_API_URL = 'https://api.firi.com/v2/markets';
 const KRAKEN_API_URL = 'https://api.kraken.com/0/public/Ticker';
 const CRYPTOCOM_API_URL = 'https://api.crypto.com/exchange/v1/public/get-tickers';
 const NBX_API_URL = 'https://api.nbx.com/tickers';
+const BARE_BITCOIN_API_URL = 'https://api.bb.no/v1/price/nok';
 const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
 
 // Configurable fees and spreads
@@ -31,6 +32,10 @@ export const FEES = {
   [Exchange.NBX]: {
     trade: 0.0034,  // 0.34% (NBX competitive fee for BTC/NOK)
     spread: 0.001,  // 0.1% (estimated spread)
+  },
+  [Exchange.BareBitcoin]: {
+    trade: 0.0, // explicit trade fee not published in this app
+    spread: 0.008, // bank buy markup approximation
   },
   [Exchange.Revolut]: {
     trade: 0.0, // Revolut app often advertises no explicit trade fee
@@ -146,6 +151,40 @@ export const getNbxPrice = async (): Promise<number> => {
   } catch (error) {
     console.error('Error fetching NBX price:', error);
     throw new Error('Kunne ikke hente pris fra NBX.');
+  }
+};
+
+export const getBareBitcoinPrice = async (): Promise<number> => {
+  try {
+    const response = await axios.get(BARE_BITCOIN_API_URL);
+    const bankBuy = Number(response.data?.bank?.buy);
+    const ask = Number(response.data?.ask);
+    const spot = Number(response.data?.price);
+
+    if (Number.isFinite(bankBuy) && bankBuy > 0) return bankBuy;
+    if (Number.isFinite(ask) && ask > 0) return ask;
+    if (Number.isFinite(spot) && spot > 0) return spot;
+
+    throw new Error('Invalid Bare Bitcoin price payload.');
+  } catch (error) {
+    console.error('Error fetching Bare Bitcoin price:', error);
+    // Fallback to public BTC/NOK price so Bare Bitcoin is still included in comparisons.
+    try {
+      const fallbackResponse = await axios.get(`${COINGECKO_API_URL}/simple/price`, {
+        params: {
+          ids: 'bitcoin',
+          vs_currencies: 'nok',
+        },
+      });
+      const fallbackPrice = Number(fallbackResponse.data?.bitcoin?.nok);
+      if (Number.isFinite(fallbackPrice) && fallbackPrice > 0) {
+        return fallbackPrice;
+      }
+    } catch (fallbackError) {
+      console.error('Error fetching Bare Bitcoin fallback price:', fallbackError);
+    }
+
+    throw new Error('Kunne ikke hente pris fra Bare Bitcoin.');
   }
 };
 

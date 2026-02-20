@@ -10,6 +10,7 @@ export enum Exchange {
   Firi = 'Firi',
   Kraken = 'Kraken',
   NBX = 'NBX',
+  BareBitcoin = 'Bare Bitcoin',
   Revolut = 'Revolut',
   CryptoCom = 'Crypto.com',
   BuyBitcoin = 'BuyBitcoin.com',
