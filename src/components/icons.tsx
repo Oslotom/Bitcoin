@@ -1,9 +1,9 @@
 import { CryptoCurrency, Exchange } from '../types';
 
 const BitcoinIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="12" r="12" fill="#F7931A"/>
-        <path d="M14.5 12C14.5 13.3807 13.3807 14.5 12 14.5C10.6193 14.5 9.5 13.3807 9.5 12C9.5 10.6193 10.6193 9.5 12 9.5C13.3807 9.5 14.5 10.6193 14.5 12ZM12 8.5C14.4853 8.5 16.5 10.5147 16.5 13C16.5 15.4853 14.4853 17.5 12 17.5C9.51472 17.5 7.5 15.4853 7.5 13C7.5 10.5147 9.51472 8.5 12 8.5Z" fill="white"/>
+    <svg width="24" height="24" viewBox="0.004 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+        <path d="M63.04 39.741c-4.274 17.143-21.638 27.575-38.783 23.301C7.12 58.768-3.313 41.404.962 24.262 5.234 7.117 22.597-3.317 39.737.957c17.144 4.274 27.576 21.64 23.302 38.784z" fill="#f7931a"></path>
+        <path d="M46.11 27.441c.636-4.258-2.606-6.547-7.039-8.074l1.438-5.768-3.512-.875-1.4 5.616c-.922-.23-1.87-.447-2.812-.662l1.41-5.653-3.509-.875-1.439 5.766c-.764-.174-1.514-.346-2.242-.527l.004-.018-4.842-1.209-.934 3.75s2.605.597 2.55.634c1.422.355 1.68 1.296 1.636 2.042l-1.638 6.571c.098.025.225.061.365.117l-.37-.092-2.297 9.205c-.174.432-.615 1.08-1.609.834.035.051-2.552-.637-2.552-.637l-1.743 4.02 4.57 1.139c.85.213 1.683.436 2.502.646l-1.453 5.835 3.507.875 1.44-5.772c.957.26 1.887.5 2.797.726L27.504 50.8l3.511.875 1.453-5.823c5.987 1.133 10.49.676 12.383-4.738 1.527-4.36-.075-6.875-3.225-8.516 2.294-.531 4.022-2.04 4.483-5.157zM38.087 38.69c-1.086 4.36-8.426 2.004-10.807 1.412l1.928-7.729c2.38.594 10.011 1.77 8.88 6.317zm1.085-11.312c-.99 3.966-7.1 1.951-9.083 1.457l1.748-7.01c1.983.494 8.367 1.416 7.335 5.553z" fill="#ffffff"></path>
     </svg>
 );
 
@@ -42,6 +42,13 @@ const NbxIcon = () => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="12" fill="#000000"/>
         <path d="M8 8H10V16H8V8ZM14 8H16V16H14V8ZM11 8H13V16H11V8Z" fill="#00BFFF"/>
+    </svg>
+);
+
+const RevolutIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="12" fill="#111111"/>
+        <path d="M7.5 8H12.8C14.31 8 15.5 9.18 15.5 10.65C15.5 12.1 14.32 13.3 12.84 13.3H10V16H7.5V8ZM10 10.2V11.2H12.62C12.91 11.2 13.14 10.97 13.14 10.68C13.14 10.43 12.94 10.2 12.62 10.2H10Z" fill="white"/>
     </svg>
 );
 
@@ -87,12 +94,10 @@ export const CryptoIcon = ({ crypto }: { crypto: CryptoCurrency }) => {
 };
 
 const NorwayFlagIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="24" height="24" fill="white"/>
-        <path d="M0 10H24V14H0V10Z" fill="#002868"/>
-        <path d="M10 0H14V24H10V0Z" fill="#002868"/>
-        <path d="M0 11H24V13H0V11Z" fill="#EF2B2D"/>
-        <path d="M11 0H13V24H11V0Z" fill="#EF2B2D"/>
+    <svg width="24" height="24" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" preserveAspectRatio="xMidYMid meet">
+        <path fill="#EF2B2D" d="M10 5H4a4 4 0 0 0-4 4v6h10V5zm22 0H16v10h20V9a4 4 0 0 0-4-4zM10 31H4a4 4 0 0 1-4-4v-6h10v10zm22 0H16V21h20v6a4 4 0 0 1-4 4z"></path>
+        <path fill="#002868" d="M14.5 5h-2.944l-.025 11.5H0v3h11.525L11.5 31h3V19.5H36v-3H14.5z"></path>
+        <path fill="#EEE" d="M14.5 31H16V21h20v-1.5H14.5zM16 5h-1.5v11.5H36V15H16zm-4.5 0H10v10H0v1.5h11.5zM0 19.5V21h10v10h1.5V19.5z"></path>
     </svg>
 );
 
@@ -117,6 +122,8 @@ export const ExchangeIcon = ({ exchange }: { exchange: Exchange }) => {
             return <KrakenIcon />;
         case 'NBX':
             return <NbxIcon />;
+        case 'Revolut':
+            return <RevolutIcon />;
         case 'Crypto.com':
             return <CryptoComIcon />;
         case 'BuyBitcoin.com':

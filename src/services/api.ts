@@ -4,9 +4,11 @@ import { CryptoCurrency, Exchange } from '../types';
 const COINBASE_API_URL = 'https://api.coinbase.com/v2/prices';
 const BINANCE_API_URL = 'https://api.binance.com/api/v3/ticker/price';
 const FIRI_API_URL = 'https://api.firi.com/v2/markets/BTCNOK/ticker';
+const FIRI_MARKETS_API_URL = 'https://api.firi.com/v2/markets';
 const KRAKEN_API_URL = 'https://api.kraken.com/0/public/Ticker';
 const CRYPTOCOM_API_URL = 'https://api.crypto.com/exchange/v1/public/get-tickers';
 const NBX_API_URL = 'https://api.nbx.com/tickers';
+const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
 
 // Configurable fees and spreads
 export const FEES = {
@@ -30,6 +32,10 @@ export const FEES = {
     trade: 0.0034,  // 0.34% (NBX competitive fee for BTC/NOK)
     spread: 0.001,  // 0.1% (estimated spread)
   },
+  [Exchange.Revolut]: {
+    trade: 0.0, // Revolut app often advertises no explicit trade fee
+    spread: 0.02, // spread/markup estimate
+  },
   [Exchange.CryptoCom]: {
     trade: 0.005,  // 0.5% 
     spread: 0, 
@@ -38,10 +44,6 @@ export const FEES = {
     trade: 0.01,   // 1.0%
     spread: 0.015,  // 1.5% (simulated)
   },
-};
-
-const simulatePrice = (min: number, max: number) => {
-  return parseFloat((Math.random() * (max - min) + min).toFixed(2));
 };
 
 export const getCoinbasePrice = async (crypto: CryptoCurrency): Promise<number> => {
@@ -91,20 +93,18 @@ export const getBinancePrice = async (crypto: CryptoCurrency): Promise<number> =
 
 export const getFiriPrice = async (): Promise<number> => {
   try {
-    const response = await axios.get(FIRI_API_URL);
-    const ask = parseFloat(response.data?.ask);
-    if (Number.isFinite(ask) && ask > 0) {
-      return ask;
-    }
-
-    const last = parseFloat(response.data?.last);
+    // Match Firi's listed market price by reading BTCNOK.last from markets endpoint first.
+    const marketsResponse = await axios.get(FIRI_MARKETS_API_URL);
+    const btcNokMarket = marketsResponse.data?.find?.((market: any) => market.id === 'BTCNOK');
+    const last = parseFloat(btcNokMarket?.last);
     if (Number.isFinite(last) && last > 0) {
       return last;
     }
 
-    const bid = parseFloat(response.data?.bid);
-    if (Number.isFinite(bid) && bid > 0 && Number.isFinite(ask) && ask > 0) {
-      return (bid + ask) / 2;
+    const response = await axios.get(FIRI_API_URL);
+    const ask = parseFloat(response.data?.ask);
+    if (Number.isFinite(ask) && ask > 0) {
+      return ask;
     }
 
     throw new Error('Invalid ticker payload from Firi.');
@@ -176,7 +176,45 @@ export const getCryptoComPrice = async (): Promise<number> => {
   }
 };
 
+export const getRevolutPrice = async (): Promise<number> => {
+  try {
+    const response = await axios.get(`${COINGECKO_API_URL}/simple/price`, {
+      params: {
+        ids: 'bitcoin',
+        vs_currencies: 'nok',
+      },
+    });
+
+    const priceInNok = Number(response.data?.bitcoin?.nok);
+    if (!Number.isFinite(priceInNok) || priceInNok <= 0) {
+      throw new Error('Invalid BTC/NOK price payload.');
+    }
+
+    return priceInNok;
+  } catch (error) {
+    console.error('Error fetching Revolut proxy price via API:', error);
+    throw new Error('Kunne ikke hente pris for Revolut.');
+  }
+};
+
 export const getBuyBitcoinPrice = async (): Promise<number> => {
-  return new Promise(resolve => setTimeout(() => resolve(simulatePrice(290000, 330000)), 450));
+  try {
+    const response = await axios.get(`${COINGECKO_API_URL}/simple/price`, {
+      params: {
+        ids: 'bitcoin',
+        vs_currencies: 'nok',
+      },
+    });
+
+    const priceInNok = Number(response.data?.bitcoin?.nok);
+    if (!Number.isFinite(priceInNok) || priceInNok <= 0) {
+      throw new Error('Invalid BTC/NOK price payload.');
+    }
+
+    return priceInNok;
+  } catch (error) {
+    console.error('Error fetching BuyBitcoin.com proxy price via API:', error);
+    throw new Error('Kunne ikke hente pris fra BuyBitcoin.com.');
+  }
 };
 

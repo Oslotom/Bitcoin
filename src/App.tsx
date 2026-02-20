@@ -1,29 +1,33 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Footer from './components/Footer';
 import Header from './components/Header';
 import ExchangeOverview from './components/ExchangeOverview';
 import ResultsTable from './components/ResultsTable';
-import { getCoinbasePrice, getBinancePrice, getFiriPrice, getKrakenPrice, getNbxPrice, getCryptoComPrice, getBuyBitcoinPrice, FEES } from './services/api';
+import VippsComparisonSection from './components/VippsComparisonSection';
+import { getCoinbasePrice, getBinancePrice, getFiriPrice, getKrakenPrice, getNbxPrice, getRevolutPrice, getCryptoComPrice, getBuyBitcoinPrice, FEES } from './services/api';
 import { ComparisonResult, CryptoCurrency, Exchange } from './types';
 
 export default function App() {
   const [results, setResults] = useState<ComparisonResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showResults, setShowResults] = useState(false);
+  const [lastAmount, setLastAmount] = useState<number | null>(10000);
+  const didInitCalculate = useRef(false);
 
   const handleCalculate = async (amount: number) => {
     setIsLoading(true);
     setError(null);
     setResults([]);
+    setLastAmount(amount);
 
     try {
-      const [coinbasePrice, binancePrice, firiPrice, krakenPrice, nbxPrice, cryptoComPrice, buyBitcoinPrice] = await Promise.allSettled([
+      const [coinbasePrice, binancePrice, firiPrice, krakenPrice, nbxPrice, revolutPrice, cryptoComPrice, buyBitcoinPrice] = await Promise.allSettled([
         getCoinbasePrice(CryptoCurrency.BTC),
         getBinancePrice(CryptoCurrency.BTC),
         getFiriPrice(),
         getKrakenPrice(),
         getNbxPrice(),
+        getRevolutPrice(),
         getCryptoComPrice(),
         getBuyBitcoinPrice(),
       ]);
@@ -56,6 +60,7 @@ export default function App() {
       processResult(Exchange.Firi, firiPrice);
       processResult(Exchange.Kraken, krakenPrice);
       processResult(Exchange.NBX, nbxPrice);
+      processResult(Exchange.Revolut, revolutPrice);
       processResult(Exchange.CryptoCom, cryptoComPrice);
       processResult(Exchange.BuyBitcoin, buyBitcoinPrice);
 
@@ -64,27 +69,35 @@ export default function App() {
       }
 
       setResults(newResults);
-      setShowResults(true); // Show results only on successful calculation
     } catch (err: any) {
       setError(err.message || 'En ukjent feil oppstod.');
-      setShowResults(false); // Hide results if there's an error
     } finally {
       setIsLoading(false);
     }
   };
 
+  useEffect(() => {
+    if (didInitCalculate.current) return;
+    didInitCalculate.current = true;
+    handleCalculate(10000);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gray-900 text-white font-sans">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
       <Header onCalculate={handleCalculate} isLoading={isLoading} />
       <main className="container mx-auto px-4 pb-16">
-        <div className="max-w-4xl mx-auto">
-          {showResults && (
-            <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} />
-          )}
+        <div className="max-w-5xl mx-auto">
+          <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} />
         </div>
       </main>
       <ExchangeOverview />
+      <section className="container mx-auto px-4 pb-10">
+        <div className="max-w-5xl mx-auto">
+          <VippsComparisonSection results={results} amount={lastAmount} />
+        </div>
+      </section>
       <Footer />
     </div>
   );
 }
+

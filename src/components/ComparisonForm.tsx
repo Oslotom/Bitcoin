@@ -11,7 +11,7 @@ interface ComparisonFormProps {
 export default function ComparisonForm({ onCalculate, isLoading }: ComparisonFormProps) {
   const [amount, setAmount] = useState('10000');
   const [error, setError] = useState<string | null>(null);
-  const [selectedAction, setSelectedAction] = useState('Buy'); // Only 'Buy' is selectable
+  const [selectedAction, setSelectedAction] = useState('Kjøp'); // Only 'Kjøp' is selectable
   const [selectedCrypto, setSelectedCrypto] = useState<CryptoCurrency>(CryptoCurrency.BTC); // BTC is default
 
 
@@ -32,16 +32,16 @@ export default function ComparisonForm({ onCalculate, isLoading }: ComparisonFor
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.4 }}
     >
-      <form onSubmit={handleSubmit} className="flex items-center w-full bg-white rounded-xl shadow-lg text-gray-800 divide-x divide-gray-200">
+      <form onSubmit={handleSubmit} className="flex items-center w-full bg-white rounded-xl shadow-lg text-gray-800 divide-x divide-gray-200 py-1">
         {/* Buy/Sell Dropdown */}
-        <div className="relative flex-none w-28 flex items-center justify-center p-4">
+        <div className="relative flex-none w-24 flex items-center justify-center p-4">
           <select
             className="block w-full bg-white text-gray-800 text-lg font-semibold focus:outline-none appearance-none pr-8"
             value={selectedAction}
             onChange={(e) => setSelectedAction(e.target.value)}
           >
-            <option>Buy</option>
-            <option disabled>Sell (coming soon)</option>
+            <option>Kjøp</option>
+            <option disabled>Selg (kommer snart)</option>
           </select>
           <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
             <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -51,9 +51,11 @@ export default function ComparisonForm({ onCalculate, isLoading }: ComparisonFor
         </div>
 
         {/* Crypto Dropdown */}
-        <div className="relative flex-none w-36 flex items-center p-4 min-w-0">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <CryptoIcon crypto={selectedCrypto} />
+        <div className="relative flex-none w-28 flex items-center p-4 min-w-0">
+          <div className="absolute inset-y-0 left-0 z-10 flex items-center pl-3 pointer-events-none">
+            <div className="h-5 w-5 [&>svg]:h-5 [&>svg]:w-5">
+              <CryptoIcon crypto={selectedCrypto} />
+            </div>
           </div>
           <select
             className="block w-full bg-white text-gray-800 text-lg font-semibold focus:outline-none appearance-none pl-10 pr-8"
@@ -82,15 +84,17 @@ export default function ComparisonForm({ onCalculate, isLoading }: ComparisonFor
         {/* Amount Input */}
         <div className="relative flex-1 flex items-center p-4 min-w-0">
             <label htmlFor="amount" className="sr-only">Amount</label>
-            <input
-              id="amount"
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="Amount"
-              className="block w-full bg-white text-gray-800 text-lg font-semibold focus:outline-none pr-10"
-            />
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500 text-lg font-semibold">NOK</div>
+            <div className="flex items-center w-full">
+              <input
+                id="amount"
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="Amount"
+                className="block w-full bg-white text-gray-800 text-lg font-semibold focus:outline-none"
+              />
+              <span className="ml-2 text-gray-500 text-lg font-semibold whitespace-nowrap">NOK</span>
+            </div>
         </div>
 
 
