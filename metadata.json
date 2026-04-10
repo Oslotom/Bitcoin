@@ -1,5 +1,5 @@
 {
-  "name": "Crypto Price Compare (Norge)",
-  "description": "En enkel og rask nettside for å sammenligne kryptopriser mellom Coinbase og Binance i norske kroner.",
+  "name": "Sammenlign Bitcoin Priser i Norge",
+  "description": "Finn den beste prisen for å kjøpe bitcoin. Vi sammenligner de største børsene i Norge for deg, inkludert Firi, NBX, Coinbase, Binance og flere.",
   "requestFramePermissions": []
 }

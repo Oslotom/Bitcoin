@@ -143,9 +143,9 @@ export default function ResultsTable({ results, isLoading, error, crypto }: Resu
                 onClick={() => handleRowClick(result.exchange)}
               >
                 <div className="flex items-center justify-between gap-3">
-                  <div className="flex min-w-0 items-center gap-2">
+                     <div className="flex min-w-0 items-center gap-2">
                     <ExchangeIcon exchange={result.exchange} />
-                    <span className="truncate font-semibold text-slate-900">{result.exchange}</span>
+                      <span className="truncate font-semibold text-slate-900">{result.exchange}</span>
                     {(result.exchange === Exchange.Firi || result.exchange === Exchange.Kraken) && (
                       <CountryIcon countryCode="NO" />
                     )}
@@ -186,15 +186,15 @@ export default function ResultsTable({ results, isLoading, error, crypto }: Resu
                   <tr onClick={() => handleRowClick(result.exchange)} className="cursor-pointer transition-colors duration-200 hover:bg-slate-50">
                     <td className="relative whitespace-nowrap p-4 font-semibold text-slate-900">
                       {result.exchange === bestResult.exchange && (
-                        <div className="absolute -left-0.5 top-0 h-full w-1 rounded-l-full bg-green-500"></div>
+                          <div className="absolute -left-0.5 top-0 h-full w-1 rounded-l-full bg-green-500"></div>
                       )}
                       <div className="flex items-center gap-3">
                         <ExchangeIcon exchange={result.exchange} />
-                        {result.exchange}
-                        {(result.exchange === Exchange.Firi || result.exchange === Exchange.Kraken) && (
-                          <CountryIcon countryCode="NO" />
-                        )}
-                      </div>
+                          {result.exchange}
+                          {(result.exchange === Exchange.Firi || result.exchange === Exchange.Kraken) && (
+                            <CountryIcon countryCode="NO" />
+                          )}
+                        </div>
                     </td>
                     <td className="whitespace-nowrap p-4 text-right font-semibold text-sky-600">
                       <CountUp end={result.cryptoAmount} decimals={6} duration={1} separator=" " decimal="," />
@@ -206,14 +206,14 @@ export default function ResultsTable({ results, isLoading, error, crypto }: Resu
                       <CountUp end={result.feeInNok} decimals={0} duration={1} prefix="~ " separator=" " decimal="," /> NOK
                     </td>
                     <td className="p-4 text-right">
-                      <a
-                        href={PLATFORM_DATA[result.exchange].link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-sky-500"
-                      >
-                        Kjop her
-                      </a>
+                        <a
+                          href={PLATFORM_DATA[result.exchange].link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-sky-500"
+                        >
+                          Kjop her
+                        </a>
                     </td>
                   </tr>
                   <tr>

@@ -65,7 +65,7 @@ export default function VippsComparisonSection({ results, amount, className = ''
           {priceError && <p className="mt-3 text-sm text-red-700">{priceError}</p>}
 
           <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
-            For {effectiveAmount.toLocaleString('nb-NO')} NOK betaler du ca.{' '}
+            For {effectiveAmount.toLocaleString('nb-NO')} NOK betaler du ca.
             <span className="font-semibold">{Math.round(feeDifferenceNok).toLocaleString('nb-NO')} NOK</span> mer i
             gebyr med Vipps.
           </div>

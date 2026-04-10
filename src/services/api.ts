@@ -84,10 +84,10 @@ export const getBinancePrice = async (crypto: CryptoCurrency): Promise<number> =
       const symbolEur = `${crypto}EUR`;
       const responseEur = await axios.get(`${BINANCE_API_URL}?symbol=${symbolEur}`);
       const priceInEur = parseFloat(responseEur.data.price);
-      
+
       // Now get the EUR to NOK rate from Coinbase
       const eurNokRate = await getEurNokRate();
-      
+
       return priceInEur * eurNokRate;
     } catch (eurError) {
       console.error(`Error fetching Binance price for ${crypto} via EUR:`, eurError);

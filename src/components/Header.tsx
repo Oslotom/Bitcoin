@@ -27,7 +27,7 @@ export default function Header({ onCalculate, isLoading }: HeaderProps) {
         >
           Finn den beste prisen for å kjøpe bitcoin. Vi sammenligner de største børsene i Norge for deg.
         </motion.p>
-        <div className="mt-8 max-w-3xl mx-auto">
+        <div className="mt-8 max-w-xl mx-auto">
             <ComparisonForm onCalculate={onCalculate} isLoading={isLoading} />
         </div>
       </div>

@@ -23,7 +23,7 @@ const exchanges: ExchangeItem[] = [
     link: 'https://firi.com',
     category: 'Norsk',
     pros: ['Norsk app og support', 'Enkel NOK-innbetaling'],
-    cons: ['Høyere kost enn noen globale borser'],
+    cons: ['Hoyere kost enn noen globale borser'],
   },
   {
     name: Exchange.Coinbase,
@@ -31,8 +31,8 @@ const exchanges: ExchangeItem[] = [
     description: 'Stor global bors med brukervennlig plattform.',
     link: 'https://www.coinbase.com',
     category: 'Global',
-    pros: ['Svært enkel i bruk', 'God sikkerhet og omdømme'],
-    cons: ['Kan være dyrere enn proff-plattformer'],
+    pros: ['Svaert enkel i bruk', 'God sikkerhet og omdomme'],
+    cons: ['Kan vaere dyrere enn proff-plattformer'],
   },
   {
     name: Exchange.Binance,
@@ -68,7 +68,7 @@ const exchanges: ExchangeItem[] = [
     link: 'https://barebitcoin.no',
     category: 'Norsk',
     pros: ['Spisset mot Bitcoin', 'Enkel kjopsflyt'],
-    cons: ['Færre produkter enn full-service borser'],
+    cons: ['Faerre produkter enn full-service borser'],
   },
   {
     name: Exchange.Revolut,
@@ -91,7 +91,7 @@ const exchanges: ExchangeItem[] = [
   {
     name: Exchange.BuyBitcoin,
     icon: Exchange.BuyBitcoin,
-    description: 'Enkel Bitcoin-kjopslosning for nye brukere.',
+    description: 'Enkel Bitcoin-kjopsloesning for nye brukere.',
     link: 'https://buybitcoin.com',
     category: 'Global',
     pros: ['Lett for nybegynnere', 'Enkel kjopsprosess'],
@@ -167,7 +167,7 @@ export default function ExchangeOverview() {
                       <td className="p-3 align-top md:p-4">
                         <div className="flex items-center gap-3 font-semibold text-slate-900">
                           <ExchangeIcon exchange={exchange.name as any} />
-                          <span className="truncate">{exchange.name}</span>
+                            <span className="truncate">{exchange.name}</span>
                         </div>
                       </td>
                       <td className="hidden whitespace-nowrap p-4 text-slate-600 md:table-cell">{exchange.description}</td>
@@ -190,32 +190,32 @@ export default function ExchangeOverview() {
                           <div className="bg-slate-50 px-3 pb-3 pt-1 text-sm text-slate-600 md:px-4 md:pb-4">
                             <p className="mb-3">{exchange.description}</p>
                             <div className="grid gap-3 md:grid-cols-2">
-                              <div>
-                                <p className="mb-1 font-semibold text-slate-900">Fordeler</p>
-                                <ul className="space-y-1">
-                                  {exchange.pros.map((pro) => (
-                                    <li key={pro}>+ {pro}</li>
-                                  ))}
-                                </ul>
+                                <div>
+                                  <p className="mb-1 font-semibold text-slate-900">Fordeler</p>
+                                  <ul className="space-y-1">
+                                    {exchange.pros.map((pro) => (
+                                      <li key={pro}>+ {pro}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                                <div>
+                                  <p className="mb-1 font-semibold text-slate-900">Ulemper</p>
+                                  <ul className="space-y-1">
+                                    {exchange.cons.map((con) => (
+                                      <li key={con}>- {con}</li>
+                                    ))}
+                                  </ul>
+                                </div>
                               </div>
-                              <div>
-                                <p className="mb-1 font-semibold text-slate-900">Ulemper</p>
-                                <ul className="space-y-1">
-                                  {exchange.cons.map((con) => (
-                                    <li key={con}>- {con}</li>
-                                  ))}
-                                </ul>
-                              </div>
-                            </div>
-                            <a
-                              href={exchange.link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="mt-3 inline-flex rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-900 transition-all duration-200 hover:bg-sky-600 hover:text-white md:hidden"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              Besok side
-                            </a>
+                              <a
+                                href={exchange.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-3 inline-flex rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-900 transition-all duration-200 hover:bg-sky-600 hover:text-white md:hidden"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                Besok side
+                              </a>
                           </div>
                         )}
                       </td>
