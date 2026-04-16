@@ -1,5 +1,5 @@
 {
-  "name": "Sammenlign Bitcoin Priser i Norge",
-  "description": "Finn den beste prisen for å kjøpe bitcoin. Vi sammenligner de største børsene i Norge for deg, inkludert Firi, NBX, Coinbase, Binance og flere.",
+  "name": "Kjøpebitcoin.no",
+  "description": "Sammenlign priser på bitcoin i Norge. Finn den beste plattformen for å kjøpe bitcoin basert på gebyrer, sikkerhet og brukervennlighet.",
   "requestFramePermissions": []
 }

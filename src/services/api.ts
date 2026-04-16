@@ -7,8 +7,8 @@ const FIRI_API_URL = 'https://api.firi.com/v2/markets/BTCNOK/ticker';
 const FIRI_MARKETS_API_URL = 'https://api.firi.com/v2/markets';
 const KRAKEN_API_URL = 'https://api.kraken.com/0/public/Ticker';
 const CRYPTOCOM_API_URL = 'https://api.crypto.com/exchange/v1/public/get-tickers';
-const NBX_API_URL = 'https://api.nbx.com/tickers';
-const BARE_BITCOIN_API_URL = 'https://api.bb.no/v1/price/nok';
+const NBX_API_URL = '/api/proxy/nbx';
+const BARE_BITCOIN_API_URL = '/api/proxy/bare-bitcoin';
 const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
 
 // Configurable fees and spreads
@@ -254,6 +254,25 @@ export const getBuyBitcoinPrice = async (): Promise<number> => {
   } catch (error) {
     console.error('Error fetching BuyBitcoin.com proxy price via API:', error);
     throw new Error('Kunne ikke hente pris fra BuyBitcoin.com.');
+  }
+};
+
+export const getHistoricalData = async (days: number = 7): Promise<{ timestamp: number; price: number }[]> => {
+  try {
+    const response = await axios.get(`${COINGECKO_API_URL}/coins/bitcoin/market_chart`, {
+      params: {
+        vs_currency: 'nok',
+        days: days,
+      },
+    });
+
+    return response.data.prices.map(([timestamp, price]: [number, number]) => ({
+      timestamp,
+      price,
+    }));
+  } catch (error) {
+    console.error('Error fetching historical data:', error);
+    throw new Error('Kunne ikke hente historiske data.');
   }
 };
 

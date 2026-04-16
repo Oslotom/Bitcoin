@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CryptoCurrency } from '../types';
 import { CryptoIcon } from './icons';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 
 interface ComparisonFormProps {
   onCalculate: (amount: number) => void;
@@ -34,73 +34,79 @@ export default function ComparisonForm({ onCalculate, isLoading }: ComparisonFor
 
   return (
     <motion.div
+      id="comparison-form-container"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.4 }}
     >
-      <form onSubmit={handleSubmit} className="w-full rounded-xl bg-white p-2 shadow-lg">
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-12">
+      <form id="price-search-form" onSubmit={handleSubmit} className="w-full rounded-lg bg-white p-1.5 shadow-sm border border-slate-100">
+        <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-12 font-mono">
+          {/* Input: Action Selection */}
           <div className="relative sm:col-span-2">
             <select
-              className="block w-full rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-gray-800 focus:outline-none appearance-none pr-9"
+              id="action-select"
+              className="block w-full rounded border border-slate-100 bg-slate-50 px-2 py-2 text-xs font-bold text-slate-800 focus:outline-none appearance-none pr-6"
               value={selectedAction}
               onChange={(e) => setSelectedAction(e.target.value)}
             >
-              <option>Kjop</option>
-              <option disabled>Selg (kommer snart)</option>
+              <option>Kjøp</option>
+              <option disabled>Selg</option>
             </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
-              <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 text-slate-400">
+              <svg className="h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
             </div>
           </div>
 
+          {/* Input: Crypto Selection */}
           <div className="relative sm:col-span-2">
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-3">
-              <div className="h-4 w-4 [&>svg]:h-4 [&>svg]:w-4">
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-2">
+              <div className="h-3 w-3">
                 <CryptoIcon crypto={selectedCrypto} />
               </div>
             </div>
             <select
-              className="block w-full rounded-lg border border-slate-200 bg-white py-3 pl-8 pr-8 text-sm font-semibold text-gray-800 focus:outline-none appearance-none"
+              id="crypto-select"
+              className="block w-full rounded border border-slate-100 bg-slate-50 py-2 pl-6 pr-6 text-xs font-bold text-slate-800 focus:outline-none appearance-none"
               value={selectedCrypto}
               onChange={(e) => setSelectedCrypto(e.target.value as CryptoCurrency)}
             >
               <option value={CryptoCurrency.BTC}>BTC</option>
-              <option value={CryptoCurrency.ETH} disabled>ETH (coming soon)</option>
-              <option value={CryptoCurrency.DOGE} disabled>DOGE (coming soon)</option>
+              <option value={CryptoCurrency.ETH} disabled>ETH</option>
             </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
-              <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 text-slate-400">
+              <svg className="h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
             </div>
           </div>
 
+          {/* Input: Amount in NOK */}
           <div className="col-span-2 sm:col-span-6">
-            <label htmlFor="amount" className="sr-only">Amount</label>
             <input
-              id="amount"
+              id="amount-input"
               type="text"
               inputMode="numeric"
               value={formatAmount(amount)}
               onChange={(e) => setAmount(e.target.value.replace(/\D/g, ''))}
-              placeholder="Belop"
-              className="block w-full rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-gray-800 focus:outline-none"
+              placeholder="Beløp"
+              className="block w-full rounded border border-slate-100 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none"
             />
           </div>
 
+          {/* Submit Button */}
           <button
+            id="calculate-submit-btn"
             type="submit"
             disabled={isLoading}
-            className="col-span-2 sm:col-span-2 shrink-0 whitespace-nowrap rounded-lg bg-green-500 px-4 py-3 text-sm font-semibold text-white transition-all duration-300 hover:bg-green-600 disabled:cursor-not-allowed disabled:bg-gray-400"
+            className="col-span-2 sm:col-span-2 rounded bg-orange-600 py-2 text-xs font-bold text-white transition-all hover:bg-orange-700 disabled:bg-slate-200 disabled:text-slate-400 active:scale-95"
           >
-            {isLoading ? 'Laster...' : 'Compare'}
+            {isLoading ? '...' : 'Oppdater'}
           </button>
         </div>
       </form>
-      {error && <p className="mt-2 text-left text-sm text-red-600">{error}</p>}
+      {error && <p id="form-error-msg" className="mt-2 text-left text-sm text-red-600">{error}</p>}
     </motion.div>
   );
 }

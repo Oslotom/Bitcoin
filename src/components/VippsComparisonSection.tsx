@@ -52,87 +52,52 @@ export default function VippsComparisonSection({ results, amount, className = ''
   const btcDifference = bankBtc - vippsBtc;
 
   return (
-    <section className={`rounded-3xl border border-slate-200 bg-white p-6 shadow-lg md:p-10 ${className}`.trim()}>
-      <div className="grid items-start gap-8 lg:grid-cols-12">
-        <div className="lg:col-span-7">
-          <VippsLogo />
-          <h3 className="mt-4 text-4xl font-bold tracking-tight text-slate-900 md:text-5xl">
-            Kjop Bitcoin med VIPPS
-          </h3>
-          <p className="mt-4 max-w-xl text-lg text-slate-600">
-            Vipps er raskt og enkelt, men ekstra betalingsgebyr gjor at du far mindre BTC enn ved bankoverforing.
-          </p>
-          {priceError && <p className="mt-3 text-sm text-red-700">{priceError}</p>}
-
-          <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
-            For {effectiveAmount.toLocaleString('nb-NO')} NOK betaler du ca.
-            <span className="font-semibold">{Math.round(feeDifferenceNok).toLocaleString('nb-NO')} NOK</span> mer i
-            gebyr med Vipps.
+    <section className={`rounded-2xl border border-slate-100 bg-white p-6 shadow-sm ${className}`.trim()}>
+      <div className="flex flex-col md:flex-row gap-8 items-start">
+        <div className="flex-1">
+          <div className="flex items-center gap-3 mb-4">
+            <VippsLogo />
+            <div>
+              <h3 className="text-xl font-bold tracking-tight text-slate-900">
+                Kjøp med Vipps
+              </h3>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-orange-500">Fast & Easy</p>
+            </div>
           </div>
+          <p className="text-sm text-slate-500 leading-relaxed mb-6">
+            Vipps er raskt og enkelt, men ekstra betalingsgebyr gjør at du får mindre BTC enn ved bankoverføring.
+          </p>
 
-          <div className="mt-6">
-            <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-              Steder du kan kjope Bitcoin med Vipps
-            </h4>
-            <ul className="mt-3 space-y-2 text-slate-700">
-              <li>
-                <a
-                  href="https://firi.com/no/kryptovaluta/bitcoin-btc/hvordan-kjope-bitcoin"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sky-700 hover:text-sky-600"
-                >
-                  Firi
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://nbx.com/no/bitcoin-kurs"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sky-700 hover:text-sky-600"
-                >
-                  NBX
-                </a>
-              </li>
-            </ul>
+          <div className="rounded-xl border border-amber-100 bg-amber-50/50 p-4 text-[13px] text-amber-900 font-medium">
+            Ved kjøp på {effectiveAmount.toLocaleString('nb-NO')} NOK betaler du ca. <span className="font-bold underlineDecoration-amber-200 decoration-2 underline-offset-2 underline">{Math.round(feeDifferenceNok).toLocaleString('nb-NO')} NOK</span> mer i gebyr.
           </div>
         </div>
 
-        <div className="lg:col-span-5">
-          <div className="overflow-hidden rounded-2xl border border-slate-200">
-            <table className="w-full text-xs md:text-sm">
-              <thead className="bg-slate-100 text-slate-600">
+        <div className="w-full md:w-80 shrink-0">
+          <div className="overflow-hidden rounded-xl border border-slate-100">
+            <table className="w-full text-xs">
+              <thead className="bg-slate-50 text-[10px] font-bold uppercase tracking-widest text-slate-400">
                 <tr>
-                  <th className="px-3 py-2 text-left font-semibold">Metode</th>
-                  <th className="px-2 md:px-3 py-2 text-right font-semibold">Gebyr</th>
-                  <th className="px-2 md:px-3 py-2 text-right font-semibold">Du far (BTC)</th>
+                  <th className="px-3 py-2 text-left font-bold">Metode</th>
+                  <th className="px-2 py-2 text-right font-bold">Gebyr</th>
+                  <th className="px-2 py-2 text-right font-bold">Du får</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 bg-white">
+              <tbody className="divide-y divide-slate-50">
                 <tr>
-                  <td className="px-2 md:px-3 py-2 font-medium text-slate-900">Firi bank</td>
-                  <td className="px-2 md:px-3 py-2 text-right text-slate-700">{Math.round(bankFeeNok).toLocaleString('nb-NO')} NOK</td>
-                  <td className="px-2 md:px-3 py-2 text-right text-slate-900">{bankBtc.toLocaleString('nb-NO', { maximumFractionDigits: 8 })}</td>
+                  <td className="px-3 py-2 font-bold text-slate-900 text-[11px]">Bankoverføring</td>
+                  <td className="px-2 py-2 text-right text-slate-500 font-mono italic">{Math.round(bankFeeNok)} NOK</td>
+                  <td className="px-2 py-2 text-right text-slate-900 font-bold font-mono tracking-tighter">{bankBtc.toFixed(6)}</td>
                 </tr>
                 <tr>
-                  <td className="px-2 md:px-3 py-2 font-medium text-slate-900">Firi Vipps</td>
-                  <td className="px-2 md:px-3 py-2 text-right text-slate-700">{Math.round(vippsFeeNok).toLocaleString('nb-NO')} NOK</td>
-                  <td className="px-2 md:px-3 py-2 text-right text-slate-900">{vippsBtc.toLocaleString('nb-NO', { maximumFractionDigits: 8 })}</td>
-                </tr>
-                <tr className="bg-slate-50">
-                  <td className="px-2 md:px-3 py-2 font-semibold text-slate-900">Differanse</td>
-                  <td className="px-2 md:px-3 py-2 text-right font-semibold text-amber-700">
-                    +{Math.round(feeDifferenceNok).toLocaleString('nb-NO')} NOK
-                  </td>
-                  <td className="px-2 md:px-3 py-2 text-right font-semibold text-amber-700">
-                    -{btcDifference.toLocaleString('nb-NO', { maximumFractionDigits: 8 })}
-                  </td>
+                  <td className="px-3 py-2 font-bold text-slate-900 text-[11px]">Vipps Betaling</td>
+                  <td className="px-2 py-2 text-right text-slate-500 font-mono italic">{Math.round(vippsFeeNok)} NOK</td>
+                  <td className="px-2 py-2 text-right text-slate-900 font-bold font-mono tracking-tighter text-orange-600">{vippsBtc.toFixed(6)}</td>
                 </tr>
               </tbody>
             </table>
           </div>
-          {!spotPrice && <p className="mt-2 text-xs text-slate-500">Laster Firi-pris for tabellen...</p>}
+          {!spotPrice && <p className="mt-2 text-[10px] text-slate-400 font-medium italic animate-pulse">Oppdaterer priser...</p>}
         </div>
       </div>
     </section>

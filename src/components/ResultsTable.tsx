@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ComparisonResult, CryptoCurrency, Exchange } from '../types';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import CountUp from 'react-countup';
 import { CountryIcon, ExchangeIcon } from './icons';
 import { FEES } from '../services/api';
@@ -67,12 +67,12 @@ const ExpandedRowContent = ({ result }: { result: ComparisonResult }) => (
 
 const DesktopTableHeader = () => (
   <thead>
-    <tr className="border-b border-slate-200">
-      <th className="whitespace-nowrap p-4 text-left text-sm font-semibold text-slate-500">Plattform</th>
-      <th className="whitespace-nowrap p-4 text-right text-sm font-semibold text-slate-500">Du mottar</th>
-      <th className="whitespace-nowrap p-4 text-right text-sm font-semibold text-slate-500">Kurs</th>
-      <th className="whitespace-nowrap p-4 text-right text-sm font-semibold text-slate-500">Gebyr (NOK)</th>
-      <th className="whitespace-nowrap p-4 text-right text-sm font-semibold text-slate-500"></th>
+    <tr className="border-b border-slate-100">
+      <th className="py-3 px-4 text-left text-[10px] font-bold uppercase tracking-widest text-slate-400">Plattform</th>
+      <th className="py-3 px-4 text-right text-[10px] font-bold uppercase tracking-widest text-slate-400">Du mottar</th>
+      <th className="py-3 px-4 text-right text-[10px] font-bold uppercase tracking-widest text-slate-400">Kurs</th>
+      <th className="py-3 px-4 text-right text-[10px] font-bold uppercase tracking-widest text-slate-400">Gebyr</th>
+      <th className="py-3 px-4 text-right text-[10px] font-bold uppercase tracking-widest text-slate-400"></th>
     </tr>
   </thead>
 );
@@ -82,8 +82,8 @@ export default function ResultsTable({ results, isLoading, error, crypto }: Resu
 
   if (isLoading) {
     return (
-      <div className="mt-16 flex items-center justify-center">
-        <svg className="h-10 w-10 animate-spin text-sky-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <div className="py-12 flex items-center justify-center">
+        <svg className="h-8 w-8 animate-spin text-orange-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
@@ -96,18 +96,18 @@ export default function ResultsTable({ results, isLoading, error, crypto }: Resu
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mt-8 rounded-lg border border-red-200 bg-red-50 p-4 text-center text-red-700"
+        className="mt-8 rounded-xl border border-red-100 bg-red-50 p-4 text-center text-red-600 text-sm"
       >
-        <p><strong>En feil oppstod:</strong> {error}</p>
+        <p><strong>Feil:</strong> {error}</p>
       </motion.div>
     );
   }
 
   if (results.length === 0) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center text-slate-500 shadow-lg md:p-16">
-        <h3 className="text-xl font-semibold">Klar til aa sammenligne</h3>
-        <p>Fyll ut skjemaet over for aa se live priser.</p>
+      <div className="rounded-2xl border border-slate-100 bg-white p-12 text-center text-slate-400">
+        <h3 className="text-lg font-bold text-slate-900 mb-1">Klar til å sammenligne</h3>
+        <p className="text-sm">Fyll ut beløp for å se live priser.</p>
       </div>
     );
   }
@@ -129,38 +129,51 @@ export default function ResultsTable({ results, isLoading, error, crypto }: Resu
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+        id="results-table-main"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="border-t border-slate-100"
       >
-        <div className="space-y-3 md:hidden">
+        {/* Mobile View: Stacked Rows */}
+        <div id="results-mobile-view" className="space-y-1 md:hidden">
           {sortedResults.map((result) => (
-            <div key={result.exchange} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div 
+              key={result.exchange} 
+              id={`exchange-row-mobile-${result.exchange.toLowerCase()}`}
+              className="overflow-hidden border-b border-slate-50 bg-white"
+            >
               <button
                 type="button"
-                className="w-full p-4 text-left"
+                className="w-full py-2.5 px-2 text-left"
                 onClick={() => handleRowClick(result.exchange)}
               >
                 <div className="flex items-center justify-between gap-3">
-                     <div className="flex min-w-0 items-center gap-2">
-                    <ExchangeIcon exchange={result.exchange} />
-                      <span className="truncate font-semibold text-slate-900">{result.exchange}</span>
-                    {(result.exchange === Exchange.Firi || result.exchange === Exchange.Kraken) && (
-                      <CountryIcon countryCode="NO" />
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="shrink-0 scale-75">
+                      <ExchangeIcon exchange={result.exchange} />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-bold text-slate-900 leading-tight">{result.exchange}</span>
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">
+                        {result.exchange === Exchange.Firi || result.exchange === Exchange.NBX || result.exchange === Exchange.BareBitcoin ? 'Norsk' : 'Global'}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <div className="text-sm font-bold text-slate-900 font-mono tracking-tighter">
+                      <CountUp end={result.cryptoAmount} decimals={6} duration={1} separator=" " decimal="," /> BTC
+                    </div>
+                    {result.exchange === bestResult.exchange && (
+                      <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">Beste pris</span>
                     )}
                   </div>
-                  {result.exchange === bestResult.exchange && (
-                    <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700">Best</span>
-                  )}
-                </div>
-                <div className="mt-2 text-right text-lg font-semibold text-sky-600">
-                  <CountUp end={result.cryptoAmount} decimals={6} duration={1} separator=" " decimal="," />
                 </div>
               </button>
               <AnimatePresence initial={false}>
                 {expandedRow === result.exchange && (
                   <motion.div
+                    id={`expanded-content-mobile-${result.exchange.toLowerCase()}`}
                     key="mobile-content"
                     initial="collapsed"
                     animate="open"
@@ -177,57 +190,81 @@ export default function ResultsTable({ results, isLoading, error, crypto }: Resu
           ))}
         </div>
 
-        <div className="hidden overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg md:block">
+        {/* Desktop View: Traditional Table */}
+        <div id="results-desktop-view" className="hidden md:block">
           <table className="w-full">
             <DesktopTableHeader />
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-slate-50">
               {sortedResults.map((result) => (
                 <React.Fragment key={result.exchange}>
-                  <tr onClick={() => handleRowClick(result.exchange)} className="cursor-pointer transition-colors duration-200 hover:bg-slate-50">
-                    <td className="relative whitespace-nowrap p-4 font-semibold text-slate-900">
-                      {result.exchange === bestResult.exchange && (
-                          <div className="absolute -left-0.5 top-0 h-full w-1 rounded-l-full bg-green-500"></div>
-                      )}
+                  <tr 
+                    id={`exchange-row-desktop-${result.exchange.toLowerCase()}`}
+                    onClick={() => handleRowClick(result.exchange)} 
+                    className="group cursor-pointer transition-colors duration-200 hover:bg-slate-50/50"
+                  >
+                    <td className="py-3 px-4">
                       <div className="flex items-center gap-3">
-                        <ExchangeIcon exchange={result.exchange} />
-                          {result.exchange}
-                          {(result.exchange === Exchange.Firi || result.exchange === Exchange.Kraken) && (
-                            <CountryIcon countryCode="NO" />
-                          )}
+                        <div className="shrink-0 scale-75 transition-transform group-hover:scale-90">
+                          <ExchangeIcon exchange={result.exchange} />
                         </div>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-bold text-slate-900 leading-tight">{result.exchange}</span>
+                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">
+                            {result.exchange === Exchange.Firi || result.exchange === Exchange.NBX || result.exchange === Exchange.BareBitcoin ? 'Norsk' : 'Global'}
+                          </span>
+                        </div>
+                      </div>
                     </td>
-                    <td className="whitespace-nowrap p-4 text-right font-semibold text-sky-600">
-                      <CountUp end={result.cryptoAmount} decimals={6} duration={1} separator=" " decimal="," />
+                    <td className="py-3 px-4 text-right">
+                       <div className="flex flex-col items-end">
+                        <div className="text-sm font-bold text-slate-900 font-mono tracking-tighter">
+                          <CountUp end={result.cryptoAmount} decimals={6} duration={1} separator=" " decimal="," /> BTC
+                        </div>
+                        {result.exchange === bestResult.exchange && (
+                          <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">Beste pris</span>
+                        )}
+                      </div>
                     </td>
-                    <td className="whitespace-nowrap p-4 text-right text-slate-600">
+                    <td className="py-3 px-4 text-right text-xs font-medium text-slate-500 font-mono">
                       <CountUp end={result.spotPrice} decimals={0} duration={1} separator=" " decimal="," /> NOK
                     </td>
-                    <td className="whitespace-nowrap p-4 text-right text-slate-600">
-                      <CountUp end={result.feeInNok} decimals={0} duration={1} prefix="~ " separator=" " decimal="," /> NOK
+                    <td className="py-3 px-4 text-right">
+                      <div className="flex flex-col items-end">
+                        <div className="text-xs font-bold text-slate-900">
+                           ~ {Math.round(result.feeInNok)} NOK
+                        </div>
+                        <span className="text-[8px] font-bold text-slate-400 uppercase tracking-tight">
+                          {Math.round((result.feeInNok / result.totalCost) * 1000) / 10}% totalt
+                        </span>
+                      </div>
                     </td>
-                    <td className="p-4 text-right">
+                    <td className="py-3 px-4 text-right">
                         <a
+                          id={`buy-btn-${result.exchange.toLowerCase()}`}
                           href={PLATFORM_DATA[result.exchange].link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-sky-500"
+                          className="inline-flex rounded-lg bg-slate-900 px-3 py-1.5 text-[10px] font-bold text-white transition-all duration-200 hover:bg-slate-800"
+                          onClick={(e) => e.stopPropagation()}
                         >
-                          Kjop her
+                          Kjøp
                         </a>
                     </td>
                   </tr>
-                  <tr>
-                    <td colSpan={5} className="p-0" style={{ borderTop: 'none' }}>
+                  {/* Expanded Calculation Area */}
+                  <tr id={`calculation-row-${result.exchange.toLowerCase()}`}>
+                    <td colSpan={5} className="p-0 border-none">
                       <AnimatePresence initial={false}>
                         {expandedRow === result.exchange && (
                           <motion.div
+                            id={`expanded-content-desktop-${result.exchange.toLowerCase()}`}
                             key="desktop-content"
                             initial="collapsed"
                             animate="open"
                             exit="collapsed"
                             variants={{ open: { opacity: 1, height: 'auto' }, collapsed: { opacity: 0, height: 0 } }}
                             transition={{ duration: 0.3, ease: 'easeInOut' }}
-                            className="overflow-hidden"
+                            className="overflow-hidden bg-slate-50/30"
                           >
                             <ExpandedRowContent result={result} />
                           </motion.div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { ExchangeIcon } from './icons';
 import { Exchange } from '../types';
 
@@ -120,118 +120,129 @@ export default function ExchangeOverview() {
   });
 
   return (
-    <div className="bg-slate-50 py-16 md:py-24">
+    <div id="exchange-overview-wrapper" className="bg-white py-12">
       <div className="mx-auto max-w-4xl px-4">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          id="exchange-overview-content"
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <h2 className="mb-6 text-center text-3xl font-bold text-slate-900 md:text-4xl">Her kan du kjøpe Bitcoin</h2>
-
-          <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Sok etter plattform..."
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none"
-            />
-            <select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value as 'Alle' | ExchangeCategory)}
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none"
-            >
-              <option value="Alle">Alle</option>
-              <option value="Norsk">Norske</option>
-              <option value="Global">Globale</option>
-            </select>
+          {/* Header & Filters */}
+          <div id="platforms-grid-header" className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+            <div>
+              <h1 className="text-xl font-bold tracking-tight text-slate-900">Utforsk plattformer</h1>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Finn børsen som passer dine behov</p>
+            </div>
+            
+            <div id="search-filter-controls" className="flex gap-2">
+              <input
+                id="exchange-search-input"
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Søk..."
+                className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-800 focus:outline-none w-40"
+              />
+              <select
+                id="exchange-category-select"
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value as 'Alle' | ExchangeCategory)}
+                className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-800 focus:outline-none"
+              >
+                <option value="Alle">Alle typer</option>
+                <option value="Norsk">Norske</option>
+                <option value="Global">Globale</option>
+              </select>
+            </div>
           </div>
 
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg">
-            <table className="w-full table-fixed md:table-auto">
-              <thead>
-                <tr className="border-b border-slate-200">
-                  <th className="p-3 text-left text-sm font-semibold text-slate-500 md:p-4">Plattform</th>
-                  <th className="hidden p-4 text-left text-sm font-semibold text-slate-500 md:table-cell">Beskrivelse</th>
-                  <th className="hidden p-4 text-right text-sm font-semibold text-slate-500 md:table-cell"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200">
-                {filteredExchanges.map((exchange) => (
-                  <React.Fragment key={exchange.name}>
-                    <tr
-                      className="cursor-pointer transition-colors duration-200 hover:bg-slate-50"
-                      onClick={() => toggleExpanded(exchange.name)}
+          {/* List: Filtered Results */}
+          <div id="exchanges-list-container" className="overflow-hidden rounded-xl border border-slate-100 divide-y divide-slate-50">
+            {filteredExchanges.map((exchange) => (
+              <div key={exchange.name} id={`exchange-item-${exchange.name.toLowerCase()}`} className="group">
+                <div 
+                  id={`exchange-header-${exchange.name.toLowerCase()}`}
+                  className="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50/50 transition-colors"
+                  onClick={() => toggleExpanded(exchange.name)}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="shrink-0 scale-90">
+                      <ExchangeIcon exchange={exchange.name as any} />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900">{exchange.name}</h3>
+                      <p className="text-[10px] text-slate-400 font-medium uppercase tracking-tighter">{exchange.category}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="hidden sm:block text-[11px] text-slate-500 font-medium italic truncate max-w-[200px]">{exchange.description}</span>
+                    <div className={`transition-transform duration-300 ${expanded === exchange.name ? 'rotate-180' : ''}`}>
+                       <svg className="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Dropdown: Detailed Platform Info */}
+                <AnimatePresence>
+                  {expanded === exchange.name && (
+                    <motion.div
+                      id={`exchange-details-${exchange.name.toLowerCase()}`}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden bg-slate-50/30"
                     >
-                      <td className="p-3 align-top md:p-4">
-                        <div className="flex items-center gap-3 font-semibold text-slate-900">
-                          <ExchangeIcon exchange={exchange.name as any} />
-                            <span className="truncate">{exchange.name}</span>
-                        </div>
-                      </td>
-                      <td className="hidden whitespace-nowrap p-4 text-slate-600 md:table-cell">{exchange.description}</td>
-                      <td className="hidden p-4 text-right align-top md:table-cell">
-                        <a
-                          href={exchange.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="whitespace-nowrap rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 transition-all duration-200 hover:bg-sky-600 hover:text-white"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          Besok side
-                        </a>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td colSpan={3} className="p-0">
-                        {expanded === exchange.name && (
-                          <div className="bg-slate-50 px-3 pb-3 pt-1 text-sm text-slate-600 md:px-4 md:pb-4">
-                            <p className="mb-3">{exchange.description}</p>
-                            <div className="grid gap-3 md:grid-cols-2">
-                                <div>
-                                  <p className="mb-1 font-semibold text-slate-900">Fordeler</p>
-                                  <ul className="space-y-1">
-                                    {exchange.pros.map((pro) => (
-                                      <li key={pro}>+ {pro}</li>
-                                    ))}
-                                  </ul>
-                                </div>
-                                <div>
-                                  <p className="mb-1 font-semibold text-slate-900">Ulemper</p>
-                                  <ul className="space-y-1">
-                                    {exchange.cons.map((con) => (
-                                      <li key={con}>- {con}</li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              </div>
-                              <a
-                                href={exchange.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="mt-3 inline-flex rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-900 transition-all duration-200 hover:bg-sky-600 hover:text-white md:hidden"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                Besok side
-                              </a>
+                      <div className="px-12 pb-6 pt-2">
+                        <p className="text-xs text-slate-600 mb-6 leading-relaxed bg-white p-3 rounded-lg border border-slate-100 italic">
+                          "{exchange.description}"
+                        </p>
+                        <div className="grid sm:grid-cols-2 gap-8">
+                          <div id={`pros-${exchange.name.toLowerCase()}`}>
+                            <h4 className="text-[10px] uppercase tracking-widest font-black text-emerald-500 mb-3">Fordeler</h4>
+                            <ul className="space-y-2">
+                              {exchange.pros.map(pro => (
+                                <li key={pro} className="text-xs text-slate-700 flex items-start gap-2">
+                                  <span className="text-emerald-500 font-black">✓</span> {pro}
+                                </li>
+                              ))}
+                            </ul>
                           </div>
-                        )}
-                      </td>
-                    </tr>
-                  </React.Fragment>
-                ))}
+                          <div id={`cons-${exchange.name.toLowerCase()}`}>
+                            <h4 className="text-[10px] uppercase tracking-widest font-black text-rose-400 mb-3">Ulemper</h4>
+                            <ul className="space-y-2">
+                              {exchange.cons.map(con => (
+                                <li key={con} className="text-xs text-slate-700 flex items-start gap-2 text-opacity-80">
+                                  <span className="text-rose-400 font-black">✕</span> {con}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                        <div className="mt-8">
+                          <a
+                            id={`ext-link-${exchange.name.toLowerCase()}`}
+                            href={exchange.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-6 py-2 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-slate-800 transition-colors"
+                          >
+                            Gå til plattform
+                          </a>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
 
-                {filteredExchanges.length === 0 && (
-                  <tr>
-                    <td colSpan={3} className="p-6 text-center text-sm text-slate-500">
-                      Ingen borser matcher filteret.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+            {filteredExchanges.length === 0 && (
+              <div id="no-results-msg" className="p-12 text-center text-slate-400 italic text-sm">
+                Ingen børser funnet for dine søkekriterier.
+              </div>
+            )}
           </div>
         </motion.div>
       </div>

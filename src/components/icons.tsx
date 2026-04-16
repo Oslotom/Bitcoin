@@ -7,15 +7,15 @@ const BitcoinIcon = () => (
     </svg>
 );
 
-const CoinbaseIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+const CoinbaseIcon = ({ size = 24 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="12" fill="#0052FF"/>
         <path d="M17.5 12C17.5 15.0376 15.0376 17.5 12 17.5C8.96243 17.5 6.5 15.0376 6.5 12C6.5 8.96243 8.96243 6.5 12 6.5C15.0376 6.5 17.5 8.96243 17.5 12ZM9.5 12C9.5 13.3807 10.6193 14.5 12 14.5C13.3807 14.5 14.5 13.3807 14.5 12C14.5 10.6193 13.3807 9.5 12 9.5C10.6193 9.5 9.5 10.6193 9.5 12Z" fill="white"/>
     </svg>
 );
 
-const BinanceIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+const BinanceIcon = ({ size = 24 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="12" fill="#F0B90B"/>
         <path d="M12 7.5L14.5 10L12 12.5L9.5 10L12 7.5Z" fill="white"/>
         <path d="M7 10L9.5 12.5L7 15L4.5 12.5L7 10Z" fill="white"/>
@@ -24,50 +24,50 @@ const BinanceIcon = () => (
     </svg>
 );
 
-const FiriIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+const FiriIcon = ({ size = 24 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="12" fill="#1A1A1A"/>
         <path d="M8 8V16H9.5V12.5H14.5V16H16V8H14.5V11H9.5V8H8Z" fill="white"/>
     </svg>
 );
 
-const KrakenIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+const KrakenIcon = ({ size = 24 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="12" fill="#5E20CD"/>
         <path d="M12 6L15 9H9L12 6ZM12 18L9 15H15L12 18ZM6 12L9 9V15L6 12ZM18 12L15 15V9L18 12Z" fill="white"/>
     </svg>
 );
 
-const NbxIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+const NbxIcon = ({ size = 24 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="12" fill="#000000"/>
         <path d="M8 8H10V16H8V8ZM14 8H16V16H14V8ZM11 8H13V16H11V8Z" fill="#00BFFF"/>
     </svg>
 );
 
-const BareBitcoinIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+const BareBitcoinIcon = ({ size = 24 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="12" fill="#F7931A"/>
         <path d="M8 7.5H12.4C14.1 7.5 15.2 8.4 15.2 9.8C15.2 10.7 14.8 11.3 14.1 11.6C15 11.9 15.5 12.6 15.5 13.6C15.5 15.2 14.2 16.2 12.2 16.2H8V7.5ZM10.1 10.9H12.1C12.8 10.9 13.2 10.6 13.2 10C13.2 9.4 12.8 9.1 12.1 9.1H10.1V10.9ZM10.1 14.6H12.3C13.1 14.6 13.5 14.3 13.5 13.7C13.5 13.1 13.1 12.7 12.3 12.7H10.1V14.6Z" fill="white"/>
     </svg>
 );
 
-const RevolutIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+const RevolutIcon = ({ size = 24 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="12" fill="#111111"/>
         <path d="M7.5 8H12.8C14.31 8 15.5 9.18 15.5 10.65C15.5 12.1 14.32 13.3 12.84 13.3H10V16H7.5V8ZM10 10.2V11.2H12.62C12.91 11.2 13.14 10.97 13.14 10.68C13.14 10.43 12.94 10.2 12.62 10.2H10Z" fill="white"/>
     </svg>
 );
 
-const CryptoComIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+const CryptoComIcon = ({ size = 24 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="12" fill="#121B27"/>
         <path d="M12 6L17 9L12 12L7 9L12 6ZM12 13L17 10L12 19L7 10L12 13Z" fill="#1199FA"/>
     </svg>
 );
 
-const BuyBitcoinIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+const BuyBitcoinIcon = ({ size = 24 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="12" fill="#F7931A"/>
         <path d="M14.5 12C14.5 13.3807 13.3807 14.5 12 14.5C10.6193 14.5 9.5 13.3807 9.5 12C9.5 10.6193 10.6193 9.5 12 9.5C13.3807 9.5 14.5 10.6193 14.5 12ZM12 8.5C14.4853 8.5 16.5 10.5147 16.5 13C16.5 15.4853 14.4853 17.5 12 17.5C9.51472 17.5 7.5 15.4853 7.5 13C7.5 10.5147 9.51472 8.5 12 8.5Z" fill="white"/>
     </svg>
@@ -117,26 +117,26 @@ export const CountryIcon = ({ countryCode }: { countryCode: string }) => {
     }
 };
 
-export const ExchangeIcon = ({ exchange }: { exchange: Exchange }) => {
+export const ExchangeIcon = ({ exchange, size = 24 }: { exchange: Exchange, size?: number }) => {
     switch (exchange) {
         case 'Coinbase':
-            return <CoinbaseIcon />;
+            return <CoinbaseIcon size={size} />;
         case 'Binance':
-            return <BinanceIcon />;
+            return <BinanceIcon size={size} />;
         case 'Firi':
-            return <FiriIcon />;
+            return <FiriIcon size={size} />;
         case 'Kraken':
-            return <KrakenIcon />;
+            return <KrakenIcon size={size} />;
         case 'NBX':
-            return <NbxIcon />;
+            return <NbxIcon size={size} />;
         case 'Bare Bitcoin':
-            return <BareBitcoinIcon />;
+            return <BareBitcoinIcon size={size} />;
         case 'Revolut':
-            return <RevolutIcon />;
+            return <RevolutIcon size={size} />;
         case 'Crypto.com':
-            return <CryptoComIcon />;
+            return <CryptoComIcon size={size} />;
         case 'BuyBitcoin.com':
-            return <BuyBitcoinIcon />;
+            return <BuyBitcoinIcon size={size} />;
         default:
             return null;
     }
