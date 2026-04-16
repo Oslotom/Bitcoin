@@ -136,7 +136,7 @@ export default function App() {
               <section id="hero-landing" className="text-center space-y-6 py-8">
             
                 <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-                  Den enkleste veien til <br /> din første <span className="text-orange-600">Bitcoin</span>
+                   <span className="text-orange-600">Kjøp Bitcoin</span>
                 </h1>
                 <p className="text-slate-500 text-lg max-w-2xl mx-auto font-medium">
                   Vi sammenligner priser, gebyrer og sikkerhet hos norske og internasjonale børser, slik at du alltid får mest Bitcoin for pengene dine.
