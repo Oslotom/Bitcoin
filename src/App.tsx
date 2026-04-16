@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import Footer from './components/Footer';
-import ComparisonForm from './components/ComparisonForm';
 import ExchangeOverview from './components/ExchangeOverview';
 import ResultsTable from './components/ResultsTable';
 import VippsComparisonSection from './components/VippsComparisonSection';
@@ -9,15 +8,15 @@ import DetailedComparison from './components/DetailedComparison';
 import Overview from './components/Overview';
 import { getCoinbasePrice, getBinancePrice, getFiriPrice, getKrakenPrice, getNbxPrice, getBareBitcoinPrice, getRevolutPrice, getCryptoComPrice, getBuyBitcoinPrice, FEES } from './services/api';
 import { ComparisonResult, CryptoCurrency, Exchange } from './types';
-import { ExternalLink, ShieldCheck, CreditCard, Wallet } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 
 export default function App() {
   const [results, setResults] = useState<ComparisonResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastAmount, setLastAmount] = useState<number | null>(10000);
-  const [activeTab, setActiveTab] = useState<'live' | 'analysis'>('live');
-  const [currentPage, setCurrentPage] = useState<'home' | 'compare' | 'overview' | 'platforms'>('home');
+  const [currentPage, setCurrentPage] = useState<'home' | 'live' | 'overview' | 'platforms'>('home');
+  const didInitCalculate = useRef(false);
 
   const handleCalculate = async (amount: number) => {
     setIsLoading(true);
@@ -56,6 +55,8 @@ export default function App() {
             cryptoAmount,
             totalCost: amount,
           });
+        } else {
+          console.error(`Error fetching price for ${exchange}:`, priceResult.reason);
         }
       };
 
@@ -69,6 +70,10 @@ export default function App() {
       processResult(Exchange.CryptoCom, cryptoComPrice);
       processResult(Exchange.BuyBitcoin, buyBitcoinPrice);
 
+      if (newResults.length === 0) {
+        throw new Error('Kunne ikke hente priser fra noen av børsene. Prøv igjen senere.');
+      }
+
       setResults(newResults);
     } catch (err: any) {
       setError(err.message || 'En ukjent feil oppstod.');
@@ -78,6 +83,8 @@ export default function App() {
   };
 
   useEffect(() => {
+    if (didInitCalculate.current) return;
+    didInitCalculate.current = true;
     handleCalculate(10000);
   }, []);
 
@@ -85,188 +92,86 @@ export default function App() {
     <div id="app-root" className="min-h-screen bg-white text-slate-900 font-sans">
       <main id="main-content" className="container mx-auto px-4 pt-10 pb-16">
         <div className="max-w-4xl mx-auto">
-          {/* Section: Logo and Navigation */}
-          <header id="site-header" className="flex flex-col items-center mb-12">
+          {/* Section: Logo (Navigation moved to footer) */}
+          <header id="site-header" className="flex flex-col items-center mb-10">
             <div 
               id="logo-container"
               onClick={() => setCurrentPage('home')}
-              className="flex items-center gap-3 cursor-pointer group mb-6"
+              className="flex items-center gap-3 cursor-pointer group"
             >
               <div className="bg-orange-600 p-1.5 rounded-xl group-hover:rotate-12 transition-transform shrink-0 shadow-lg shadow-orange-100">
                 <span className="text-white text-base font-black italic px-1">₿</span>
               </div>
-              <span className="font-bold text-2xl tracking-tighter whitespace-nowrap">KJØPEBITCOIN<span className="text-orange-500">.NO</span></span>
+              <span className="font-bold text-xl tracking-tighter whitespace-nowrap">KJØPEBITCOIN<span className="text-orange-500">.NO</span></span>
             </div>
-            
-            <nav id="main-nav" className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-100">
-              <button 
-                id="nav-home-btn"
-                onClick={() => setCurrentPage('home')}
-                className={`text-[10px] font-bold uppercase tracking-widest transition-all px-4 py-2 rounded-lg ${currentPage === 'home' ? 'bg-white text-orange-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
-              >
-                Hjem
-              </button>
-              <button 
-                id="nav-compare-btn"
-                onClick={() => setCurrentPage('compare')}
-                className={`text-[10px] font-bold uppercase tracking-widest transition-all px-4 py-2 rounded-lg ${currentPage === 'compare' ? 'bg-white text-orange-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
-              >
-                Sammenlign
-              </button>
-              <button 
-                id="nav-platforms-btn"
-                onClick={() => setCurrentPage('platforms')}
-                className={`text-[10px] font-bold uppercase tracking-widest transition-all px-4 py-2 rounded-lg ${currentPage === 'platforms' ? 'bg-white text-orange-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
-              >
-                Plattformer
-              </button>
-              <button 
-                id="nav-overview-btn"
-                onClick={() => setCurrentPage('overview')}
-                className={`text-[10px] font-bold uppercase tracking-widest transition-all px-4 py-2 rounded-lg ${currentPage === 'overview' ? 'bg-white text-orange-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
-              >
-                Oversikt
-              </button>
-            </nav>
           </header>
 
-          {/* Page: Home (Landing Page) */}
+          {/* Page: Home (Landing / Analysis) */}
           {currentPage === 'home' && (
-            <div id="home-landing-page" className="space-y-16">
-              <section id="hero-landing" className="text-center space-y-6 py-8">
-            
-                <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-                   <span className="text-orange-600">Kjøp Bitcoin</span>
+            <div id="home-page" className="space-y-2">
+              {/* Hero Section */}
+              <section id="home-hero" className="text-center space-y-2 py-8">
+                <h1 className="text-3xl font-black tracking-tighter sm:text-4xl text-slate-900 uppercase">
+                  Finn den beste prisen på <span className="text-orange-600">Bitcoin</span>
                 </h1>
-                <p className="text-slate-500 text-lg max-w-2xl mx-auto font-medium">
-                  Vi sammenligner priser, gebyrer og sikkerhet hos norske og internasjonale børser, slik at du alltid får mest Bitcoin for pengene dine.
+                <p className="text-slate-500 max-w-lg mx-auto text-sm font-medium leading-relaxed">
+                  Vi henter live kurser og gebyrer fra alle norske og internasjonale børser, slik at du alltid vet hvor du får mest for pengene.
                 </p>
-                <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-                  <button 
-                    onClick={() => setCurrentPage('compare')}
-                    className="px-8 py-4 bg-orange-600 text-white font-black text-sm uppercase tracking-widest rounded-2xl hover:bg-orange-700 transition-all hover:scale-105 shadow-xl shadow-orange-100"
-                  >
-                    Sammenlign Priser Nå
-                  </button>
-                  <button 
-                    onClick={() => setCurrentPage('overview')}
-                    className="px-8 py-4 bg-white text-slate-900 border border-slate-200 font-black text-sm uppercase tracking-widest rounded-2xl hover:bg-slate-50 transition-all"
-                  >
-                    Hvordan kjøpe?
-                  </button>
-                </div>
               </section>
 
-              {/* Teaser: Mini Comparison */}
-              <section id="mini-teaser" className="bg-slate-50 rounded-3xl p-8 border border-slate-100">
-                <div className="flex flex-col md:flex-row items-center gap-8">
-                  <div className="flex-1 space-y-4">
-                    <h2 className="text-2xl font-bold text-slate-900">Se live-priser fra alle børser</h2>
-                    <p className="text-slate-600 text-sm">Priser på Bitcoin varierer mellom plattformer. Vi henter realtidsdata fra Coinbase, Binance, Firi og NBX slik at du ser hvem som er billigst akkurat nå.</p>
-                    <div className="flex gap-4 items-center">
-                      <div className="flex -space-x-2">
-                        {[Exchange.Firi, Exchange.NBX, Exchange.Binance].map(ex => (
-                          <div key={ex} className="w-8 h-8 rounded-full border-2 border-white bg-white flex items-center justify-center shadow-sm overflow-hidden">
-                            <span className="scale-50 font-black text-[8px]">{ex[0]}</span>
-                          </div>
-                        ))}
-                      </div>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">+ 5 andre plattformer</span>
-                    </div>
+              {/* Quick View Table */}
+              <section id="quick-view-table" className="space-y-6">
+                <div className="flex justify-between items-end">
+                  <div className="space-y-1">
+                    <h2 className="text-lg font-bold tracking-tight">Live markedsscan</h2>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Utvalgte børser • 10.000 kr beløp</p>
                   </div>
-                  <div className="w-full md:w-auto">
-                    <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 scale-90 md:scale-100">
-                      <div className="text-[10px] font-black uppercase text-slate-400 mb-3 tracking-widest">Beste pris akkurat nå</div>
-                      <div className="flex items-center gap-4">
-                         <div className="text-2xl font-black text-slate-900 font-mono tracking-tighter">
-                           {results[0] ? Math.round(results[0].spotPrice).toLocaleString('nb-NO') : '--- ---'} NOK
-                         </div>
-                         <div className="px-2 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-black rounded-lg">LIVE</div>
-                      </div>
-                    </div>
-                  </div>
+                  <button 
+                    onClick={() => setCurrentPage('live')}
+                    className="text-[10px] font-black uppercase tracking-widest text-orange-600 hover:text-orange-700"
+                  >
+                    Full oversikt →
+                  </button>
                 </div>
+                <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} />
               </section>
 
-              {/* Grid: Popular Features */}
-              <section id="features-landing" className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[
-                  { title: 'Skatteberegning', desc: 'Norske børser som Firi og NBX rapporterer automatisk til Skatteetaten for deg.', icon: ShieldCheck },
-                  { title: 'Betal med Vipps', desc: 'Flere børser støtter nå lynrask innbetaling med Vipps for umiddelbart kjøp.', icon: CreditCard },
-                  { title: 'Egen lommebok', desc: 'Lær hvordan du tar kontroll over dine coins med en hardware wallet.', icon: Wallet }
-                ].map((f, i) => (
-                  <div key={i} className="p-8 bg-white border border-slate-100 rounded-3xl hover:border-orange-200 transition-colors group cursor-default">
-                    <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 text-slate-400 group-hover:text-orange-500 group-hover:bg-orange-50 transition-colors">
-                       <f.icon size={24} />
-                    </div>
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">{f.title}</h3>
-                    <p className="text-slate-500 text-sm leading-relaxed">{f.desc}</p>
-                  </div>
-                ))}
-              </section>
+              {/* Section: Market Analysis */}
+              <div id="market-analysis-content" className="pt-16 border-t border-slate-100 space-y-12">
+                <div className="text-center max-w-xl mx-auto">
+                  <h2 className="text-xl font-bold tracking-tight mb-2">Markedsanalyse</h2>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Trender og grafisk oversikt</p>
+                </div>
+                <PriceChart />
+                <DetailedComparison />
+              </div>
             </div>
           )}
 
-          {/* Page: Comparison Tool (The refactored tool page) */}
-          {currentPage === 'compare' && (
-            <div id="compare-page" className="space-y-8">
-              {/* Box: Input Form */}
-              <section id="comparison-form-section" className="mb-8">
-                <ComparisonForm onCalculate={handleCalculate} isLoading={isLoading} />
-              </section>
-
-              {/* Box: View Tabs */}
-              <div id="tabs-container" className="flex justify-start mb-8 border-b border-slate-100">
-                <div className="flex gap-6">
-                  <button
-                    id="tab-live-prices"
-                    onClick={() => setActiveTab('live')}
-                    className={`pb-3 text-[10px] font-bold uppercase tracking-widest transition-all ${
-                      activeTab === 'live'
-                        ? 'text-slate-900 border-b-2 border-slate-900'
-                        : 'text-slate-400 hover:text-slate-600'
-                    }`}
-                  >
-                    Live Priser
-                  </button>
-                  <button
-                    id="tab-market-analysis"
-                    onClick={() => setActiveTab('analysis')}
-                    className={`pb-3 text-[10px] font-bold uppercase tracking-widest transition-all ${
-                      activeTab === 'analysis'
-                        ? 'text-slate-900 border-b-2 border-slate-900'
-                        : 'text-slate-400 hover:text-slate-600'
-                    }`}
-                  >
-                    Markedsanalyse
-                  </button>
-                </div>
+          {/* Page: Live Prices (Comparison Tool) */}
+          {currentPage === 'live' && (
+            <div id="live-prices-page" className="space-y-16">
+              <div className="text-center mb-10">
+                <h2 className="text-2xl font-black tracking-tight uppercase">Live Priser</h2>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Sanntidssammenligning av børser</p>
               </div>
 
-              {/* Content: Active Tab Rendering */}
-              {activeTab === 'live' ? (
-                <div id="live-prices-content" className="space-y-16">
-                  <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} />
-                  
-                  {/* CTA Box */}
-                  <div id="cta-explanation" className="text-center bg-white p-6 rounded-2xl border border-slate-100 shadow-sm max-w-2xl mx-auto">
-                    <p className="text-slate-600 mb-4 font-medium text-sm">Vil du ha en dypere forklaring på de ulike måtene å kjøpe på?</p>
-                    <button 
-                      onClick={() => setCurrentPage('overview')}
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-slate-800 transition-all active:scale-95"
-                    >
-                      Se vår fulle oversikt <ExternalLink size={14} />
-                    </button>
-                  </div>
+              <div id="live-prices-content" className="space-y-16">
+                <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} />
+                
+                {/* CTA Box */}
+                <div id="cta-explanation" className="text-center bg-white p-6 rounded-2xl border border-slate-100 shadow-sm max-w-2xl mx-auto">
+                  <p className="text-slate-600 mb-4 font-medium text-sm">Vil du ha en dypere forklaring på de ulike måtene å kjøpe på?</p>
+                  <button 
+                    onClick={() => setCurrentPage('overview')}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-slate-800 transition-all active:scale-95"
+                  >
+                    Se vår fulle oversikt <ExternalLink size={14} />
+                  </button>
+                </div>
 
-                  <VippsComparisonSection results={results} amount={lastAmount} />
-                </div>
-              ) : (
-                <div id="market-analysis-content" className="space-y-12">
-                  <PriceChart />
-                  <DetailedComparison />
-                </div>
-              )}
+                <VippsComparisonSection results={results} amount={lastAmount} />
+              </div>
             </div>
           )}
 
@@ -281,7 +186,7 @@ export default function App() {
           </div>
         </div>
       </main>
-      <Footer />
+      <Footer setCurrentPage={setCurrentPage} currentPage={currentPage} />
     </div>
 );
 }
