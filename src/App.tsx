@@ -106,7 +106,7 @@ export default function App() {
               <div className="bg-orange-600 p-1.5 rounded-xl group-hover:rotate-12 transition-transform shrink-0 shadow-lg shadow-orange-100">
                 <span className="text-white text-base font-black italic px-1">₿</span>
               </div>
-              <span className="font-bold text-xl tracking-tighter whitespace-nowrap">KJØPEBITCOIN1<span className="text-orange-500">.NO</span></span>
+              <span className="font-bold text-xl tracking-tighter whitespace-nowrap">KJØPEBITCOIN<span className="text-orange-500">.NO</span></span>
             </div>
           </header>
 
