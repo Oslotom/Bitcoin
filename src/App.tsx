@@ -6,6 +6,8 @@ import VippsComparisonSection from './components/VippsComparisonSection';
 import PriceChart from './components/PriceChart';
 import DetailedComparison from './components/DetailedComparison';
 import Overview from './components/Overview';
+import { ExchangeIcon } from './components/icons';
+import CountUp from 'react-countup';
 import { getCoinbasePrice, getBinancePrice, getFiriPrice, getKrakenPrice, getNbxPrice, getBareBitcoinPrice, getRevolutPrice, getCryptoComPrice, getBuyBitcoinPrice, FEES } from './services/api';
 import { ComparisonResult, CryptoCurrency, Exchange } from './types';
 import { ExternalLink } from 'lucide-react';
@@ -88,9 +90,11 @@ export default function App() {
     handleCalculate(10000);
   }, []);
 
+  const topResults = [...results].sort((a, b) => b.cryptoAmount - a.cryptoAmount).slice(0, 3);
+
   return (
     <div id="app-root" className="min-h-screen bg-white text-slate-900 font-sans">
-      <main id="main-content" className="container mx-auto px-4 pt-10 pb-16">
+      <main id="main-content" className="container mx-auto px-6 pt-10 pb-16">
         <div className="max-w-4xl mx-auto">
           {/* Section: Logo (Navigation moved to footer) */}
           <header id="site-header" className="flex flex-col items-center mb-10">
@@ -118,6 +122,39 @@ export default function App() {
                   Vi henter live kurser og gebyrer fra alle norske og internasjonale børser, slik at du alltid vet hvor du får mest for pengene.
                 </p>
               </section>
+
+              {/* Top Highlights Cards */}
+              {topResults.length > 0 && !isLoading && (
+                <section id="best-price-highlights" className="pb-4">
+                  <div className="flex gap-3 overflow-x-auto pb-4 px-1 scrollbar-hide -mx-1 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible">
+                    {topResults.map((result, index) => (
+                      <div 
+                        key={result.exchange}
+                        className={`min-w-[210px] sm:min-w-0 bg-white border ${index === 0 ? 'border-orange-200 bg-orange-50/10' : 'border-slate-100'} p-4 rounded-xl shadow-sm space-y-3 group transition-all hover:shadow-md`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="scale-[1.0] shrink-0">
+                              <ExchangeIcon exchange={result.exchange} size={28} />
+                            </div>
+                            <span className="text-[15px] font-black text-slate-900 truncate">{result.exchange}</span>
+                          </div>
+                          {index === 0 && (
+                            <span className="text-[9px] font-black bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded uppercase tracking-widest border border-emerald-100">Best pris</span>
+                          )}
+                        </div>
+                        <div className="space-y-0.5">
+                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Kurs nå</p>
+                          <div className="text-[17px] font-black text-slate-900 font-mono tracking-tighter">
+                            <CountUp end={result.spotPrice} decimals={0} duration={1.5} separator=" " decimal="," />
+                            <span className="text-[12px] text-slate-400 font-sans ml-1">NOK</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
 
               {/* Quick View Table */}
               <section id="quick-view-table" className="space-y-6">
