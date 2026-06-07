@@ -10,6 +10,9 @@ const __dirname = path.dirname(__filename);
 async function startServer() {
   const app = express();
   const PORT = 3000;
+  const isProduction = process.env.NODE_ENV === "production";
+
+  console.log(`Starting server in ${isProduction ? 'production' : 'development'} mode...`);
 
   // Proxy for NBX API
   app.get("/api/proxy/nbx", async (req, res) => {
@@ -33,8 +36,8 @@ async function startServer() {
     }
   });
 
-  // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
+  // Vite middleware or static serving
+  if (!isProduction) {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
@@ -49,7 +52,7 @@ async function startServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://0.0.0.0:${PORT}`);
   });
 }
 
