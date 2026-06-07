@@ -10,6 +10,11 @@ async function startServer() {
   console.log(`Starting server in ${isProduction ? "production" : "development"} mode...`);
 
   app.use((req, res, next) => {
+    const host = req.get("host");
+    if (host && host.startsWith("www.")) {
+      const newHost = host.slice(4);
+      return res.redirect(301, `${req.protocol}://${newHost}${req.originalUrl}`);
+    }
     console.log(`${req.method} ${req.url}`);
     next();
   });
@@ -49,9 +54,25 @@ async function startServer() {
     
     console.log(`Production mode: Serving static files from ${distPath}`);
     
-    app.use(express.static(distPath));
+    // Serve static files with explicit MIME types if needed
+    app.use(express.static(distPath, {
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith(".js")) {
+          res.setHeader("Content-Type", "application/javascript");
+        } else if (filePath.endsWith(".css")) {
+          res.setHeader("Content-Type", "text/css");
+        }
+      }
+    }));
     
+    // Handle SPA routing
     app.get("*", (req, res) => {
+      // Don't serve index.html for missing assets
+      if (req.url.startsWith("/assets/") || path.extname(req.url)) {
+        console.warn(`Asset not found: ${req.url}`);
+        return res.status(404).send("Not found");
+      }
+
       const indexPath = path.join(distPath, "index.html");
       res.sendFile(indexPath, (err) => {
         if (err) {
