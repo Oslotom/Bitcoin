@@ -106,7 +106,7 @@ export default function App() {
               <div className="bg-orange-600 p-1.5 rounded-xl group-hover:rotate-12 transition-transform shrink-0 shadow-lg shadow-orange-100">
                 <span className="text-white text-base font-black italic px-1">₿</span>
               </div>
-              <span className="font-bold text-xl tracking-tighter whitespace-nowrap">KJØPEBITCOIN2<span className="text-orange-500">.NO</span></span>
+              <span className="font-bold text-xl tracking-tighter whitespace-nowrap">KJØPEBITCOIN22<span className="text-orange-500">.NO</span></span>
             </div>
           </header>
 
@@ -116,10 +116,10 @@ export default function App() {
               {/* Hero Section */}
               <section id="home-hero" className="text-center space-y-2 py-8">
                 <h1 className="text-3xl font-black tracking-tighter sm:text-4xl text-slate-900 uppercase">
-                  Finn den beste prisen på <span className="text-orange-600">Bitcoin</span>
+                  Finn den beste prisen på <span className="text-orange-600">Bitcoin3</span>
                 </h1>
                 <p className="text-slate-500 max-w-lg mx-auto text-sm font-medium leading-relaxed">
-                  Vi henter live kurser og gebyrer fra alle norske og internasjonale børser, slik at du alltid vet hvor du får mest for pengene.
+                  1Vi henter live kurser og gebyrer fra alle norske og internasjonale børser, slik at du alltid vet hvor du får mest for pengene.
                 </p>
               </section>
 
