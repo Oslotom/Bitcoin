@@ -45,7 +45,7 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), "dist");
+    const distPath = path.resolve(process.cwd(), "dist");
     
     console.log(`Production mode: Serving static files from ${distPath}`);
     
@@ -55,7 +55,7 @@ async function startServer() {
       const indexPath = path.join(distPath, "index.html");
       res.sendFile(indexPath, (err) => {
         if (err) {
-          console.error("Error sending index.html:", err);
+          console.error(`Error sending index.html from ${indexPath}:`, err);
           res.status(500).send("Static file serving error");
         }
       });

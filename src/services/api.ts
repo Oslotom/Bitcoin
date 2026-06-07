@@ -11,6 +11,10 @@ const NBX_API_URL = '/api/proxy/nbx';
 const BARE_BITCOIN_API_URL = '/api/proxy/bare-bitcoin';
 const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
 
+// Direct URLs for fallback (might fail CORS in browser, but better than nothing)
+const NBX_DIRECT_URL = 'https://api.nbx.com/tickers';
+const BARE_BITCOIN_DIRECT_URL = 'https://api.bb.no/v1/price/nok';
+
 // Configurable fees and spreads
 export const FEES = {
   [Exchange.Coinbase]: {
@@ -144,11 +148,21 @@ export const getKrakenPrice = async (): Promise<number> => {
 
 export const getNbxPrice = async (): Promise<number> => {
   try {
+    // Try proxy first
     const response = await axios.get(NBX_API_URL);
     const btcNokTicker = response.data.find((t: any) => t.id === 'BTC-NOK');
     if (!btcNokTicker) throw new Error('BTC-NOK ticker not found on NBX');
     return parseFloat(btcNokTicker.lastTradePrice);
   } catch (error) {
+    console.warn('NBX proxy failed, trying direct call (might fail due to CORS):', error);
+    try {
+      const response = await axios.get(NBX_DIRECT_URL);
+      const btcNokTicker = response.data.find((t: any) => t.id === 'BTC-NOK');
+      if (btcNokTicker) return parseFloat(btcNokTicker.lastTradePrice);
+    } catch (directError) {
+      console.error('NBX direct call failed:', directError);
+    }
+    
     console.error('Error fetching NBX price:', error);
     throw new Error('Kunne ikke hente pris fra NBX.');
   }
@@ -156,6 +170,7 @@ export const getNbxPrice = async (): Promise<number> => {
 
 export const getBareBitcoinPrice = async (): Promise<number> => {
   try {
+    // Try proxy first
     const response = await axios.get(BARE_BITCOIN_API_URL);
     const bankBuy = Number(response.data?.bank?.buy);
     const ask = Number(response.data?.ask);
@@ -167,6 +182,14 @@ export const getBareBitcoinPrice = async (): Promise<number> => {
 
     throw new Error('Invalid Bare Bitcoin price payload.');
   } catch (error) {
+    console.warn('Bare Bitcoin proxy failed, trying direct call (might fail due to CORS):', error);
+    try {
+      const response = await axios.get(BARE_BITCOIN_DIRECT_URL);
+      if (response.data?.bank?.buy) return Number(response.data.bank.buy);
+    } catch (directError) {
+      console.error('Bare Bitcoin direct call failed:', directError);
+    }
+
     console.error('Error fetching Bare Bitcoin price:', error);
     // Fallback to public BTC/NOK price so Bare Bitcoin is still included in comparisons.
     try {
