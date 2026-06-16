@@ -1,0 +1,8 @@
+# Apache configuration for React Router (SPA)
+# Place this in your public folder so it gets copied to dist/
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.html$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]

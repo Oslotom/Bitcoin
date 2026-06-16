@@ -7,13 +7,13 @@ const FIRI_API_URL = 'https://api.firi.com/v2/markets/BTCNOK/ticker';
 const FIRI_MARKETS_API_URL = 'https://api.firi.com/v2/markets';
 const KRAKEN_API_URL = 'https://api.kraken.com/0/public/Ticker';
 const CRYPTOCOM_API_URL = 'https://api.crypto.com/exchange/v1/public/get-tickers';
-const NBX_API_URL = '/api/proxy/nbx';
-const BARE_BITCOIN_API_URL = '/api/proxy/bare-bitcoin';
+const NBX_API_URL = 'https://api.nbx.com/tickers';
+const BARE_BITCOIN_API_URL = 'https://api.bb.no/v1/price/nok';
 const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
 
-// Direct URLs for fallback (might fail CORS in browser, but better than nothing)
-const NBX_DIRECT_URL = 'https://api.nbx.com/tickers';
-const BARE_BITCOIN_DIRECT_URL = 'https://api.bb.no/v1/price/nok';
+// Direct URLs are now the primary ones
+const NBX_DIRECT_URL = NBX_API_URL;
+const BARE_BITCOIN_DIRECT_URL = BARE_BITCOIN_API_URL;
 
 // Configurable fees and spreads
 export const FEES = {
@@ -148,21 +148,11 @@ export const getKrakenPrice = async (): Promise<number> => {
 
 export const getNbxPrice = async (): Promise<number> => {
   try {
-    // Try proxy first
     const response = await axios.get(NBX_API_URL);
     const btcNokTicker = response.data.find((t: any) => t.id === 'BTC-NOK');
     if (!btcNokTicker) throw new Error('BTC-NOK ticker not found on NBX');
     return parseFloat(btcNokTicker.lastTradePrice);
   } catch (error) {
-    console.warn('NBX proxy failed, trying direct call (might fail due to CORS):', error);
-    try {
-      const response = await axios.get(NBX_DIRECT_URL);
-      const btcNokTicker = response.data.find((t: any) => t.id === 'BTC-NOK');
-      if (btcNokTicker) return parseFloat(btcNokTicker.lastTradePrice);
-    } catch (directError) {
-      console.error('NBX direct call failed:', directError);
-    }
-    
     console.error('Error fetching NBX price:', error);
     throw new Error('Kunne ikke hente pris fra NBX.');
   }
@@ -170,7 +160,6 @@ export const getNbxPrice = async (): Promise<number> => {
 
 export const getBareBitcoinPrice = async (): Promise<number> => {
   try {
-    // Try proxy first
     const response = await axios.get(BARE_BITCOIN_API_URL);
     const bankBuy = Number(response.data?.bank?.buy);
     const ask = Number(response.data?.ask);
@@ -182,31 +171,16 @@ export const getBareBitcoinPrice = async (): Promise<number> => {
 
     throw new Error('Invalid Bare Bitcoin price payload.');
   } catch (error) {
-    console.warn('Bare Bitcoin proxy failed, trying direct call (might fail due to CORS):', error);
-    try {
-      const response = await axios.get(BARE_BITCOIN_DIRECT_URL);
-      if (response.data?.bank?.buy) return Number(response.data.bank.buy);
-    } catch (directError) {
-      console.error('Bare Bitcoin direct call failed:', directError);
-    }
-
-    console.error('Error fetching Bare Bitcoin price:', error);
-    // Fallback to public BTC/NOK price so Bare Bitcoin is still included in comparisons.
+    console.warn('Bare Bitcoin API failed, trying fallback:', error);
     try {
       const fallbackResponse = await axios.get(`${COINGECKO_API_URL}/simple/price`, {
-        params: {
-          ids: 'bitcoin',
-          vs_currencies: 'nok',
-        },
+        params: { ids: 'bitcoin', vs_currencies: 'nok' },
       });
       const fallbackPrice = Number(fallbackResponse.data?.bitcoin?.nok);
-      if (Number.isFinite(fallbackPrice) && fallbackPrice > 0) {
-        return fallbackPrice;
-      }
+      if (Number.isFinite(fallbackPrice) && fallbackPrice > 0) return fallbackPrice;
     } catch (fallbackError) {
-      console.error('Error fetching Bare Bitcoin fallback price:', fallbackError);
+      console.error('Bare Bitcoin fallback failed:', fallbackError);
     }
-
     throw new Error('Kunne ikke hente pris fra Bare Bitcoin.');
   }
 };
