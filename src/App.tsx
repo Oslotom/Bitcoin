@@ -107,7 +107,7 @@ export default function App() {
               <div className="bg-orange-600 p-1.5 rounded-xl group-hover:rotate-12 transition-transform shrink-0 shadow-lg shadow-orange-100">
                 <span className="text-white text-base font-black italic px-1">₿</span>
               </div>
-              <span className="font-bold text-xl tracking-tighter whitespace-nowrap">KJØPEBITCOIN<span className="text-orange-500">.NO</span></span>
+              <span className="font-bold text-xl tracking-tighter whitespace-nowrap">KJØPEBITCOIN1<span className="text-orange-500">.NO</span></span>
             </div>
           </header>
 
@@ -120,7 +120,7 @@ export default function App() {
                   Finn den beste prisen på <span className="text-orange-600">Bitcoin</span> i Norge!
                 </h1>
                 <p className="text-slate-500 max-w-lg mx-auto text-sm font-medium leading-relaxed">
-                  Vi henter live kurser sjekket mot spredning og gebyrer fra alle norske og internasjonale børser i sanntid, slik at du alltid vet hvor du gjøres det billigste kjøpet.
+                  TEST Vi henter live kurser sjekket mot spredning og gebyrer fra alle norske og internasjonale børser i sanntid, slik at du alltid vet hvor du gjøres det billigste kjøpet.
                 </p>
               </section>
 
