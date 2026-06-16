@@ -41,6 +41,20 @@ async function startServer() {
     }
   });
 
+  // Proxy for CoinGecko price API
+  app.get("/api/proxy/coingecko", async (req, res) => {
+    try {
+      const { ids, vs_currencies } = req.query;
+      const response = await axios.get("https://api.coingecko.com/api/v3/simple/price", {
+        params: { ids, vs_currencies }
+      });
+      res.json(response.data);
+    } catch (error) {
+      console.error("Error proxying CoinGecko API:", error);
+      res.status(500).json({ error: "Failed to fetch CoinGecko data" });
+    }
+  });
+
   // Vite middleware or static serving
   if (!isProduction) {
     const { createServer: createViteServer } = await import("vite");

@@ -9,11 +9,36 @@ const KRAKEN_API_URL = 'https://api.kraken.com/0/public/Ticker';
 const CRYPTOCOM_API_URL = 'https://api.crypto.com/exchange/v1/public/get-tickers';
 const NBX_API_URL = '/api/proxy/nbx';
 const BARE_BITCOIN_API_URL = '/api/proxy/bare-bitcoin';
-const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
+const COINGECKO_PROXY_URL = '/api/proxy/coingecko';
+const COINGECKO_DIRECT_URL = 'https://api.coingecko.com/api/v3';
+const COINGECKO_API_URL = COINGECKO_DIRECT_URL;
 
 // Fallback direct URLs for static environments
 const NBX_DIRECT_URL = 'https://api.nbx.com/tickers';
 const BARE_BITCOIN_DIRECT_URL = 'https://api.bb.no/v1/price/nok';
+
+// Helper to fetch CoinGecko price with proxy and direct fallback
+const fetchCoinGeckoPrice = async (ids: string, vs_currencies: string): Promise<number> => {
+  try {
+    // Try proxy first
+    const response = await axios.get(COINGECKO_PROXY_URL, {
+      params: { ids, vs_currencies }
+    });
+    const price = Number(response.data?.[ids]?.[vs_currencies]);
+    if (Number.isFinite(price) && price > 0) return price;
+  } catch (proxyError) {
+    console.warn('CoinGecko proxy failed, trying direct:', proxyError);
+  }
+
+  // Try direct
+  const directResponse = await axios.get(`${COINGECKO_DIRECT_URL}/simple/price`, {
+    params: { ids, vs_currencies }
+  });
+  const directPrice = Number(directResponse.data?.[ids]?.[vs_currencies]);
+  if (Number.isFinite(directPrice) && directPrice > 0) return directPrice;
+
+  throw new Error('Could not fetch CoinGecko price');
+};
 
 // Configurable fees and spreads
 export const FEES = {
@@ -191,10 +216,7 @@ export const getBareBitcoinPrice = async (): Promise<number> => {
     }
 
     try {
-      const fallbackResponse = await axios.get(`${COINGECKO_API_URL}/simple/price`, {
-        params: { ids: 'bitcoin', vs_currencies: 'nok' },
-      });
-      const fallbackPrice = Number(fallbackResponse.data?.bitcoin?.nok);
+      const fallbackPrice = await fetchCoinGeckoPrice('bitcoin', 'nok');
       if (Number.isFinite(fallbackPrice) && fallbackPrice > 0) return fallbackPrice;
     } catch (fallbackError) {
       console.error('Bare Bitcoin fallback failed:', fallbackError);
@@ -232,42 +254,18 @@ export const getCryptoComPrice = async (): Promise<number> => {
 
 export const getRevolutPrice = async (): Promise<number> => {
   try {
-    const response = await axios.get(`${COINGECKO_API_URL}/simple/price`, {
-      params: {
-        ids: 'bitcoin',
-        vs_currencies: 'nok',
-      },
-    });
-
-    const priceInNok = Number(response.data?.bitcoin?.nok);
-    if (!Number.isFinite(priceInNok) || priceInNok <= 0) {
-      throw new Error('Invalid BTC/NOK price payload.');
-    }
-
-    return priceInNok;
+    return await fetchCoinGeckoPrice('bitcoin', 'nok');
   } catch (error) {
-    console.error('Error fetching Revolut proxy price via API:', error);
+    console.error('Error fetching Revolut price:', error);
     throw new Error('Kunne ikke hente pris for Revolut.');
   }
 };
 
 export const getBuyBitcoinPrice = async (): Promise<number> => {
   try {
-    const response = await axios.get(`${COINGECKO_API_URL}/simple/price`, {
-      params: {
-        ids: 'bitcoin',
-        vs_currencies: 'nok',
-      },
-    });
-
-    const priceInNok = Number(response.data?.bitcoin?.nok);
-    if (!Number.isFinite(priceInNok) || priceInNok <= 0) {
-      throw new Error('Invalid BTC/NOK price payload.');
-    }
-
-    return priceInNok;
+    return await fetchCoinGeckoPrice('bitcoin', 'nok');
   } catch (error) {
-    console.error('Error fetching BuyBitcoin.com proxy price via API:', error);
+    console.error('Error fetching BuyBitcoin price:', error);
     throw new Error('Kunne ikke hente pris fra BuyBitcoin.com.');
   }
 };
