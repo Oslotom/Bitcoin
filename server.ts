@@ -56,7 +56,6 @@ async function startServer() {
     
     // Serve static files with explicit MIME types
     app.use(express.static(distPath, {
-      index: false,
       setHeaders: (res, filePath) => {
         const ext = path.extname(filePath).toLowerCase();
         if (ext === ".js" || ext === ".mjs") {
@@ -66,8 +65,14 @@ async function startServer() {
           res.setHeader("Content-Type", "text/css; charset=UTF-8");
         } else if (ext === ".html") {
           res.setHeader("Content-Type", "text/html; charset=UTF-8");
+        } else if (ext === ".png") {
+          res.setHeader("Content-Type", "image/png");
+        } else if (ext === ".jpg" || ext === ".jpeg") {
+          res.setHeader("Content-Type", "image/jpeg");
         } else if (ext === ".svg") {
           res.setHeader("Content-Type", "image/svg+xml");
+        } else if (ext === ".ico") {
+          res.setHeader("Content-Type", "image/x-icon");
         }
       }
     }));
