@@ -3,7 +3,6 @@ import Footer from './components/Footer';
 import ExchangeOverview from './components/ExchangeOverview';
 import ResultsTable from './components/ResultsTable';
 import VippsComparisonSection from './components/VippsComparisonSection';
-import PriceChart from './components/PriceChart';
 import DetailedComparison from './components/DetailedComparison';
 import Overview from './components/Overview';
 import FAQSection from './components/FAQSection';
@@ -174,13 +173,8 @@ export default function App() {
                 <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} />
               </section>
 
-              {/* Section: Market Analysis */}
-              <div id="market-analysis-content" className="pt-16 border-t border-slate-100 space-y-12">
-                <div className="text-center max-w-xl mx-auto">
-                  <h2 className="text-xl font-bold tracking-tight mb-2">Markedsanalyse</h2>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Trender og grafisk oversikt</p>
-                </div>
-                <PriceChart />
+              {/* Details & FAQ Section */}
+              <div id="details-faq-section" className="pt-16 border-t border-slate-100 space-y-16">
                 <DetailedComparison />
                 <FAQSection />
               </div>
