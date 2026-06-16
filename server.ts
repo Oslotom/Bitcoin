@@ -54,30 +54,42 @@ async function startServer() {
     
     console.log(`Production mode: Serving static files from ${distPath}`);
     
-    // Serve static files with explicit MIME types if needed
+    // Serve static files with explicit MIME types
     app.use(express.static(distPath, {
+      index: false,
       setHeaders: (res, filePath) => {
-        if (filePath.endsWith(".js")) {
-          res.setHeader("Content-Type", "application/javascript");
-        } else if (filePath.endsWith(".css")) {
-          res.setHeader("Content-Type", "text/css");
+        const ext = path.extname(filePath).toLowerCase();
+        if (ext === ".js" || ext === ".mjs") {
+          res.setHeader("Content-Type", "application/javascript; charset=UTF-8");
+          res.setHeader("X-Content-Type-Options", "nosniff");
+        } else if (ext === ".css") {
+          res.setHeader("Content-Type", "text/css; charset=UTF-8");
+        } else if (ext === ".html") {
+          res.setHeader("Content-Type", "text/html; charset=UTF-8");
         }
       }
     }));
     
     // Handle SPA routing
     app.get("*", (req, res) => {
-      // Don't serve index.html for missing assets
-      if (req.url.startsWith("/assets/") || path.extname(req.url)) {
-        console.warn(`Asset not found: ${req.url}`);
-        return res.status(404).send("Not found");
+      const url = req.url.split('?')[0]; // Ignore query params
+      
+      // Specifically handle common static file extensions that might have reached here (meaning they are missing)
+      const missingFileExts = ['.js', '.css', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.woff', '.woff2', '.ttf'];
+      const ext = path.extname(url).toLowerCase();
+      
+      if (url.startsWith("/assets/") || missingFileExts.includes(ext)) {
+        console.warn(`Static asset or file extension not found: ${url}`);
+        return res.status(404).type('text/plain').send("Not found");
       }
 
       const indexPath = path.join(distPath, "index.html");
       res.sendFile(indexPath, (err) => {
         if (err) {
           console.error(`Error sending index.html from ${indexPath}:`, err);
-          res.status(500).send("Static file serving error");
+          if (!res.headersSent) {
+            res.status(500).type('text/plain').send("Static file serving error");
+          }
         }
       });
     });

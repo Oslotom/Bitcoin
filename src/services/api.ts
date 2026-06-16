@@ -7,13 +7,13 @@ const FIRI_API_URL = 'https://api.firi.com/v2/markets/BTCNOK/ticker';
 const FIRI_MARKETS_API_URL = 'https://api.firi.com/v2/markets';
 const KRAKEN_API_URL = 'https://api.kraken.com/0/public/Ticker';
 const CRYPTOCOM_API_URL = 'https://api.crypto.com/exchange/v1/public/get-tickers';
-const NBX_API_URL = 'https://api.nbx.com/tickers';
-const BARE_BITCOIN_API_URL = 'https://api.bb.no/v1/price/nok';
+const NBX_API_URL = '/api/proxy/nbx';
+const BARE_BITCOIN_API_URL = '/api/proxy/bare-bitcoin';
 const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
 
-// Direct URLs are now the primary ones
-const NBX_DIRECT_URL = NBX_API_URL;
-const BARE_BITCOIN_DIRECT_URL = BARE_BITCOIN_API_URL;
+// Fallback direct URLs for static environments
+const NBX_DIRECT_URL = 'https://api.nbx.com/tickers';
+const BARE_BITCOIN_DIRECT_URL = 'https://api.bb.no/v1/price/nok';
 
 // Configurable fees and spreads
 export const FEES = {
@@ -149,11 +149,21 @@ export const getKrakenPrice = async (): Promise<number> => {
 export const getNbxPrice = async (): Promise<number> => {
   try {
     const response = await axios.get(NBX_API_URL);
-    const btcNokTicker = response.data.find((t: any) => t.id === 'BTC-NOK');
+    // Tickers is an array
+    const data = response.data;
+    const btcNokTicker = Array.isArray(data) ? data.find((t: any) => t.id === 'BTC-NOK') : null;
     if (!btcNokTicker) throw new Error('BTC-NOK ticker not found on NBX');
     return parseFloat(btcNokTicker.lastTradePrice);
   } catch (error) {
-    console.error('Error fetching NBX price:', error);
+    console.warn('NBX proxy failed, attempting direct call:', error);
+    try {
+      const response = await axios.get(NBX_DIRECT_URL);
+      const data = response.data;
+      const btcNokTicker = Array.isArray(data) ? data.find((t: any) => t.id === 'BTC-NOK') : null;
+      if (btcNokTicker) return parseFloat(btcNokTicker.lastTradePrice);
+    } catch (directError) {
+      console.error('NBX direct call also failed:', directError);
+    }
     throw new Error('Kunne ikke hente pris fra NBX.');
   }
 };
@@ -171,7 +181,15 @@ export const getBareBitcoinPrice = async (): Promise<number> => {
 
     throw new Error('Invalid Bare Bitcoin price payload.');
   } catch (error) {
-    console.warn('Bare Bitcoin API failed, trying fallback:', error);
+    console.warn('Bare Bitcoin proxy failed, trying direct:', error);
+    try {
+      const response = await axios.get(BARE_BITCOIN_DIRECT_URL);
+      const val = Number(response.data?.bank?.buy || response.data?.ask || response.data?.price);
+      if (Number.isFinite(val) && val > 0) return val;
+    } catch (directError) {
+      console.error('Bare Bitcoin direct also failed:', directError);
+    }
+
     try {
       const fallbackResponse = await axios.get(`${COINGECKO_API_URL}/simple/price`, {
         params: { ids: 'bitcoin', vs_currencies: 'nok' },
