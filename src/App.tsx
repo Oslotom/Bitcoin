@@ -117,7 +117,7 @@ export default function App() {
               {/* Hero Section */}
               <section id="home-hero" className="text-center space-y-2 py-8">
                 <h1 className="text-3xl font-black tracking-tighter sm:text-4xl text-slate-900 uppercase">
-                  Finn den beste prisen på <span className="text-orange-600">Bitcoin</span> i Norge
+                  Finn den beste prisen på <span className="text-orange-600">Bitcoin</span> i Norge!
                 </h1>
                 <p className="text-slate-500 max-w-lg mx-auto text-sm font-medium leading-relaxed">
                   Vi henter live kurser sjekket mot spredning og gebyrer fra alle norske og internasjonale børser i sanntid, slik at du alltid vet hvor du gjøres det billigste kjøpet.

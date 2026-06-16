@@ -66,9 +66,20 @@ async function startServer() {
           res.setHeader("Content-Type", "text/css; charset=UTF-8");
         } else if (ext === ".html") {
           res.setHeader("Content-Type", "text/html; charset=UTF-8");
+        } else if (ext === ".svg") {
+          res.setHeader("Content-Type", "image/svg+xml");
         }
       }
     }));
+
+    // Redirect www to apex (non-www)
+    app.use((req, res, next) => {
+      const host = req.get("host");
+      if (host && host.startsWith("www.xn--")) {
+        return res.redirect(301, `https://xn--kjpebitcoin-hgb.no${req.originalUrl}`);
+      }
+      next();
+    });
     
     // Handle SPA routing
     app.get("*", (req, res) => {

@@ -1,21 +1,27 @@
 # Apache configuration for React Router (SPA)
 # Place this in your public folder so it gets copied to dist/
 
-# Add correct MIME types
+# Add correct MIME types for JavaScript modules
 <IfModule mod_mime.c>
   AddType application/javascript .js
   AddType application/javascript .mjs
   AddType text/css .css
 </IfModule>
 
+# Ensure JS files are served with correct headers even if mime detection fails
+<FilesMatch "\.(js|mjs)$">
+  <IfModule mod_headers.c>
+    Header set Content-Type "application/javascript; charset=utf-8"
+  </IfModule>
+</FilesMatch>
+
 RewriteEngine On
-RewriteBase /
 
 # Redirect www to non-www
 RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
 RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
 
-RewriteRule ^index\.html$ - [L]
+# SPA routing
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.html [L]
+RewriteRule . index.html [L]
