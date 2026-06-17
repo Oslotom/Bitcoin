@@ -1,3 +1,5 @@
+import SearchSection from './SearchSection';
+
 interface FooterProps {
   setCurrentPage: (page: 'home' | 'live' | 'overview' | 'platforms') => void;
   currentPage: string;
@@ -9,7 +11,12 @@ export default function Footer({ setCurrentPage, currentPage }: FooterProps) {
   return (
     <footer id="site-footer" className="py-12 bg-slate-50 border-t border-slate-100 mt-20">
       <div className="container mx-auto px-4 max-w-4xl">
-        <div className="flex flex-col items-center gap-8 text-center">
+        <div className="flex flex-col items-center gap-10 text-center">
+          {/* Footer Search Section */}
+          <div className="w-full pb-6 border-b border-slate-200/60">
+            <SearchSection setCurrentPage={setCurrentPage} />
+          </div>
+
           {/* Footer Navigation */}
           <nav id="footer-nav" className="flex flex-wrap justify-center gap-x-8 gap-y-4">
             <button 
