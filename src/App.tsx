@@ -3,16 +3,18 @@ import Footer from './components/Footer';
 import ExchangeOverview from './components/ExchangeOverview';
 import ResultsTable from './components/ResultsTable';
 import VippsComparisonSection from './components/VippsComparisonSection';
-import DetailedComparison from './components/DetailedComparison';
 import Overview from './components/Overview';
 import FAQSection from './components/FAQSection';
 import { ExchangeIcon } from './components/icons';
 import CountUp from 'react-countup';
 import { getCoinbasePrice, getBinancePrice, getFiriPrice, getKrakenPrice, getNbxPrice, getBareBitcoinPrice, getRevolutPrice, getCryptoComPrice, getBuyBitcoinPrice, FEES } from './services/api';
 import { ComparisonResult, CryptoCurrency, Exchange } from './types';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Edit2, Save } from 'lucide-react';
+import { useContent } from './contexts/ContentContext';
+import EditableText from './components/EditableText';
 
 export default function App() {
+  const { isEditMode, setIsEditMode, saveContent } = useContent();
   const [results, setResults] = useState<ComparisonResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -94,10 +96,10 @@ export default function App() {
 
   return (
     <div id="app-root" className="min-h-screen bg-white text-slate-900 font-sans">
-      <main id="main-content" className="container mx-auto px-6 pt-10 pb-16">
+      <main id="main-content" className="container mx-auto px-3 pt-10 pb-16">
         <div className="max-w-4xl mx-auto">
           {/* Section: Logo (Navigation moved to footer) */}
-          <header id="site-header" className="flex flex-col items-center mb-10">
+          <header id="site-header" className="flex flex-col items-center mb-5">
             <div 
               id="logo-container"
               onClick={() => setCurrentPage('home')}
@@ -106,7 +108,7 @@ export default function App() {
               <div className="bg-orange-600 p-1.5 rounded-xl group-hover:rotate-12 transition-transform shrink-0 shadow-lg shadow-orange-100">
                 <span className="text-white text-base font-black italic px-1">₿</span>
               </div>
-              <span className="font-bold text-xl tracking-tighter whitespace-nowrap">KJØPEBITCOIN<span className="text-orange-500">.NO</span></span>
+              <span className="font-bold text-l tracking-tighter whitespace-nowrap">KJØPEBITCOIN<span className="text-orange-500">.NO</span></span>
             </div>
           </header>
 
@@ -115,15 +117,43 @@ export default function App() {
             <div id="home-page" className="space-y-2">
               {/* Hero Section */}
               <section id="home-hero" className="text-center space-y-2 py-8">
-                <h1 className="text-3xl font-black tracking-tighter sm:text-4xl text-slate-900 uppercase">
-                  Finn den beste prisen på <span className="text-orange-600">Bitcoin</span> i Norge!
+                <h1 className="text-3xl font-black sm:text-4xl text-slate-900 uppercase">
+                  <EditableText contentKey="homeHeroTitle" />
                 </h1>
-                <p className="text-slate-500 max-w-lg mx-auto text-sm font-medium leading-relaxed">
-                  Vi henter live kurser sjekket mot spredning og gebyrer fra alle norske og internasjonale børser i sanntid, slik at du alltid vet hvor du gjøres det billigste kjøpet.
-                </p>
+                <div className="max-w-lg mx-auto">
+                    <EditableText contentKey="homeHeroDescription" className="text-slate-500 text-sm font-medium leading-relaxed text-center" multiline />
+                </div>
               </section>
 
-              {/* Top Highlights Cards */}
+              {/* Quick View Table */}
+              <section id="quick-view-table" className="space-y-6">
+                <div className="flex justify-between items-end">
+                  <div className="space-y-1">
+                    <h2 className="text-xl font-bold tracking-tight">
+                        <EditableText contentKey="comparePriceTitle" />
+                    </h2>
+                  </div>
+                  <button 
+                    onClick={() => setCurrentPage('live')}
+                    className="text-[10px] font-black uppercase tracking-widest text-orange-600 hover:text-orange-700"
+                  >
+                    Full oversikt →
+                  </button>
+                </div>
+                <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} />
+              </section>
+
+
+              
+
+              {/* Details & FAQ Section */}
+              <div id="details-faq-section" className="pt-16 border-t border-slate-100 space-y-16">
+                <FAQSection />
+              </div>
+            </div>
+          )}
+
+{/* Top Highlights Cards */}
               {topResults.length > 0 && !isLoading && (
                 <section id="best-price-highlights" className="pb-4">
                   <div className="flex gap-3 overflow-x-auto pb-4 px-1 scrollbar-hide -mx-1 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible">
@@ -156,37 +186,16 @@ export default function App() {
                 </section>
               )}
 
-              {/* Quick View Table */}
-              <section id="quick-view-table" className="space-y-6">
-                <div className="flex justify-between items-end">
-                  <div className="space-y-1">
-                    <h2 className="text-lg font-bold tracking-tight">Live markedsscan</h2>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Utvalgte børser • 10.000 kr beløp</p>
-                  </div>
-                  <button 
-                    onClick={() => setCurrentPage('live')}
-                    className="text-[10px] font-black uppercase tracking-widest text-orange-600 hover:text-orange-700"
-                  >
-                    Full oversikt →
-                  </button>
-                </div>
-                <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} />
-              </section>
-
-              {/* Details & FAQ Section */}
-              <div id="details-faq-section" className="pt-16 border-t border-slate-100 space-y-16">
-                <DetailedComparison />
-                <FAQSection />
-              </div>
-            </div>
-          )}
-
           {/* Page: Live Prices (Comparison Tool) */}
           {currentPage === 'live' && (
             <div id="live-prices-page" className="space-y-16">
               <div className="text-center mb-10">
-                <h2 className="text-2xl font-black tracking-tight uppercase">Live Priser</h2>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Sanntidssammenligning av børser</p>
+                <h2 className="text-2xl font-black tracking-tight uppercase">
+                    <EditableText contentKey="livePricesTitle" />
+                </h2>
+                <div className="mt-1">
+                    <EditableText contentKey="livePricesDescription" className="text-xs font-bold text-slate-400 uppercase tracking-widest" />
+                </div>
               </div>
 
               <div id="live-prices-content" className="space-y-16">
@@ -219,6 +228,26 @@ export default function App() {
           </div>
         </div>
       </main>
+      
+      {/* Edit Mode Button - Bottom Right */}
+      <div className="fixed bottom-4 right-4 z-50">
+        {!isEditMode ? (
+          <button 
+            onClick={() => setIsEditMode(true)}
+            className="flex items-center gap-1 text-[10px] text-slate-400 font-bold uppercase tracking-widest hover:text-slate-600 transition-colors bg-white/80 backdrop-blur-sm px-2 py-1 rounded"
+          >
+            <Edit2 size={10} /> Endre
+          </button>
+        ) : (
+          <button 
+            onClick={saveContent}
+            className="flex items-center gap-1 text-[10px] text-white font-bold uppercase tracking-widest bg-emerald-600 hover:bg-emerald-700 transition-colors px-3 py-1.5 rounded-full shadow-lg"
+          >
+            <Save size={10} /> Lagre endringer
+          </button>
+        )}
+      </div>
+
       <Footer setCurrentPage={setCurrentPage} currentPage={currentPage} />
     </div>
 );

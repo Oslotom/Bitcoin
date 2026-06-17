@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, Shield, CreditCard, Award, HelpCircle } from 'lucide-react';
+import EditableText from './EditableText';
 
 interface FAQItem {
   question: string;
@@ -45,12 +46,11 @@ export default function FAQSection() {
             <Shield size={12} /> Trygg crypto-guide
           </div>
           <h2 className="text-2xl font-black tracking-tight text-slate-900 uppercase">
-            Hva bør du vurdere når du skal <span className="text-orange-600">kjøpe Bitcoin</span> i Norge?
+            <EditableText contentKey="faqHeroTitle" />
           </h2>
-          <p className="text-slate-600 text-sm leading-relaxed">
-            Når du sammenligner kryptobørser, er det fort gjort å kun se på handelsgebyret. For å finne den 
-            <strong> billigste måten å kjøpe Bitcoin på</strong>, må du ta tre kritiske faktorer i betraktning:
-          </p>
+          <div className="text-slate-600 text-sm leading-relaxed">
+            <EditableText contentKey="faqDescription" multiline />
+          </div>
           <ul className="space-y-3 text-sm text-slate-600">
             <li className="flex items-start gap-2">
               <span className="text-orange-600 font-bold">•</span>
