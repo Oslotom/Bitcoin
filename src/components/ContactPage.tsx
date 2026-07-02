@@ -9,17 +9,22 @@ export default function ContactPage() {
     e.preventDefault();
     setStatus('loading');
     
-    // Simulate form submission
-    // In a real app, you would use an API route or a service like Formspree
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
     
     try {
-      // Using a standard form submission service or just simulating
-      console.log('Sending message to tomhaugeplass@gmail.com:', data);
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error('Kunne ikke sende melding');
+      }
       
-      // Artificial delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
       setStatus('success');
     } catch (error) {
       console.error('Error sending message:', error);
@@ -143,17 +148,8 @@ export default function ContactPage() {
         </form>
       </div>
 
-      <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-center md:text-left">
-        <div className="flex items-center gap-4">
-          <div className="bg-orange-50 p-3 rounded-2xl">
-            <Mail className="text-orange-600" size={20} />
-          </div>
-          <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">E-post</p>
-            <p className="text-sm font-bold text-slate-700">tomhaugeplass@gmail.com</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
+
+        <div className="flex items-center justify-center gap-4">
           <div className="bg-blue-50 p-3 rounded-2xl">
             <MessageSquare className="text-[#0052FF]" size={20} />
           </div>
@@ -163,6 +159,5 @@ export default function ContactPage() {
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
 }

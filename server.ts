@@ -1,6 +1,7 @@
 import express from "express";
 import axios from "axios";
 import path from "path";
+import { Resend } from 'resend';
 
 async function startServer() {
   const app = express();
@@ -8,6 +9,8 @@ async function startServer() {
   const isProduction = process.env.NODE_ENV === "production";
 
   console.log(`Starting server in ${isProduction ? "production" : "development"} mode...`);
+
+  app.use(express.json());
 
   app.use((req, res, next) => {
     const host = req.get("host");
@@ -52,6 +55,47 @@ async function startServer() {
     } catch (error) {
       console.error("Error proxying CoinGecko API:", error);
       res.status(500).json({ error: "Failed to fetch CoinGecko data" });
+    }
+  });
+
+  // Contact form API
+  app.post("/api/contact", async (req, res) => {
+    try {
+      const { name, email, subject, message } = req.body;
+      
+      if (!name || !email || !message) {
+        return res.status(400).json({ error: "Navn, e-post og melding er påkrevd." });
+      }
+
+      console.log(`Ny kontaktforespørsel fra ${name} (${email}): ${subject}`);
+
+      const resendKey = process.env.RESEND_API_KEY;
+      
+      if (resendKey) {
+        const resend = new Resend(resendKey);
+        await resend.emails.send({
+          from: 'Kjøpebitcoin.no <onboarding@resend.dev>',
+          to: 'tomhaugeplass@gmail.com',
+          subject: `Kontaktform: ${subject || 'Ny melding'}`,
+          replyTo: email,
+          html: `
+            <h3>Ny melding fra kontaktskjema</h3>
+            <p><strong>Navn:</strong> ${name}</p>
+            <p><strong>E-post:</strong> ${email}</p>
+            <p><strong>Emne:</strong> ${subject}</p>
+            <p><strong>Melding:</strong></p>
+            <p>${message.replace(/\n/g, '<br>')}</p>
+          `
+        });
+        console.log("E-post sendt via Resend.");
+      } else {
+        console.warn("RESEND_API_KEY mangler. E-post ble ikke sendt, men forespørsel er logget.");
+      }
+
+      res.status(200).json({ status: "ok", message: "Meldingen er mottatt." });
+    } catch (error) {
+      console.error("Feil ved mottak av kontaktform:", error);
+      res.status(500).json({ error: "Kunne ikke motta meldingen." });
     }
   });
 

@@ -11,9 +11,10 @@ import NorwayExchanges from './components/NorwayExchanges';
 import ContactPage from './components/ContactPage';
 import { getCoinbasePrice, getBinancePrice, getFiriPrice, getKrakenPrice, getNbxPrice, getBareBitcoinPrice, getRevolutPrice, getCryptoComPrice, getBuyBitcoinPrice, FEES } from './services/api';
 import { ComparisonResult, CryptoCurrency, Exchange } from './types';
-import { ExternalLink, Edit2, Save } from 'lucide-react';
+import { ExternalLink, Edit2, Save, Menu, X } from 'lucide-react';
 import { useContent } from './contexts/ContentContext';
 import EditableText from './components/EditableText';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function App() {
   const { isEditMode, setIsEditMode, saveContent } = useContent();
@@ -22,6 +23,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [lastAmount, setLastAmount] = useState<number | null>(10000);
   const [currentPage, setCurrentPage] = useState<'home' | 'live' | 'overview' | 'platforms' | 'norway' | 'contact'>('home');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const didInitCalculate = useRef(false);
 
   const handleCalculate = async (amount: number) => {
@@ -94,26 +96,130 @@ export default function App() {
     handleCalculate(10000);
   }, []);
 
-  const topResults = [...results].sort((a, b) => b.cryptoAmount - a.cryptoAmount).slice(0, 3);
+  const navigateTo = (page: typeof currentPage) => {
+    setCurrentPage(page);
+    setIsMobileMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div id="app-root" className="min-h-screen bg-white text-slate-900 font-sans">
-      <main id="main-content" className="container mx-auto px-3 pt-10 pb-16">
-        <div className="max-w-4xl mx-auto">
-          {/* Section: Logo (Navigation moved to footer) */}
-          <header id="site-header" className="flex flex-col items-center mb-5">
-            <div 
-              id="logo-container"
-              onClick={() => setCurrentPage('home')}
-              className="flex items-center gap-3 cursor-pointer group"
-            >
-              <div className="bg-orange-600 p-1.5 rounded-xl group-hover:rotate-12 transition-transform shrink-0 shadow-lg shadow-orange-100">
-                <span className="text-white text-base font-black italic px-1">₿</span>
-              </div>
-              <span className="font-bold text-l tracking-tighter whitespace-nowrap">KJØPEBITCOIN<span className="text-orange-500">.NO</span></span>
+      {/* Header / Nav */}
+      <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-100">
+        <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+          <div 
+            onClick={() => navigateTo('home')}
+            className="flex items-center gap-2 cursor-pointer group"
+          >
+            <div className="w-8 h-8 bg-orange-600 rounded-xl flex items-center justify-center text-white font-black text-lg shadow-lg shadow-orange-100 group-hover:scale-110 transition-transform">
+              ₿
             </div>
-          </header>
+            <span className="font-bold text-lg tracking-tighter uppercase whitespace-nowrap">
+              KJØPEBITCOIN<span className="text-orange-500">.NO</span>
+            </span>
+          </div>
 
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-6">
+            <button 
+              onClick={() => navigateTo('live')}
+              className={`text-xs font-bold uppercase tracking-widest transition-colors ${currentPage === 'live' ? 'text-orange-600' : 'text-slate-400 hover:text-slate-900'}`}
+            >
+              Live Priser
+            </button>
+            <button 
+              onClick={() => navigateTo('norway')}
+              className={`text-xs font-bold uppercase tracking-widest transition-colors ${currentPage === 'norway' ? 'text-orange-600' : 'text-slate-400 hover:text-slate-900'}`}
+            >
+              I Norge
+            </button>
+            <button 
+              onClick={() => navigateTo('overview')}
+              className={`text-xs font-bold uppercase tracking-widest transition-colors ${currentPage === 'overview' ? 'text-orange-600' : 'text-slate-400 hover:text-slate-900'}`}
+            >
+              Guide
+            </button>
+            <button 
+              onClick={() => navigateTo('contact')}
+              className={`text-xs font-bold uppercase tracking-widest transition-colors ${currentPage === 'contact' ? 'text-orange-600' : 'text-slate-400 hover:text-slate-900'}`}
+            >
+              Kontakt
+            </button>
+          </nav>
+
+          {/* Mobile Menu Toggle */}
+          <button 
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="md:hidden p-2 text-slate-500 hover:text-slate-900 transition-colors"
+          >
+            <Menu size={24} />
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[50] md:hidden"
+            />
+            <motion.div 
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 right-0 bottom-0 w-[280px] bg-white z-[51] shadow-2xl md:hidden flex flex-col"
+            >
+              <div className="p-6 flex items-center justify-between border-b border-slate-50">
+                <span className="font-black text-[10px] uppercase tracking-widest text-slate-400">Meny</span>
+                <button 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-2 text-slate-400 hover:text-slate-900 transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-6 space-y-2">
+                {[
+                  { id: 'home', label: 'Forside', icon: '🏠' },
+                  { id: 'live', label: 'Live Priser', icon: '📊' },
+                  { id: 'norway', label: 'Bitcoin i Norge', icon: '🇳🇴' },
+                  { id: 'overview', label: 'Guide & Kunnskap', icon: '📚' },
+                  { id: 'contact', label: 'Kontakt oss', icon: '✉️' }
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => navigateTo(item.id as any)}
+                    className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-sm font-bold transition-all ${
+                      currentPage === item.id 
+                        ? 'bg-orange-50 text-orange-600' 
+                        : 'text-slate-600 hover:bg-slate-50 active:scale-[0.98]'
+                    }`}
+                  >
+                    <span className="text-xl">{item.icon}</span>
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="p-6 border-t border-slate-50">
+                <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] text-center">
+                  © 2026 KJØPEBITCOIN.NO
+                </p>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      <main id="main-content" className="container mx-auto px-3 pt-6 pb-16">
+        <div className="max-w-4xl mx-auto">
           {/* Page: Home (Landing / Analysis) */}
           {currentPage === 'home' && (
             <div id="home-page" className="space-y-2">
@@ -155,38 +261,6 @@ export default function App() {
             </div>
           )}
 
-{/* Top Highlights Cards */}
-              {topResults.length > 0 && !isLoading && (
-                <section id="best-price-highlights" className="pb-4">
-                  <div className="flex gap-3 overflow-x-auto pb-4 px-1 scrollbar-hide -mx-1 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible">
-                    {topResults.map((result, index) => (
-                      <div 
-                        key={result.exchange}
-                        className={`min-w-[210px] sm:min-w-0 bg-white border ${index === 0 ? 'border-orange-200 bg-orange-50/10' : 'border-slate-100'} p-4 rounded-xl shadow-sm space-y-3 group transition-all hover:shadow-md`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="scale-[1.0] shrink-0">
-                              <ExchangeIcon exchange={result.exchange} size={28} />
-                            </div>
-                            <span className="text-[15px] font-black text-slate-900 truncate">{result.exchange}</span>
-                          </div>
-                          {index === 0 && (
-                            <span className="text-[9px] font-black bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded uppercase tracking-widest border border-emerald-100">Best pris</span>
-                          )}
-                        </div>
-                        <div className="space-y-0.5">
-                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Kurs nå</p>
-                          <div className="text-[17px] font-black text-slate-900 font-mono tracking-tighter">
-                            <CountUp end={result.spotPrice} decimals={0} duration={1.5} separator=" " decimal="," />
-                            <span className="text-[12px] text-slate-400 font-sans ml-1">NOK</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              )}
 
           {/* Page: Live Prices (Comparison Tool) */}
           {currentPage === 'live' && (

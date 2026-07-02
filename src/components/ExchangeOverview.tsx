@@ -101,7 +101,6 @@ const exchanges: ExchangeItem[] = [
 
 export default function ExchangeOverview() {
   const [expanded, setExpanded] = useState<Exchange | null>(null);
-  const [query, setQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<'Alle' | ExchangeCategory>('Alle');
 
   const toggleExpanded = (exchange: Exchange) => {
@@ -109,14 +108,8 @@ export default function ExchangeOverview() {
   };
 
   const filteredExchanges = exchanges.filter((exchange) => {
-    const q = query.toLowerCase();
-    const matchesQuery =
-      exchange.name.toLowerCase().includes(q) ||
-      exchange.description.toLowerCase().includes(q) ||
-      exchange.pros.some((p) => p.toLowerCase().includes(q)) ||
-      exchange.cons.some((c) => c.toLowerCase().includes(q));
     const matchesCategory = categoryFilter === 'Alle' || exchange.category === categoryFilter;
-    return matchesQuery && matchesCategory;
+    return matchesCategory;
   });
 
   return (
@@ -135,14 +128,6 @@ export default function ExchangeOverview() {
             </div>
             
             <div id="search-filter-controls" className="flex gap-2">
-              <input
-                id="exchange-search-input"
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Søk..."
-                className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-800 focus:outline-none w-40"
-              />
               <select
                 id="exchange-category-select"
                 value={categoryFilter}

@@ -155,9 +155,6 @@ export default function ResultsTable({ results, isLoading, error, crypto }: Resu
                     <div className="text-[14px] font-semibold text-slate-900 font-mono">
                       <CountUp end={result.spotPrice} decimals={0} duration={1} separator=" " decimal="," />
                     </div>
-                    {result.exchange === bestResult.exchange && (
-                      <span className="text-[8px] font-bold text-[#0052FF] mt-0.5 uppercase tracking-wider">Best pris</span>
-                    )}
                   </div>
                 </div>
 
@@ -230,9 +227,6 @@ export default function ResultsTable({ results, isLoading, error, crypto }: Resu
                         <div className="flex flex-col">
                           <div className="flex items-center gap-2">
                             <span className="text-[15px] font-semibold text-slate-900 leading-none">{result.exchange}</span>
-                            {result.exchange === bestResult.exchange && (
-                              <span className="text-[9px] font-bold text-[#0052FF] bg-blue-50 px-2 py-0.5 rounded-full uppercase tracking-wider leading-none">Best</span>
-                            )}
                           </div>
                           <span className="text-[11px] text-slate-500 font-medium mt-1">
                             {result.exchange === Exchange.Firi || result.exchange === Exchange.NBX || result.exchange === Exchange.BareBitcoin ? 'Norsk' : 'Global'}
