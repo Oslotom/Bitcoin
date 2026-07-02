@@ -7,6 +7,8 @@ import Overview from './components/Overview';
 import FAQSection from './components/FAQSection';
 import { ExchangeIcon } from './components/icons';
 import CountUp from 'react-countup';
+import NorwayExchanges from './components/NorwayExchanges';
+import ContactPage from './components/ContactPage';
 import { getCoinbasePrice, getBinancePrice, getFiriPrice, getKrakenPrice, getNbxPrice, getBareBitcoinPrice, getRevolutPrice, getCryptoComPrice, getBuyBitcoinPrice, FEES } from './services/api';
 import { ComparisonResult, CryptoCurrency, Exchange } from './types';
 import { ExternalLink, Edit2, Save } from 'lucide-react';
@@ -19,7 +21,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastAmount, setLastAmount] = useState<number | null>(10000);
-  const [currentPage, setCurrentPage] = useState<'home' | 'live' | 'overview' | 'platforms'>('home');
+  const [currentPage, setCurrentPage] = useState<'home' | 'live' | 'overview' | 'platforms' | 'norway' | 'contact'>('home');
   const didInitCalculate = useRef(false);
 
   const handleCalculate = async (amount: number) => {
@@ -225,6 +227,16 @@ export default function App() {
           {/* Page: Knowledge Overview */}
           <div id="overview-page">
             {currentPage === 'overview' && <Overview />}
+          </div>
+
+          {/* Page: Norway Exchanges */}
+          <div id="norway-page">
+            {currentPage === 'norway' && <NorwayExchanges />}
+          </div>
+
+          {/* Page: Contact */}
+          <div id="contact-page">
+            {currentPage === 'contact' && <ContactPage />}
           </div>
         </div>
       </main>

@@ -108,6 +108,20 @@ const NorwayFlagIcon = () => (
     </svg>
 );
 
+const ResourceIcon = ({ size = 24 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="4" width="18" height="16" rx="2" fill="#64748B" />
+        <path d="M7 8H17M7 12H17M7 16H13" stroke="white" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+);
+
+const GenericExchangeIcon = ({ size = 24 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="12" fill="#CBD5E1" />
+        <path d="M12 7V17M7 12H17" stroke="white" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+);
+
 export const CountryIcon = ({ countryCode }: { countryCode: string }) => {
     switch (countryCode) {
         case 'NO':
@@ -117,7 +131,7 @@ export const CountryIcon = ({ countryCode }: { countryCode: string }) => {
     }
 };
 
-export const ExchangeIcon = ({ exchange, size = 24 }: { exchange: Exchange, size?: number }) => {
+export const ExchangeIcon = ({ exchange, size = 24 }: { exchange: string, size?: number }) => {
     switch (exchange) {
         case 'Coinbase':
             return <CoinbaseIcon size={size} />;
@@ -137,7 +151,9 @@ export const ExchangeIcon = ({ exchange, size = 24 }: { exchange: Exchange, size
             return <CryptoComIcon size={size} />;
         case 'BuyBitcoin.com':
             return <BuyBitcoinIcon size={size} />;
+        case 'kryptopris':
+            return <ResourceIcon size={size} />;
         default:
-            return null;
+            return <GenericExchangeIcon size={size} />;
     }
 };

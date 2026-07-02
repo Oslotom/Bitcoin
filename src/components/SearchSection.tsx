@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Exchange } from '../types';
 
 interface SearchSectionProps {
-  setCurrentPage: (page: 'home' | 'live' | 'overview' | 'platforms') => void;
+  setCurrentPage: (page: 'home' | 'live' | 'overview' | 'platforms' | 'norway' | 'contact') => void;
 }
 
 interface SearchItem {
@@ -60,6 +60,22 @@ export default function SearchSection({ setCurrentPage }: SearchSectionProps) {
       description: 'Les dype analyser, anmeldelser, fordeler og ulemper for alle støttede børser.',
       keywords: ['plattformer', 'børser', 'omtaler', 'firi', 'nbx', 'bare bitcoin', 'coinbase', 'binance', 'kraken', 'revolut', 'anmeldelse', 'erfaringer'],
       payload: { targetPage: 'platforms' }
+    },
+    {
+      id: 'page-norway',
+      type: 'page',
+      title: 'Kjøp Bitcoin i Norge',
+      description: 'Sammenlign de mest populære norske handelsplattformene: Firi, NBX og Bare Bitcoin.',
+      keywords: ['norge', 'norsk', 'bitcoin i norge', 'firi', 'nbx', 'bare bitcoin', 'bankid', 'vipps', 'finanstilsynet'],
+      payload: { targetPage: 'norway' }
+    },
+    {
+      id: 'page-contact',
+      type: 'page',
+      title: 'Kontakt oss',
+      description: 'Send oss en melding med spørsmål, ris eller ros. Vi svarer innen 24 timer.',
+      keywords: ['kontakt', 'hjelp', 'epost', 'melding', 'support', 'spørsmål', 'tomhaugeplass@gmail.com'],
+      payload: { targetPage: 'contact' }
     },
     {
       id: 'page-overview',
@@ -138,6 +154,34 @@ export default function SearchSection({ setCurrentPage }: SearchSectionProps) {
         spread: 'Ekstremt lav spread, ofte under 0.05%',
         pros: ['Laveste gebyrer i bransjen', 'Enorm likviditet og rask utførelse', 'Gigantisk utvalg av finesser og krypto'],
         cons: ['Komplisert grensesnitt for nybegynnere', 'Uregulert i Norge (valutafare)', 'Manuell skatteberegning nødvendig']
+      }
+    },
+    {
+      id: 'platform-kaupang',
+      type: 'platform',
+      title: 'Kaupang Krypto',
+      description: 'Norsk kryptomegler som tilbyr et bredt utvalg av kryptovalutaer og personlig oppfølging for større handler (OTC).',
+      keywords: ['kaupang', 'norsk', 'megler', 'otc', 'bankid', 'utvalg'],
+      payload: {
+        link: 'https://kaupangkrypto.no',
+        fees: 'Vekslingsgebyr inkludert i prisen.',
+        spread: 'Avhenger av markedet.',
+        pros: ['Norsk kundesupport', 'Enkel handel med BankID', 'Personlig service', 'Bredt utvalg av coins'],
+        cons: ['Noe høyere spread enn børser', 'Mindre kontroll over nøyaktig pris']
+      }
+    },
+    {
+      id: 'platform-kryptopris',
+      type: 'platform',
+      title: 'Kryptopris.no',
+      description: 'Uavhengig sammenligningstjeneste for norske kryptobørser. Hjelper deg å finne de laveste gebyrene og beste prisene.',
+      keywords: ['kryptopris', 'sammenligning', 'guide', 'ressurs', 'norsk'],
+      payload: {
+        link: 'https://kryptopris.no',
+        fees: 'Gratis tjeneste.',
+        spread: 'N/A',
+        pros: ['Uavhengige vurderinger', 'Oversikt over alle gebyrer', 'Nyttige guider for nybegynnere'],
+        cons: ['Kun informasjonsportal, ikke handelsplattform']
       }
     },
     {

@@ -1,7 +1,7 @@
 import SearchSection from './SearchSection';
 
 interface FooterProps {
-  setCurrentPage: (page: 'home' | 'live' | 'overview' | 'platforms') => void;
+  setCurrentPage: (page: 'home' | 'live' | 'overview' | 'platforms' | 'norway' | 'contact') => void;
   currentPage: string;
 }
 
@@ -30,6 +30,18 @@ export default function Footer({ setCurrentPage, currentPage }: FooterProps) {
               className={`text-xs font-bold uppercase tracking-widest transition-colors ${currentPage === 'live' ? 'text-orange-600' : 'text-slate-400 hover:text-slate-600'}`}
             >
               Live Priser
+            </button>
+            <button 
+              onClick={() => setCurrentPage('norway')}
+              className={`text-xs font-bold uppercase tracking-widest transition-colors ${currentPage === 'norway' ? 'text-orange-600' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              Bitcoin i Norge
+            </button>
+            <button 
+              onClick={() => setCurrentPage('contact')}
+              className={`text-xs font-bold uppercase tracking-widest transition-colors ${currentPage === 'contact' ? 'text-orange-600' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              Kontakt oss
             </button>
             <button 
               onClick={() => setCurrentPage('platforms')}
