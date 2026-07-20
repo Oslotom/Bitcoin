@@ -172,19 +172,26 @@ const Overview: React.FC = () => {
 
   return (
     <div id="overview-wrapper" className="bg-white min-h-screen">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-16 max-w-5xl">
         <motion.div
           id="overview-header"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-10"
+          className="mb-16"
         >
-          <h1 className="text-2xl font-bold text-slate-900 mb-1">Alternativer for kjøp</h1>
-          <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Sammenligning av ulike plattformer og metoder</p>
+          <h1 className="text-4xl font-display font-bold text-slate-900 mb-4">Alternativer for kjøp</h1>
+          <p className="text-lg font-medium text-slate-500 max-w-2xl leading-relaxed">
+            En omfattende sammenligning av ulike metoder for å kjøpe Bitcoin, fra norske børser til hardware-lommebøker.
+          </p>
         </motion.div>
 
         {/* Section: Simple Comparison List */}
-        <div id="category-summary-list" className="space-y-0.5 mb-20 border-t border-slate-100">
+        <div id="category-summary-list" className="space-y-1 mb-24 card-premium overflow-hidden">
+          <div className="bg-slate-50/50 px-6 py-4 border-b border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
+            <span>Metode</span>
+            <div className="hidden sm:block">Trend</div>
+            <span>Est. Utfall (10k NOK)</span>
+          </div>
           {CATEGORIES.map((cat, idx) => {
             const btcResult = calculateBTC(cat);
             const feePercent = (cat.fees.totalPercent * 100).toFixed(1);
@@ -196,33 +203,33 @@ const Overview: React.FC = () => {
                 initial={{ opacity: 0, x: -5 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.05 }}
-                className="flex items-center justify-between py-4 border-b border-slate-50 hover:bg-slate-50/50 transition-colors px-1 cursor-default group"
+                className="flex items-center justify-between py-6 hover:bg-slate-50/50 transition-colors px-6 cursor-default group border-b border-slate-50 last:border-0"
               >
                 {/* Left: Icon & Name */}
-                <div className="flex items-center gap-3 flex-[2] sm:flex-1">
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full overflow-hidden flex items-center justify-center bg-slate-50 group-hover:scale-105 transition-transform duration-300 shrink-0">
-                    <div className="scale-75 sm:scale-100">{cat.icon}</div>
+                <div className="flex items-center gap-5 flex-[2] sm:flex-1">
+                  <div className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-slate-50 group-hover:scale-110 transition-all duration-300 shrink-0 shadow-sm border border-slate-100">
+                    <div className="scale-90">{cat.icon}</div>
                   </div>
                   <div className="flex flex-col min-w-0">
-                    <span className="text-sm sm:text-base font-bold text-slate-900 leading-tight truncate">{cat.name}</span>
-                    <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-tighter truncate">{cat.id.replace('-', ' ')}</span>
+                    <span className="text-base font-bold text-slate-900 leading-tight truncate">{cat.name}</span>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 truncate">{cat.id.replace('-', ' ')}</span>
                   </div>
                 </div>
 
                 {/* Middle: Sparkline Visual (Hidden on mobile) */}
                 <div id={`sparkline-${cat.id}`} className="hidden sm:flex flex-1 justify-center">
                   <Sparkline 
-                    color={cat.id === 'utenlandsk-bors' ? '#10b981' : cat.fees.totalPercent > 0.03 ? '#f43f5e' : '#6366f1'} 
+                    color={cat.id === 'utenlandsk-bors' ? '#10b981' : cat.fees.totalPercent > 0.03 ? '#f43f5e' : '#3b82f6'} 
                     type={getSparklineType(cat.id)} 
                   />
                 </div>
 
                 {/* Right: Price & Fees */}
-                <div className="flex flex-col items-end min-w-[100px] sm:min-w-[140px] flex-1">
+                <div className="flex flex-col items-end min-w-[120px] sm:min-w-[160px] flex-1">
                   {loading ? (
-                    <div className="h-4 w-16 sm:h-5 sm:w-20 bg-slate-100 animate-pulse rounded mb-1"></div>
+                    <div className="h-5 w-24 bg-slate-100 animate-pulse rounded-lg mb-1"></div>
                   ) : (
-                    <div className="text-sm sm:text-base font-bold text-slate-900 font-mono tracking-tighter">
+                    <div className="text-lg font-bold text-slate-900 font-mono tracking-tight">
                       <CountUp 
                         end={btcResult} 
                         decimals={6} 
@@ -232,8 +239,8 @@ const Overview: React.FC = () => {
                       /> BTC
                     </div>
                   )}
-                  <div className="flex items-center gap-1">
-                    <span className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-tight ${cat.fees.totalPercent > 0.03 ? 'text-rose-500' : 'text-emerald-500'}`}>
+                  <div className="flex items-center gap-1.5">
+                    <span className={`text-[10px] font-bold uppercase tracking-wider ${cat.fees.totalPercent > 0.03 ? 'text-rose-500' : 'text-brand'}`}>
                       {cat.fees.totalPercent > 0 ? (cat.fees.totalPercent > 0.03 ? '↘' : '↗') : ''} {feePercent}% avgift
                     </span>
                   </div>
@@ -244,65 +251,71 @@ const Overview: React.FC = () => {
         </div>
 
         {/* Section: Extensive Depth Analysis Grid */}
-        <h2 id="analysis-grid-title" className="text-[10px] font-bold text-slate-400 mb-8 uppercase tracking-[0.2em]">Dybdeanalyse</h2>
-        <div id="detailed-analysis-grid" className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {CATEGORIES.map((cat, idx) => (
-            <motion.div
-              key={cat.id}
-              id={`analysis-card-${cat.id}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 * idx }}
-              className="bg-white border border-slate-100 p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-center gap-4 mb-6">
-                <div className="p-3 bg-slate-50 rounded-2xl">{cat.icon}</div>
-                <h3 className="text-xl font-bold text-slate-900">{cat.name}</h3>
-              </div>
-              <p className="text-slate-600 mb-8 text-sm leading-relaxed">{cat.description}</p>
-              
-              <div className="grid grid-cols-2 gap-6 mb-8">
-                <div id={`pros-${cat.id}`} className="space-y-3">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-600">Fordeler</p>
-                  <ul className="space-y-2">
-                    {cat.pros.map(pro => (
-                      <li key={pro} className="text-xs text-slate-700 flex items-start gap-2">
-                        <span className="text-emerald-500 mt-0.5">+</span> {pro}
-                      </li>
-                    ))}
-                  </ul>
+        <div className="space-y-8 mb-12">
+          <h2 id="analysis-grid-title" className="text-xs font-bold text-slate-400 uppercase tracking-[0.3em]">Dybdeanalyse</h2>
+          <div id="detailed-analysis-grid" className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {CATEGORIES.map((cat, idx) => (
+              <motion.div
+                key={cat.id}
+                id={`analysis-card-${cat.id}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * idx }}
+                className="card-premium p-8 hover:border-brand/30 transition-all group"
+              >
+                <div className="flex items-center gap-5 mb-8">
+                  <div className="p-4 bg-slate-50 rounded-2xl group-hover:bg-blue-50 transition-colors border border-slate-100">{cat.icon}</div>
+                  <h3 className="text-2xl font-display font-bold text-slate-900">{cat.name}</h3>
                 </div>
-                <div id={`cons-${cat.id}`} className="space-y-3">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-rose-600">Bakdeler</p>
-                  <ul className="space-y-2">
-                    {cat.cons.map(con => (
-                      <li key={con} className="text-xs text-slate-700 flex items-start gap-2">
-                        <span className="text-rose-500 mt-0.5">-</span> {con}
-                      </li>
-                    ))}
-                  </ul>
+                <p className="text-slate-600 mb-8 text-base leading-relaxed font-medium">{cat.description}</p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
+                  <div id={`pros-${cat.id}`} className="space-y-4">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Fordeler
+                    </p>
+                    <ul className="space-y-3">
+                      {cat.pros.map(pro => (
+                        <li key={pro} className="text-xs text-slate-600 flex items-start gap-3 leading-relaxed">
+                          <span className="text-emerald-500 font-bold shrink-0">✓</span> {pro}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div id={`cons-${cat.id}`} className="space-y-4">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-rose-500 flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500" /> Ulemper
+                    </p>
+                    <ul className="space-y-3">
+                      {cat.cons.map(con => (
+                        <li key={con} className="text-xs text-slate-600 flex items-start gap-3 leading-relaxed">
+                          <span className="text-rose-500 font-bold shrink-0">✕</span> {con}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="pt-6 border-t border-slate-50 flex justify-between items-center">
-                <div className="flex items-center gap-2 text-slate-400">
-                  <Info size={12} />
-                  <span className="text-[9px] uppercase font-bold tracking-tighter italic">Beregnet ved kjøp på 10k kr</span>
+                
+                <div className="pt-8 border-t border-slate-50 flex justify-between items-center">
+                  <div className="flex items-center gap-2 text-slate-400">
+                    <Info size={14} className="shrink-0" />
+                    <span className="text-[10px] uppercase font-bold tracking-tight">Estimat per 10k NOK</span>
+                  </div>
+                  <button className="text-brand text-[11px] font-bold flex items-center gap-1.5 hover:translate-x-1 transition-transform">
+                    Les guide <ExternalLink size={14} />
+                  </button>
                 </div>
-                <button className="text-blue-600 text-[10px] font-bold flex items-center gap-1 hover:underline">
-                  Les mer <ExternalLink size={12} />
-                </button>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </div>
         </div>
 
         {/* Section: Legal/Footer Disclaimer */}
-        <div id="disclaimer-section" className="mt-16 p-8 bg-slate-50 rounded-2xl border border-slate-100 text-xs text-slate-500">
-          <p className="font-bold text-slate-900 mb-2 flex items-center gap-2">
-            <Info size={14} /> Viktig informasjon
+        <div id="disclaimer-section" className="mt-24 p-10 bg-slate-50 rounded-3xl border border-slate-100 space-y-4">
+          <p className="font-bold text-slate-900 text-lg flex items-center gap-3">
+            <Info size={20} className="text-brand" /> Viktig informasjon
           </p>
-          <p className="leading-relaxed">
+          <p className="text-slate-500 text-sm leading-relaxed font-medium">
             Gebyrsatsene ovenfor er estimater og kan endre seg basert på markedsforhold, volumrabatter eller spesielle kampanjer. 
             Ved kjøp av Bitcoin er det viktig å skille mellom handelsgebyr (commission/fee) og spread (forskjell mellom kjøps- og salgspris).
             Utenlandske børser er ofte billigst på gebyrer, men kan koste mer i vekslingsgebyr fra NOK og uttaksgebyr til egen lommebok.

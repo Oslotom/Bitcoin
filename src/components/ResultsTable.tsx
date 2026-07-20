@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ComparisonResult, CryptoCurrency, Exchange } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import CountUp from 'react-countup';
 import { CountryIcon, ExchangeIcon } from './icons';
 import { FEES } from '../services/api';
+import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface ResultsTableProps {
   results: ComparisonResult[];
@@ -11,6 +12,8 @@ interface ResultsTableProps {
   error: string | null;
   crypto: CryptoCurrency;
 }
+
+type SortKey = 'exchange' | 'spotPrice' | 'feePercent' | 'cryptoAmount';
 
 const PLATFORM_DATA: Record<Exchange, { link: string; description: string }> = {
   [Exchange.Coinbase]: { 
@@ -53,10 +56,75 @@ const PLATFORM_DATA: Record<Exchange, { link: string; description: string }> = {
 
 export default function ResultsTable({ results, isLoading, error, crypto }: ResultsTableProps) {
   const [expandedRow, setExpandedRow] = useState<Exchange | null>(null);
+  const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: 'asc' | 'desc' }>({
+    key: 'cryptoAmount',
+    direction: 'desc'
+  });
 
   const toggleRow = (exchange: Exchange) => {
     setExpandedRow(expandedRow === exchange ? null : exchange);
   };
+
+  const handleSort = (key: SortKey) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc'
+    }));
+  };
+
+  const sortedResults = useMemo(() => {
+    return [...results].sort((a, b) => {
+      let valA: any;
+      let valB: any;
+
+      if (sortConfig.key === 'exchange') {
+        valA = a.exchange;
+        valB = b.exchange;
+      } else if (sortConfig.key === 'spotPrice') {
+        valA = a.spotPrice;
+        valB = b.spotPrice;
+      } else if (sortConfig.key === 'feePercent') {
+        valA = a.feeInNok / a.totalCost;
+        valB = b.feeInNok / b.totalCost;
+      } else {
+        valA = a.cryptoAmount;
+        valB = b.cryptoAmount;
+      }
+
+      if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [results, sortConfig]);
+
+  const lowestFeeResult = useMemo(() => {
+    if (results.length === 0) return null;
+    return results.reduce((lowest, current) =>
+      (current.feeInNok / current.totalCost) < (lowest.feeInNok / lowest.totalCost) ? current : lowest
+    );
+  }, [results]);
+
+  const bestResult = useMemo(() => {
+    if (results.length === 0) return null;
+    return results.reduce((best, current) =>
+      current.cryptoAmount > best.cryptoAmount ? current : best
+    );
+  }, [results]);
+
+  const worstResult = useMemo(() => {
+    if (results.length === 0) return null;
+    return results.reduce((worst, current) =>
+      current.cryptoAmount < worst.cryptoAmount ? current : worst
+    );
+  }, [results]);
+
+  const SortIndicator = ({ column }: { column: SortKey }) => {
+    if (sortConfig.key !== column) return <ArrowUpDown size={12} className="ml-1 opacity-20" />;
+    return sortConfig.direction === 'asc' ? 
+      <ArrowUp size={12} className="ml-1 text-brand" /> : 
+      <ArrowDown size={12} className="ml-1 text-brand" />;
+  };
+
   if (isLoading) {
     return (
       <div className="py-12 flex items-center justify-center">
@@ -89,24 +157,6 @@ export default function ResultsTable({ results, isLoading, error, crypto }: Resu
     );
   }
 
-  const sortedResults = [...results].sort((a, b) => {
-    const btcDiff = b.cryptoAmount - a.cryptoAmount;
-    if (btcDiff !== 0) return btcDiff;
-    return a.effectivePrice - b.effectivePrice;
-  });
-
-  const bestResult = sortedResults.reduce((best, current) =>
-    current.cryptoAmount > best.cryptoAmount ? current : best
-  );
-
-  const lowestFeeResult = sortedResults.reduce((lowest, current) =>
-    (current.feeInNok / current.totalCost) < (lowest.feeInNok / lowest.totalCost) ? current : lowest
-  );
-
-  const mostExpensiveResult = sortedResults.reduce((most, current) =>
-    current.cryptoAmount < most.cryptoAmount ? current : most
-  );
-
   return (
     <AnimatePresence>
       <motion.div
@@ -114,45 +164,75 @@ export default function ResultsTable({ results, isLoading, error, crypto }: Resu
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="border-t border-slate-100"
+        className="overflow-hidden font-table"
       >
         {/* Mobile View: Stacked Rows */}
-        <div id="results-mobile-view" className="md:hidden border-y border-slate-100">
-          {/* Mobile Header */}
-          <div className="flex px-4 py-2 bg-white border-b border-slate-100">
-            <span className="w-[40%] text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Plattform</span>
-            <span className="w-[20%] text-[10px] font-semibold text-slate-400 uppercase tracking-wider text-center">Gebyr</span>
-            <span className="w-[40%] text-[10px] font-semibold text-slate-400 uppercase tracking-wider text-right">Pris</span>
+        <div id="results-mobile-view" className="md:hidden">
+          <div className="flex px-4 py-3 bg-slate-50/50 border-b border-slate-100">
+            <span 
+              className="w-[45%] text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center cursor-pointer"
+              onClick={() => handleSort('exchange')}
+            >
+              Plattform <SortIndicator column="exchange" />
+            </span>
+            <span 
+              className="w-[20%] text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center flex items-center justify-center cursor-pointer"
+              onClick={() => handleSort('feePercent')}
+            >
+              Gebyr <SortIndicator column="feePercent" />
+            </span>
+            <span 
+              className="w-[35%] text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right flex items-center justify-end cursor-pointer"
+              onClick={() => handleSort('spotPrice')}
+            >
+              Pris <SortIndicator column="spotPrice" />
+            </span>
           </div>
 
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-slate-50">
             {sortedResults.map((result) => (
               <div 
                 key={result.exchange} 
-                className="bg-white hover:bg-slate-50 transition-colors"
+                className="bg-white hover:bg-slate-50/80 transition-colors"
                 onClick={() => toggleRow(result.exchange)}
               >
-                <div className="py-2.5 px-4 flex items-center justify-between">
+                <div className="py-4 px-2 flex items-center justify-between">
                   {/* Left: Platform */}
-                  <div className="flex min-w-0 items-center gap-3 w-[40%]">
-                    <div className="shrink-0 scale-90">
-                      <ExchangeIcon exchange={result.exchange} />
+                  <div className="flex min-w-0 items-center gap-3 w-[45%]">
+                    <div className="shrink-0 transition-transform group-hover:scale-105">
+                      <ExchangeIcon exchange={result.exchange} size={32} />
                     </div>
                     <div className="flex flex-col min-w-0">
-                      <span className="text-[14px] font-semibold text-slate-900 leading-tight truncate">{result.exchange}</span>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-sm font-bold text-slate-900 leading-tight truncate">{result.exchange}</span>
+                        {bestResult && result.exchange === bestResult.exchange && (
+                          <span className="px-1 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded text-[8px] font-black uppercase">Beste pris</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                        <span className="text-[10px] text-slate-400 font-medium">
+                          {result.exchange === Exchange.Firi || result.exchange === Exchange.NBX || result.exchange === Exchange.BareBitcoin ? 'Norsk' : 'Global'}
+                        </span>
+                        {lowestFeeResult && result.exchange === lowestFeeResult.exchange && (
+                          <span className="text-[9px] font-bold text-blue-500 uppercase tracking-tighter">Lavest gebyr</span>
+                        )}
+                        {worstResult && result.exchange === worstResult.exchange && (
+                          <span className="text-[9px] font-bold text-red-500 uppercase tracking-tighter">Dyrest</span>
+                        )}
+                      </div>
                     </div>
                   </div>
 
                   {/* Center: Fee */}
                   <div className="w-[20%] text-center">
-                    <span className="text-[12px] text-slate-600 font-bold font-mono">
+                    <span className={`text-xs font-bold ${lowestFeeResult && result.exchange === lowestFeeResult.exchange ? 'text-success' : 'text-slate-600'}`}>
                       {Math.round((result.feeInNok / result.totalCost) * 1000) / 10}%
                     </span>
                   </div>
 
-                  {/* Right: Price & Tag */}
-                  <div className="flex flex-col items-end w-[40%]">
-                    <div className="text-[14px] font-semibold text-slate-900 font-mono">
+                  {/* Right: Price */}
+                  <div className="flex flex-col items-end w-[35%]">
+                    <div className="text-sm font-bold text-slate-900 tracking-tight">
                       <CountUp end={result.spotPrice} decimals={0} duration={1} separator=" " decimal="," />
                     </div>
                   </div>
@@ -165,21 +245,21 @@ export default function ResultsTable({ results, isLoading, error, crypto }: Resu
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden bg-slate-50 border-t border-slate-100"
+                      className="overflow-hidden bg-slate-50/50"
                     >
-                      <div className="p-4 space-y-4">
-                        <div className="px-3 py-3 bg-white rounded-lg border border-slate-200">
-                          <p className="text-[13px] text-slate-600 leading-relaxed font-medium italic">
+                      <div className="p-5 space-y-5">
+                        <div className="p-4 bg-white rounded-xl border border-slate-100 shadow-sm">
+                          <p className="text-xs text-slate-600 leading-relaxed font-medium italic">
                             "{PLATFORM_DATA[result.exchange].description}"
                           </p>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-6">
                           <div className="space-y-1">
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Handlegebyr</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Handlegebyr</p>
                             <p className="text-sm font-bold text-slate-900">{result.feeInNok.toLocaleString('no-NO')} NOK</p>
                           </div>
                           <div className="space-y-1">
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Spredning</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Spredning</p>
                             <p className="text-sm font-bold text-slate-900">{FEES[result.exchange].spread}%</p>
                           </div>
                         </div>
@@ -187,10 +267,10 @@ export default function ResultsTable({ results, isLoading, error, crypto }: Resu
                           href={PLATFORM_DATA[result.exchange].link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-center w-full py-3 bg-[#0052FF] text-white rounded-lg text-sm font-bold hover:bg-[#0045db] transition-colors shadow-sm"
+                          className="btn-primary w-full text-sm"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          Besøk {result.exchange}
+                          Gå til {result.exchange}
                         </a>
                       </div>
                     </motion.div>
@@ -203,54 +283,93 @@ export default function ResultsTable({ results, isLoading, error, crypto }: Resu
 
         {/* Desktop View: Traditional Table */}
         <div id="results-desktop-view" className="hidden md:block">
-          <table className="w-full border-collapse">
+          <table className="w-full">
             <thead>
-              <tr className="border-b border-slate-100">
-                <th className="py-3 px-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-400">Navn</th>
-                <th className="py-3 px-2 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-400">Pris (NOK)</th>
-                <th className="py-3 px-2 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-400">Gebyr</th>
-                <th className="py-3 px-2 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-400">Handling</th>
+              <tr className="bg-slate-50/50 border-b border-slate-100">
+                <th 
+                  className="py-4 px-6 text-left text-[10px] font-bold uppercase tracking-wider text-slate-400 cursor-pointer hover:text-slate-600 transition-colors"
+                  onClick={() => handleSort('exchange')}
+                >
+                  <div className="flex items-center">
+                    Plattform <SortIndicator column="exchange" />
+                  </div>
+                </th>
+                <th 
+                  className="py-4 px-6 text-right text-[10px] font-bold uppercase tracking-wider text-slate-400 cursor-pointer hover:text-slate-600 transition-colors"
+                  onClick={() => handleSort('spotPrice')}
+                >
+                  <div className="flex items-center justify-end">
+                    Live Pris (NOK) <SortIndicator column="spotPrice" />
+                  </div>
+                </th>
+                <th 
+                  className="py-4 px-6 text-right text-[10px] font-bold uppercase tracking-wider text-slate-400 cursor-pointer hover:text-slate-600 transition-colors"
+                  onClick={() => handleSort('feePercent')}
+                >
+                  <div className="flex items-center justify-end">
+                    Totalt Gebyr <SortIndicator column="feePercent" />
+                  </div>
+                </th>
+                <th className="py-4 px-6 text-right text-[10px] font-bold uppercase tracking-wider text-slate-400">Handling</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-50">
               {sortedResults.map((result) => (
                 <React.Fragment key={result.exchange}>
                   <tr 
-                    className="group hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                    className="group hover:bg-slate-50/80 transition-all duration-200 cursor-pointer"
                     onClick={() => toggleRow(result.exchange)}
                   >
-                    <td className="py-3 px-2">
+                    <td className="py-5 px-6">
                       <div className="flex items-center gap-4">
-                        <div className="shrink-0 transition-transform group-hover:scale-105">
-                          <ExchangeIcon exchange={result.exchange} />
+                        <div className="shrink-0 transition-transform group-hover:scale-110">
+                          <ExchangeIcon exchange={result.exchange} size={40} />
                         </div>
                         <div className="flex flex-col">
                           <div className="flex items-center gap-2">
-                            <span className="text-[15px] font-semibold text-slate-900 leading-none">{result.exchange}</span>
+                            <span className="text-base font-bold text-slate-900 leading-none">{result.exchange}</span>
+                            {bestResult && result.exchange === bestResult.exchange && (
+                              <span className="px-1.5 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded text-[9px] font-black uppercase tracking-wider">Beste pris</span>
+                            )}
                           </div>
-                          <span className="text-[11px] text-slate-500 font-medium mt-1">
-                            {result.exchange === Exchange.Firi || result.exchange === Exchange.NBX || result.exchange === Exchange.BareBitcoin ? 'Norsk' : 'Global'}
-                          </span>
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className="text-xs text-slate-400 font-medium flex items-center gap-1.5">
+                              {result.exchange === Exchange.Firi || result.exchange === Exchange.NBX || result.exchange === Exchange.BareBitcoin ? (
+                                <><span className="w-1 h-1 rounded-full bg-brand" /> Norsk plattform</>
+                              ) : 'Global plattform'}
+                            </span>
+                            {lowestFeeResult && result.exchange === lowestFeeResult.exchange && (
+                              <span className="text-[10px] font-bold text-blue-500 uppercase tracking-tight">Lavest gebyr</span>
+                            )}
+                            {worstResult && result.exchange === worstResult.exchange && (
+                              <span className="text-[10px] font-bold text-red-500 uppercase tracking-tight">Dyrest</span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </td>
-                    <td className="py-3 px-2 text-right">
-                      <span className="text-[16px] font-semibold text-slate-900 font-mono">
-                        <CountUp end={result.spotPrice} decimals={0} duration={1} separator=" " decimal="," />
-                      </span>
+                    <td className="py-5 px-6 text-right">
+                      <div className="flex flex-col items-end">
+                        <span className="text-lg font-bold text-slate-900 tracking-tight">
+                          <CountUp end={result.spotPrice} decimals={0} duration={1} separator=" " decimal="," />
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-bold uppercase mt-1">Per BTC</span>
+                      </div>
                     </td>
-                    <td className="py-3 px-2 text-right">
-                      <span className="text-[14px] font-bold text-slate-900 font-mono">
-                        {Math.round((result.feeInNok / result.totalCost) * 1000) / 10}%
-                      </span>
+                    <td className="py-5 px-6 text-right">
+                      <div className="flex flex-col items-end">
+                        <span className={`text-base font-bold ${lowestFeeResult && result.exchange === lowestFeeResult.exchange ? 'text-success' : 'text-slate-900'}`}>
+                          {Math.round((result.feeInNok / result.totalCost) * 1000) / 10}%
+                        </span>
+                      </div>
                     </td>
-                    <td className="py-3 px-2 text-right">
+                    <td className="py-5 px-6 text-right">
                       <a
                         id={`buy-btn-${result.exchange.toLowerCase()}`}
                         href={PLATFORM_DATA[result.exchange].link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center rounded-md bg-[#0052FF] px-4 py-2 text-[13px] font-bold text-white transition-all duration-150 hover:bg-[#0045db] shadow-sm ml-2"
+                        className="btn-primary py-2 px-5 text-sm inline-flex shadow-md shadow-blue-100"
                         onClick={(e) => e.stopPropagation()}
                       >
                         Kjøp
@@ -264,22 +383,24 @@ export default function ResultsTable({ results, isLoading, error, crypto }: Resu
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: 'auto', opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          className="bg-slate-50 overflow-hidden"
+                          className="bg-slate-50/50 overflow-hidden"
                         >
-                          <div className="px-6 py-6 border-l-4 border-[#0052FF] ml-3 mb-4 mt-2 bg-white rounded-r-xl border border-slate-100 shadow-sm mr-3">
-                            <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Om plattformen</h4>
-                            <p className="text-[14px] text-slate-600 leading-relaxed font-medium italic">
-                              "{PLATFORM_DATA[result.exchange].description}"
-                            </p>
-                            <div className="mt-4 pt-4 border-t border-slate-50 flex gap-8">
-                                <div>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Est. gebyrer</p>
-                                    <p className="text-sm font-bold text-slate-900">{result.feeInNok.toLocaleString('no-NO')} NOK</p>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Spredning (spread)</p>
-                                    <p className="text-sm font-bold text-slate-900">{FEES[result.exchange].spread}%</p>
-                                </div>
+                          <div className="mx-6 mb-6 p-8 bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col md:flex-row gap-12">
+                            <div className="flex-1 space-y-4">
+                              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Analyse av plattformen</h4>
+                              <p className="text-base text-slate-600 leading-relaxed font-medium italic">
+                                "{PLATFORM_DATA[result.exchange].description}"
+                              </p>
+                            </div>
+                            <div className="md:w-64 grid grid-cols-1 gap-6">
+                              <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Handlegebyr</p>
+                                <p className="text-lg font-bold text-slate-900">{result.feeInNok.toLocaleString('no-NO')} NOK</p>
+                              </div>
+                              <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Spredning (spread)</p>
+                                <p className="text-lg font-bold text-slate-900">{FEES[result.exchange].spread}%</p>
+                              </div>
                             </div>
                           </div>
                         </motion.div>
@@ -295,3 +416,4 @@ export default function ResultsTable({ results, isLoading, error, crypto }: Resu
     </AnimatePresence>
   );
 }
+

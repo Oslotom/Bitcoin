@@ -9,9 +9,10 @@ import { ExchangeIcon } from './components/icons';
 import CountUp from 'react-countup';
 import NorwayExchanges from './components/NorwayExchanges';
 import ContactPage from './components/ContactPage';
+import AllExchanges from './components/AllExchanges';
 import { getCoinbasePrice, getBinancePrice, getFiriPrice, getKrakenPrice, getNbxPrice, getBareBitcoinPrice, getRevolutPrice, getCryptoComPrice, getBuyBitcoinPrice, FEES } from './services/api';
 import { ComparisonResult, CryptoCurrency, Exchange } from './types';
-import { ExternalLink, Edit2, Save, Menu, X } from 'lucide-react';
+import { ExternalLink, Edit2, Save, Menu, X, Zap, Globe, CreditCard } from 'lucide-react';
 import { useContent } from './contexts/ContentContext';
 import EditableText from './components/EditableText';
 import { motion, AnimatePresence } from 'motion/react';
@@ -22,7 +23,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastAmount, setLastAmount] = useState<number | null>(10000);
-  const [currentPage, setCurrentPage] = useState<'home' | 'live' | 'overview' | 'platforms' | 'norway' | 'contact'>('home');
+  const [currentPage, setCurrentPage] = useState<'home' | 'live' | 'overview' | 'platforms' | 'norway' | 'contact' | 'all'>('home');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const didInitCalculate = useRef(false);
 
@@ -104,47 +105,47 @@ export default function App() {
 
   return (
     <div id="app-root" className="min-h-screen bg-white text-slate-900 font-sans">
+      {/* Global Background Decorations */}
+      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden opacity-[0.04]">
+        <div className="absolute -top-[10%] -left-[20%] w-[140%] h-[600px] bg-gradient-to-br from-brand via-transparent to-transparent rotate-[-15deg] transform-gpu" />
+        <div className="absolute top-[30%] -right-[20%] w-[120%] h-[800px] bg-gradient-to-bl from-accent via-transparent to-transparent rotate-[12deg] transform-gpu" />
+        <div className="absolute bottom-[10%] -left-[10%] w-[100%] h-[500px] bg-gradient-to-tr from-brand via-transparent to-transparent rotate-[-8deg] transform-gpu" />
+      </div>
+
       {/* Header / Nav */}
-      <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-100">
-        <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+      <header className="sticky top-0 z-40 w-full bg-transparent backdrop-blur-s" style={{ marginBottom: '-20px' }}>
+        <div className="max-w-5xl mx-auto px-4 h-20 flex items-center justify-between">
           <div 
             onClick={() => navigateTo('home')}
             className="flex items-center gap-2 cursor-pointer group"
           >
-            <div className="w-8 h-8 bg-orange-600 rounded-xl flex items-center justify-center text-white font-black text-lg shadow-lg shadow-orange-100 group-hover:scale-110 transition-transform">
+            <div className="w-8 h-8 bg-brand rounded-lg flex items-center justify-center text-white font-black text-lg shadow-lg shadow-blue-100 group-hover:scale-105 transition-transform">
               ₿
             </div>
-            <span className="font-bold text-lg tracking-tighter uppercase whitespace-nowrap">
-              KJØPEBITCOIN<span className="text-orange-500">.NO</span>
+            <span className="font-display font-bold text-lg tracking-tight text-slate-900">
+              KjøpeBitcoin<span className="text-brand">.no</span>
             </span>
           </div>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-6">
-            <button 
-              onClick={() => navigateTo('live')}
-              className={`text-xs font-bold uppercase tracking-widest transition-colors ${currentPage === 'live' ? 'text-orange-600' : 'text-slate-400 hover:text-slate-900'}`}
-            >
-              Live Priser
-            </button>
-            <button 
-              onClick={() => navigateTo('norway')}
-              className={`text-xs font-bold uppercase tracking-widest transition-colors ${currentPage === 'norway' ? 'text-orange-600' : 'text-slate-400 hover:text-slate-900'}`}
-            >
-              I Norge
-            </button>
-            <button 
-              onClick={() => navigateTo('overview')}
-              className={`text-xs font-bold uppercase tracking-widest transition-colors ${currentPage === 'overview' ? 'text-orange-600' : 'text-slate-400 hover:text-slate-900'}`}
-            >
-              Guide
-            </button>
-            <button 
-              onClick={() => navigateTo('contact')}
-              className={`text-xs font-bold uppercase tracking-widest transition-colors ${currentPage === 'contact' ? 'text-orange-600' : 'text-slate-400 hover:text-slate-900'}`}
-            >
-              Kontakt
-            </button>
+          <nav className="hidden md:flex items-center gap-8">
+            {[
+              { id: 'live', label: 'Sammenlign Priser' },
+              { id: 'all', label: 'Alle' },
+              { id: 'norway', label: 'Børser i Norge' },
+              { id: 'overview', label: 'Lær Mer' },
+              { id: 'contact', label: 'Kontakt' }
+            ].map((item) => (
+              <button 
+                key={item.id}
+                onClick={() => navigateTo(item.id as any)}
+                className={`text-sm font-semibold transition-colors ${
+                  currentPage === item.id ? 'text-brand' : 'text-slate-500 hover:text-brand'
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
           </nav>
 
           {/* Mobile Menu Toggle */}
@@ -189,6 +190,7 @@ export default function App() {
                 {[
                   { id: 'home', label: 'Forside', icon: '🏠' },
                   { id: 'live', label: 'Live Priser', icon: '📊' },
+                  { id: 'all', label: 'Alle Børser', icon: '🌎' },
                   { id: 'norway', label: 'Bitcoin i Norge', icon: '🇳🇴' },
                   { id: 'overview', label: 'Guide & Kunnskap', icon: '📚' },
                   { id: 'contact', label: 'Kontakt oss', icon: '✉️' }
@@ -218,102 +220,123 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      <main id="main-content" className="container mx-auto px-3 pt-6 pb-16">
-        <div className="max-w-4xl mx-auto">
-          {/* Page: Home (Landing / Analysis) */}
-          {currentPage === 'home' && (
-            <div id="home-page" className="space-y-2">
-              {/* Hero Section */}
-              <section id="home-hero" className="text-center space-y-2 py-8">
-                <h1 className="text-3xl font-black sm:text-4xl text-slate-900 uppercase">
-                  <EditableText contentKey="homeHeroTitle" />
+      <main id="main-content" className="flex-1">
+        {currentPage === 'home' && (
+          <div className="animate-fade-in">
+            {/* Hero Section */}
+            <section className="relative pt-20 pb-12 overflow-hidden">
+              <div className="max-w-5xl mx-auto px-4 text-center space-y-8">
+            
+                
+                <h1 className="text-5xl md:text-5xl font-display font-bold tracking-tight text-slate-900 leading-[1.1]">
+                  Finn beste pris<br />
+                  <span className="text-brand">på bitcoin</span>
                 </h1>
-                <div className="max-w-lg mx-auto">
-                    <EditableText contentKey="homeHeroDescription" className="text-slate-500 text-sm font-medium leading-relaxed text-center" multiline />
-                </div>
-              </section>
-
-              {/* Quick View Table */}
-              <section id="quick-view-table" className="space-y-6">
-                <div className="flex justify-between items-end">
-                  <div className="space-y-1">
-                    <h2 className="text-xl font-bold tracking-tight">
-                        <EditableText contentKey="comparePriceTitle" />
-                    </h2>
-                  </div>
-                  <button 
-                    onClick={() => setCurrentPage('live')}
-                    className="text-[10px] font-black uppercase tracking-widest text-orange-600 hover:text-orange-700"
-                  >
-                    Full oversikt →
-                  </button>
-                </div>
-                <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} />
-              </section>
+                
+                <p className="max-w-2xl mx-auto text-lg md:text-lg text-slate-600 leading-relaxed font-medium">
+                  Vi sammenligner priser, gebyrer og spredning på tvers av alle  børser.
+                </p>
 
 
-              
-
-              {/* Details & FAQ Section */}
-              <div id="details-faq-section" className="pt-16 border-t border-slate-100 space-y-16">
-                <FAQSection />
               </div>
-            </div>
-          )}
+            </section>
 
+            {/* Quick Features Bar */}
+            <section className="max-w-5xl mx-auto px-1">
+              <div className="bg-white/50 py-2 px-1 flex flex-wrap justify-center gap-x-2 gap-y-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="bg-blue-50 p-1.5 rounded-lg text-brand">
+                    <Zap size={16} fill="currentColor" className="opacity-20" />
+                  </div>
+                  <span className="text-sm font-bold text-slate-700">Live kurs</span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <div className="bg-blue-50 p-1.5 rounded-lg text-brand">
+                    <Globe size={16} />
+                  </div>
+                  <span className="text-sm font-bold text-slate-700">30 børser</span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <div className="bg-blue-50 p-1.5 rounded-lg text-brand">
+                    <CreditCard size={16} />
+                  </div>
+                  <span className="text-sm font-bold text-slate-700">Se gebyrer</span>
+                </div>
+              </div>
+            </section>
+
+    
+
+            {/* Preview Section */}
+            <section className="py-14 max-w-5xl mx-auto px-4 space-y-8">
+              <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-display font-bold tracking-tight">Live Bitcoin priser</h2>
+                  <p className="text-slate-500 font-medium">Prisene blir automatisk hentet</p>
+                </div>
+            
+              </div>
+              
+              <div className="card-premium overflow-hidden">
+                <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} />
+              </div>
+            </section>
+          </div>
+        )}
 
           {/* Page: Live Prices (Comparison Tool) */}
           {currentPage === 'live' && (
-            <div id="live-prices-page" className="space-y-16">
-              <div className="text-center mb-10">
-                <h2 className="text-2xl font-black tracking-tight uppercase">
-                    <EditableText contentKey="livePricesTitle" />
-                </h2>
-                <div className="mt-1">
-                    <EditableText contentKey="livePricesDescription" className="text-xs font-bold text-slate-400 uppercase tracking-widest" />
-                </div>
+            <div id="live-prices-page" className="space-y-16 animate-fade-in">
+              <div className="text-center max-w-2xl mx-auto space-y-4">
+                <h2 className="text-4xl font-display font-bold tracking-tight">Live Prissammenligning</h2>
+                <p className="text-slate-600 font-medium leading-relaxed">
+                  Vi henter priser direkte fra børsene og regner ut nøyaktig hvor mye krypto du sitter igjen med etter alle gebyrer.
+                </p>
               </div>
 
-              <div id="live-prices-content" className="space-y-16">
-                <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} />
-                
-                {/* CTA Box */}
-                <div id="cta-explanation" className="text-center bg-white p-6 rounded-2xl border border-slate-100 shadow-sm max-w-2xl mx-auto">
-                  <p className="text-slate-600 mb-4 font-medium text-sm">Vil du ha en dypere forklaring på de ulike måtene å kjøpe på?</p>
-                  <button 
-                    onClick={() => setCurrentPage('overview')}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-slate-800 transition-all active:scale-95"
-                  >
-                    Se vår fulle oversikt <ExternalLink size={14} />
-                  </button>
+              <div id="live-prices-content" className="space-y-12">
+                <div className="card-premium p-1">
+                  <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} />
                 </div>
-
-                <VippsComparisonSection results={results} amount={lastAmount} />
+                
+                <div className="flex flex-col md:flex-row gap-12 pt-8">
+                  <div className="flex-1">
+                    <VippsComparisonSection results={results} amount={lastAmount} />
+                  </div>
+                  <div className="md:w-80 space-y-6">
+                    <div className="card-premium p-6 bg-slate-900 text-white border-none">
+                      <h3 className="text-xl font-bold font-display mb-4">Hvorfor sammenligne?</h3>
+                      <p className="text-slate-300 text-sm leading-relaxed mb-6">
+                        Forskjellen mellom den billigste og dyreste plattformen kan være over 5% på små beløp. Det betyr 500 kr spart per 10 000 kr du investerer.
+                      </p>
+                      <button 
+                        onClick={() => navigateTo('overview')}
+                        className="w-full py-3 bg-white text-slate-900 rounded-xl font-bold text-sm hover:bg-slate-100 transition-colors"
+                      >
+                        Lær mer om gebyrer
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
 
           {/* Page: Platforms Overview */}
-          <div id="platforms-page">
-            {currentPage === 'platforms' && <ExchangeOverview />}
-          </div>
+          {currentPage === 'platforms' && <div className="animate-fade-in"><ExchangeOverview /></div>}
+
+          {/* Page: All Exchanges */}
+          {currentPage === 'all' && <div className="animate-fade-in max-w-5xl mx-auto px-4 py-12"><AllExchanges /></div>}
 
           {/* Page: Knowledge Overview */}
-          <div id="overview-page">
-            {currentPage === 'overview' && <Overview />}
-          </div>
+          {currentPage === 'overview' && <div className="animate-fade-in"><Overview /></div>}
 
           {/* Page: Norway Exchanges */}
-          <div id="norway-page">
-            {currentPage === 'norway' && <NorwayExchanges />}
-          </div>
+          {currentPage === 'norway' && <div className="animate-fade-in"><NorwayExchanges /></div>}
 
           {/* Page: Contact */}
-          <div id="contact-page">
-            {currentPage === 'contact' && <ContactPage />}
-          </div>
-        </div>
-      </main>
+          {currentPage === 'contact' && <div className="animate-fade-in"><ContactPage /></div>}
+        </main>
       
       {/* Edit Mode Button - Bottom Right */}
       <div className="fixed bottom-4 right-4 z-50">
