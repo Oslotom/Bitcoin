@@ -1,6 +1,6 @@
 {
   "name": "Kjøpebitcoin.no",
-  "description": "Sammenlign priser på bitcoin i Norge. Finn den beste plattformen for å kjøpe bitcoin basert på gebyrer, sikkerhet og brukervennlighet.",
+  "description": "Se live Bitcoin kurs og sammenlign Bitcoin pris i Norge. Finn beste sted å kjøpe Bitcoin trygt og billig med vår prisoversikt.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

@@ -10,6 +10,8 @@ import CountUp from 'react-countup';
 import NorwayExchanges from './components/NorwayExchanges';
 import ContactPage from './components/ContactPage';
 import AllExchanges from './components/AllExchanges';
+import BitcoinCalculator from './components/BitcoinCalculator';
+import FiriVsNbx from './components/FiriVsNbx';
 import { getCoinbasePrice, getBinancePrice, getFiriPrice, getKrakenPrice, getNbxPrice, getBareBitcoinPrice, getRevolutPrice, getCryptoComPrice, getBuyBitcoinPrice, FEES } from './services/api';
 import { ComparisonResult, CryptoCurrency, Exchange } from './types';
 import { ExternalLink, Edit2, Save, Menu, X, Zap, Globe, CreditCard } from 'lucide-react';
@@ -92,15 +94,36 @@ export default function App() {
   };
 
   useEffect(() => {
+    // Basic routing logic for SEO paths
+    const path = window.location.pathname;
+    if (path === '/sammenlign') setCurrentPage('live');
+    else if (path === '/alle-borser') setCurrentPage('all');
+    else if (path === '/norske-borser') setCurrentPage('norway');
+    else if (path === '/guide') setCurrentPage('overview');
+    else if (path === '/kontakt') setCurrentPage('contact');
+
     if (didInitCalculate.current) return;
     didInitCalculate.current = true;
     handleCalculate(10000);
   }, []);
 
-  const navigateTo = (page: typeof currentPage) => {
+  const navigateTo = (page: 'home' | 'live' | 'overview' | 'platforms' | 'norway' | 'contact' | 'all') => {
     setCurrentPage(page);
     setIsMobileMenuOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo(0, 0);
+    
+    // Update URL without reloading for SEO
+    const paths: Record<string, string> = {
+      home: '/',
+      live: '/sammenlign',
+      all: '/alle-borser',
+      norway: '/norske-borser',
+      overview: '/guide',
+      contact: '/kontakt'
+    };
+    if (paths[page]) {
+      window.history.pushState({}, '', paths[page]);
+    }
   };
 
   return (
@@ -228,13 +251,13 @@ export default function App() {
               <div className="max-w-5xl mx-auto px-4 text-center space-y-8">
             
                 
-                <h1 className="text-5xl md:text-5xl font-display font-bold tracking-tight text-slate-900 leading-[1.1]">
-                  Finn beste pris<br />
-                  <span className="text-brand">på bitcoin</span>
+                <h1 className="text-5xl md:text-6xl font-display font-bold tracking-tight text-slate-900 leading-[1.1]">
+                  Finn beste <span className="text-brand">Bitcoin kurs</span><br />
+                  og pris i Norge
                 </h1>
                 
                 <p className="max-w-2xl mx-auto text-lg md:text-lg text-slate-600 leading-relaxed font-medium">
-                  Vi sammenligner priser, gebyrer og spredning på tvers av alle  børser.
+                  Planlegger du å kjøpe bitcoin? Vi sammenligner priser, gebyrer og spredning på tvers av alle børser i Norge.
                 </p>
 
 
@@ -319,6 +342,34 @@ export default function App() {
                   </div>
                 </div>
               </div>
+
+              {/* Bitcoin Calculator Section */}
+              <div className="max-w-5xl mx-auto px-4 pb-12">
+                <BitcoinCalculator results={results} isLoading={isLoading} />
+              </div>
+
+              {/* Firi vs NBX Section */}
+              <div className="max-w-5xl mx-auto px-4 pb-20">
+                <FiriVsNbx results={results} />
+              </div>
+
+              {/* SEO Content Section */}
+              <div className="max-w-4xl mx-auto px-4 pb-24 border-t border-slate-50 pt-20">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold text-slate-900">Kjøpe Bitcoin i Norge</h3>
+                    <p className="text-sm text-slate-500 leading-relaxed">
+                      Det har aldri vært enklere å <strong>kjøpe bitcoin i Norge</strong>. Med BankID og norske børser som Firi og NBX kan du handle trygt på få minutter. Vår tjeneste overvåker markedet slik at du alltid finner den beste <strong>bitcoin prisen</strong> tilgjengelig akkurat nå.
+                    </p>
+                  </div>
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold text-slate-900">Live Bitcoin kurs</h3>
+                    <p className="text-sm text-slate-500 leading-relaxed">
+                      Følg med på <strong>Bitcoin kurs</strong> live og se hvordan prisen endrer seg på tvers av globale og norske markeder. Ved å sammenligne <strong>Bitcoin norge</strong> priser kan du spare betydelige beløp på handelsgebyrer og spread.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
@@ -357,7 +408,7 @@ export default function App() {
         )}
       </div>
 
-      <Footer setCurrentPage={setCurrentPage} currentPage={currentPage} />
+      <Footer setCurrentPage={navigateTo as any} currentPage={currentPage} />
     </div>
 );
 }
