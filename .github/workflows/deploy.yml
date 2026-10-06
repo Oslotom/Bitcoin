@@ -43,6 +43,9 @@ jobs:
         run: npm install
       - name: Build
         run: npm run build
+        env:
+          # Valgfritt: sett repo-variabelen VITE_CONTACT_ENDPOINT (f.eks. en Formspree-URL)
+          VITE_CONTACT_ENDPOINT: ${{ vars.VITE_CONTACT_ENDPOINT }}
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact

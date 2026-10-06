@@ -1,49 +1,77 @@
 import React, { useState } from 'react';
-import { Mail, MessageSquare, Send, CheckCircle2, ChevronDown } from 'lucide-react';
-import { motion } from 'motion/react';
+import { MessageSquare, Send, CheckCircle2, ChevronDown } from 'lucide-react';
+
+const CONTACT_EMAIL = 'tomhaugeplass@gmail.com';
+// Skjemaendepunkt (f.eks. Formspree) kan settes med VITE_CONTACT_ENDPOINT ved bygg.
+// Standard er /api/contact, som bare finnes når Express-serveren (server.ts) kjører.
+const CONTACT_ENDPOINT = import.meta.env.VITE_CONTACT_ENDPOINT || '/api/contact';
+
+// Statisk hosting (GitHub Pages) har ikke /api/contact – da åpnes en ferdig utfylt e-post i stedet
+const openMailDraft = (data: Record<string, string>) => {
+  const subject = `[KjøpeBitcoin.no] ${data.subject || 'Henvendelse'}`;
+  const body = `${data.message}\n\n--\n${data.name} <${data.email}>`;
+  window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+};
 
 export default function ContactPage() {
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'mail'>('idle');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus('loading');
-    
+
     const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
-    
+    const data = Object.fromEntries(formData.entries()) as Record<string, string>;
+
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch(CONTACT_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Accept: 'application/json',
         },
         body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        throw new Error('Kunne ikke sende melding');
+        throw new Error(`Kunne ikke sende melding (HTTP ${response.status})`);
       }
-      
+
       setStatus('success');
     } catch (error) {
       console.error('Error sending message:', error);
-      setStatus('error');
+      openMailDraft(data);
+      setStatus('mail');
     }
   };
 
+  if (status === 'mail') {
+    return (
+      <div className="card-premium p-8 md:p-12 text-center space-y-4 animate-fade-in">
+        <h3 className="text-2xl font-display font-bold text-slate-900">Fullfør i e-postprogrammet ditt</h3>
+        <p className="text-slate-600 font-medium">
+          Vi har åpnet en ferdig utfylt e-post med meldingen din. Trykk send der. Åpnet den seg ikke? Skriv direkte til{' '}
+          <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-brand hover:underline">{CONTACT_EMAIL}</a>.
+        </p>
+        <button onClick={() => setStatus('idle')} className="text-brand font-bold text-sm hover:underline">
+          Tilbake til skjemaet
+        </button>
+      </div>
+    );
+  }
+
   if (status === 'success') {
     return (
-      <div className="max-w-xl mx-auto py-32 text-center space-y-8 animate-fade-in">
+      <div className="max-w-xl mx-auto py-16 text-center space-y-8 animate-fade-in">
         <div className="flex justify-center">
           <div className="bg-emerald-50 p-6 rounded-full border border-emerald-100 shadow-sm">
             <CheckCircle2 className="text-emerald-500 w-16 h-16" />
           </div>
         </div>
         <div className="space-y-4">
-          <h2 className="text-4xl font-display font-bold text-slate-900">Takk for din melding!</h2>
+          <h3 className="text-3xl font-display font-bold text-slate-900">Takk for din melding!</h3>
           <p className="text-slate-600 text-lg font-medium">
-            Vi har mottatt din henvendelse og vil svare deg på <strong>tomhaugeplass@gmail.com</strong> så snart som mulig.
+            Vi har mottatt din henvendelse og svarer til e-postadressen du oppga så snart som mulig.
           </p>
         </div>
         <button 

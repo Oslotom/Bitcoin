@@ -3,7 +3,7 @@ import Footer from './components/Footer';
 import ResultsTable from './components/ResultsTable';
 import Overview from './components/Overview';
 import FAQSection from './components/FAQSection';
-import FeeOverview from './components/FeeOverview';
+import FeeOverview, { feeRows } from './components/FeeOverview';
 import BitcoinKursPage from './components/pages/BitcoinKursPage';
 import FiriVsNbxPage from './components/pages/FiriVsNbxPage';
 import VippsPage from './components/pages/VippsPage';
@@ -282,7 +282,7 @@ export default function App({ initialPage }: { initialPage?: Page }) {
                   <div className="bg-blue-50 p-1.5 rounded-lg text-brand">
                     <Globe size={16} />
                   </div>
-                  <span className="text-sm font-bold text-slate-700">30 børser</span>
+                  <span className="text-sm font-bold text-slate-700">{feeRows().length} børser</span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <div className="bg-blue-50 p-1.5 rounded-lg text-brand">
