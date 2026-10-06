@@ -1,21 +1,24 @@
 // Kjøres etter `vite build` og `vite build --ssr`. Lager:
-//  - statisk forhåndsrendret HTML for hver side (dist/index.html, dist/sammenlign.html, ...)
+//  - statisk forhåndsrendret HTML for hver side (dist/index.html, dist/guide.html, ...)
 //    med egen title, description, canonical og strukturert data. GitHub Pages serverer
-//    /sammenlign fra sammenlign.html med HTTP 200, og crawlere uten JavaScript ser innholdet.
-//  - dist/sitemap.xml med dagens dato
+//    /guide fra guide.html med HTTP 200, og crawlere uten JavaScript ser innholdet.
+//  - dist/sitemap.xml med ekte endringsdato per side (fra git)
+//  - omdirigeringssider for nedlagte URL-er (REDIRECTS i src/routes.ts)
 //  - dist/llms.txt: kort, faktabasert oppsummering for AI-assistenter (ChatGPT, Claude, Perplexity ...)
 //  - dist/llms-full.txt: hele tekstinnholdet på alle sider som Markdown, for AI-er som vil lese alt
 //  - dist/404.html: ekte 404-side (noindex) i stedet for å sende ukjente URL-er til forsiden
 import { readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
+import { getPageDates } from './page-dates.mjs';
 
 const SITE = 'https://www.xn--kjpebitcoin-hgb.no';
 const SITE_NAME = 'KjøpeBitcoin.no';
 const SSR_DIR = 'dist-ssr';
 const today = new Date().toISOString().slice(0, 10);
+const pageDates = getPageDates();
 
-const { render, PAGE_PATHS, PAGE_TITLES, PAGE_DESCRIPTIONS, ARTICLE_PAGES, ARTICLE_PUBLISHED, FAQS, feeRows } = await import(
+const { render, PAGE_PATHS, PAGE_TITLES, PAGE_DESCRIPTIONS, ARTICLE_PAGES, ARTICLE_PUBLISHED, REDIRECTS, FAQS, feeRows, norwayExchanges } = await import(
   pathToFileURL(resolve(SSR_DIR, 'entry-server.js')).href
 );
 
@@ -78,7 +81,7 @@ for (const page of pages) {
       name: title,
       description,
       inLanguage: 'nb-NO',
-      dateModified: today,
+      dateModified: pageDates[page] ?? today,
       isPartOf: { '@id': `${SITE}/#website` },
       ...(page !== 'home' && {
         breadcrumb: {
@@ -99,11 +102,31 @@ for (const page of pages) {
       description,
       inLanguage: 'nb-NO',
       ...(ARTICLE_PUBLISHED[page] && { datePublished: ARTICLE_PUBLISHED[page] }),
-      dateModified: today,
+      dateModified: pageDates[page] ?? today,
       mainEntityOfPage: { '@id': `${url}#webpage` },
       image: `${SITE}/og-image.png`,
       author: { '@id': `${SITE}/#organization` },
       publisher: { '@id': `${SITE}/#organization` },
+    });
+  }
+  if (page === 'norway') {
+    structuredData.push({
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: 'Norske kryptobørser og meglere for kjøp av Bitcoin',
+      itemListElement: norwayExchanges
+        .filter((exchange) => exchange.type !== 'Ressurs')
+        .map((exchange, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          item: {
+            '@type': 'Organization',
+            name: exchange.name,
+            url: exchange.url,
+            description: exchange.description,
+            areaServed: 'NO',
+          },
+        })),
     });
   }
   if (page === 'home') {
@@ -129,7 +152,7 @@ for (const page of pages) {
       html,
       /<meta property="og:type" content="website" \/>/,
       `<meta property="og:type" content="article" />
-    <meta property="article:modified_time" content="${today}" />`,
+    <meta property="article:modified_time" content="${pageDates[page] ?? today}" />`,
     );
   }
   if (page !== 'home') {
@@ -148,16 +171,14 @@ for (const page of pages) {
   console.log(`Skrev ${file}`);
 }
 
-// Sitemap
-const priority = { home: '1.0', live: '0.9', price: '0.9', norway: '0.8', all: '0.8', firiNbx: '0.8', vipps: '0.8', overview: '0.7', tax: '0.7', about: '0.4', contact: '0.3' };
+// Sitemap (Google bruker bare loc og lastmod; priority/changefreq ignoreres)
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${pages
   .map(
     (page) => `  <url>
     <loc>${page === 'home' ? `${SITE}/` : `${SITE}${PAGE_PATHS[page]}`}</loc>
-    <lastmod>${today}</lastmod>
-    <priority>${priority[page] ?? '0.5'}</priority>
+    <lastmod>${pageDates[page] ?? today}</lastmod>
   </url>`,
   )
   .join('\n')}
@@ -216,7 +237,7 @@ console.log('Skrev dist/llms-full.txt');
 // 404.html – GitHub Pages serverer denne med HTTP 404. /guide/ og /guide.html sendes
 // videre til /guide; alt annet får en ekte 404 med noindex (unngår «soft 404» og duplikater).
 const knownPaths = pages.filter((page) => page !== 'home').map((page) => PAGE_PATHS[page]);
-const notFoundLinks = ['home', 'live', 'price', 'norway', 'overview', 'tax']
+const notFoundLinks = ['home', 'price', 'norway', 'overview', 'tax', 'about']
   .map((page) => `<li><a href="${PAGE_PATHS[page]}">${PAGE_TITLES[page].split(' | ')[0]}</a></li>`)
   .join('\n        ');
 const notFound = `<!doctype html>
@@ -251,5 +272,28 @@ const notFound = `<!doctype html>
 `;
 writeFileSync('dist/404.html', notFound);
 console.log('Skrev dist/404.html');
+
+// Omdirigeringssider for nedlagte URL-er. GitHub Pages kan ikke sende 301, men en
+// umiddelbar meta refresh + canonical til ny side behandles av Google som permanent flytting.
+for (const [oldPath, page] of Object.entries(REDIRECTS)) {
+  const target = page === 'home' ? `${SITE}/` : `${SITE}${PAGE_PATHS[page]}`;
+  const redirect = `<!doctype html>
+<html lang="nb">
+  <head>
+    <meta charset="utf-8" />
+    <title>${escapeAttr(PAGE_TITLES[page])}</title>
+    <meta name="robots" content="noindex, follow" />
+    <link rel="canonical" href="${target}" />
+    <meta http-equiv="refresh" content="0; url=${target}" />
+    <script>location.replace(${JSON.stringify(target)} + location.hash);</script>
+  </head>
+  <body>
+    <p>Siden har flyttet til <a href="${target}">${escapeAttr(PAGE_TITLES[page].split(' | ')[0])}</a>.</p>
+  </body>
+</html>
+`;
+  writeFileSync(`dist${oldPath}.html`, redirect);
+  console.log(`Skrev dist${oldPath}.html -> ${target}`);
+}
 
 rmSync(SSR_DIR, { recursive: true, force: true });

@@ -5,9 +5,10 @@ import App from './App';
 import { ContentProvider } from './contexts/ContentContext';
 import { pageFromPath } from './routes';
 
-export { PAGE_PATHS, PAGE_TITLES, PAGE_DESCRIPTIONS, ARTICLE_PAGES, ARTICLE_PUBLISHED } from './routes';
+export { PAGE_PATHS, PAGE_TITLES, PAGE_DESCRIPTIONS, ARTICLE_PAGES, ARTICLE_PUBLISHED, REDIRECTS } from './routes';
 export { FAQS } from './data/faqs';
 export { feeRows } from './components/FeeOverview';
+export { norwayExchanges } from './components/NorwayExchanges';
 
 export function render(path: string): string {
   return renderToString(

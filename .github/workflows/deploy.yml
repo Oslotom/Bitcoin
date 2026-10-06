@@ -31,6 +31,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Full historikk: sitemap/lastmod bruker git-datoen for siste endring per side
+          fetch-depth: 0
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -50,3 +53,16 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Notify search engines (IndexNow)
+        # Varsler Bing (driver også ChatGPT-søk og Copilot), Yandex m.fl. om nye/endrede sider
+        continue-on-error: true
+        env:
+          INDEXNOW_KEY: b593ace36b5cf7dcad0de56db2a3e5fe
+          HOST: www.xn--kjpebitcoin-hgb.no
+        run: |
+          grep -o '<loc>[^<]*' dist/sitemap.xml | sed 's/<loc>//' \
+            | jq -R . | jq -s --arg host "$HOST" --arg key "$INDEXNOW_KEY" \
+              '{host: $host, key: $key, keyLocation: "https://\($host)/\($key).txt", urlList: .}' > indexnow.json
+          curl -sS -X POST https://api.indexnow.org/indexnow \
+            -H 'Content-Type: application/json; charset=utf-8' \
+            --data @indexnow.json -w '\nIndexNow HTTP %{http_code}\n'

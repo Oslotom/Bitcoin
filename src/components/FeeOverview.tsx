@@ -1,7 +1,7 @@
 import { FEES } from '../services/api';
 import { Exchange } from '../types';
 
-declare const __BUILD_DATE__: string;
+declare const __PAGE_DATES__: Record<string, string>;
 
 const NORWEGIAN_EXCHANGES = new Set<Exchange>([Exchange.Firi, Exchange.NBX, Exchange.BareBitcoin]);
 
@@ -37,7 +37,7 @@ export default function FeeOverview() {
           Kolonnen til høyre viser hva du betaler i gebyr på et kjøp av {example.toLocaleString('nb-NO')} kr.
         </p>
         <p className="text-xs text-slate-400 font-medium">
-          Sist oppdatert: <time dateTime={__BUILD_DATE__}>{formatDate(__BUILD_DATE__)}</time>
+          Sist oppdatert: <time dateTime={__PAGE_DATES__.home}>{formatDate(__PAGE_DATES__.home)}</time>
         </p>
       </div>
 

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { PAGE_PATHS, PAGE_TITLES, type Page } from '../../routes';
 
-declare const __BUILD_DATE__: string;
+declare const __PAGE_DATES__: Record<string, string>;
 
 export type NavigateFn = (page: Page, event?: { preventDefault: () => void }) => void;
 
@@ -14,6 +14,7 @@ export function InternalLink({ to, navigateTo, children }: { to: Page; navigateT
 }
 
 interface ArticleLayoutProps {
+  page: Page;
   title: ReactNode;
   intro: ReactNode;
   related: Page[];
@@ -22,7 +23,8 @@ interface ArticleLayoutProps {
 }
 
 // Felles mal for redaksjonelle sider: én H1, ingress, dato og relaterte sider (internlenking)
-export default function ArticleLayout({ title, intro, related, navigateTo, children }: ArticleLayoutProps) {
+export default function ArticleLayout({ page, title, intro, related, navigateTo, children }: ArticleLayoutProps) {
+  const modified = __PAGE_DATES__[page];
   return (
     <article className="max-w-3xl mx-auto px-4 pt-20 pb-16 animate-fade-in">
       <header className="space-y-4 mb-10">
@@ -30,8 +32,8 @@ export default function ArticleLayout({ title, intro, related, navigateTo, child
         <p className="text-lg text-slate-600 leading-relaxed font-medium">{intro}</p>
         <p className="text-xs text-slate-400 font-medium">
           Av KjøpeBitcoin.no · Sist oppdatert{' '}
-          <time dateTime={__BUILD_DATE__}>
-            {new Date(__BUILD_DATE__).toLocaleDateString('nb-NO', { day: 'numeric', month: 'long', year: 'numeric' })}
+          <time dateTime={modified}>
+            {new Date(modified).toLocaleDateString('nb-NO', { day: 'numeric', month: 'long', year: 'numeric' })}
           </time>
         </p>
       </header>

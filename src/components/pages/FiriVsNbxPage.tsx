@@ -19,9 +19,10 @@ export default function FiriVsNbxPage({ results, navigateTo }: Props) {
 
   return (
     <ArticleLayout
+      page="firiNbx"
       title={<>Firi vs NBX: <span className="text-brand">hvem er billigst?</span></>}
       intro="Firi og NBX er to av de største norske kryptobørsene. Begge lar deg kjøpe Bitcoin med norske kroner og BankID – men gebyrene og funksjonene er forskjellige."
-      related={['norway', 'vipps', 'price', 'live']}
+      related={['norway', 'vipps', 'price', 'tax']}
       navigateTo={navigateTo}
     >
       <section>

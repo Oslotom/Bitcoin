@@ -12,6 +12,7 @@ const vippsPct = `${(FIRI_VIPPS_EXTRA_FEE * 100).toFixed(1).replace('.', ',')} %
 export default function VippsPage({ results, navigateTo }: Props) {
   return (
     <ArticleLayout
+      page="vipps"
       title={<>Kjøpe Bitcoin med <span className="text-brand">Vipps</span></>}
       intro={`Ja, du kan kjøpe Bitcoin med Vipps i Norge. Det er den raskeste måten å komme i gang på – men det koster mer enn bankoverføring. Hos Firi betaler du rundt ${vippsPct} ekstra for innskudd med Vipps.`}
       related={['firiNbx', 'norway', 'overview', 'tax']}
@@ -46,7 +47,7 @@ export default function VippsPage({ results, navigateTo }: Props) {
         </p>
         <p>
           Sammenlign de totale kostnadene hos alle børsene i{' '}
-          <InternalLink to="live" navigateTo={navigateTo}>priskalkulatoren</InternalLink>, eller se{' '}
+          <InternalLink to="home" navigateTo={navigateTo}>priskalkulatoren på forsiden</InternalLink>, eller se{' '}
           <InternalLink to="firiNbx" navigateTo={navigateTo}>Firi og NBX side om side</InternalLink>.
         </p>
       </section>

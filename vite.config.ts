@@ -2,6 +2,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig, loadEnv} from 'vite';
+import {getPageDates} from './scripts/page-dates.mjs';
 
 export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
@@ -10,8 +11,8 @@ export default defineConfig(({mode}) => {
     base: '/',
     define: {
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-      // Vises som «Sist oppdatert» og brukes som dateModified i strukturert data
-      __BUILD_DATE__: JSON.stringify(new Date().toISOString().slice(0, 10)),
+      // Sist endret per side (fra git). Vises som «Sist oppdatert», samme dato som i sitemap og JSON-LD
+      __PAGE_DATES__: JSON.stringify(getPageDates()),
     },
     resolve: {
       alias: {

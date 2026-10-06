@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Footer from './components/Footer';
-import ExchangeOverview from './components/ExchangeOverview';
 import ResultsTable from './components/ResultsTable';
-import VippsComparisonSection from './components/VippsComparisonSection';
 import Overview from './components/Overview';
 import FAQSection from './components/FAQSection';
 import FeeOverview from './components/FeeOverview';
@@ -14,10 +12,7 @@ import AboutPage from './components/pages/AboutPage';
 import { ExchangeIcon } from './components/icons';
 import CountUp from 'react-countup';
 import NorwayExchanges from './components/NorwayExchanges';
-import ContactPage from './components/ContactPage';
-import AllExchanges from './components/AllExchanges';
 import BitcoinCalculator from './components/BitcoinCalculator';
-import FiriVsNbx from './components/FiriVsNbx';
 import { getCoinbasePrice, getBinancePrice, getFiriPrice, getKrakenPrice, getNbxPrice, getBareBitcoinPrice, getRevolutPrice, getCryptoComPrice, getBuyBitcoinPrice, FEES } from './services/api';
 import { ComparisonResult, CryptoCurrency, Exchange } from './types';
 import { ExternalLink, Edit2, Save, Menu, X, Zap, Globe, CreditCard } from 'lucide-react';
@@ -32,7 +27,6 @@ export default function App({ initialPage }: { initialPage?: Page }) {
   const [results, setResults] = useState<ComparisonResult[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [lastAmount, setLastAmount] = useState<number | null>(10000);
   const [currentPage, setCurrentPage] = useState<Page>(() => initialPage ?? pageFromPath(window.location.pathname));
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const didInitCalculate = useRef(false);
@@ -41,7 +35,6 @@ export default function App({ initialPage }: { initialPage?: Page }) {
     setIsLoading(true);
     setError(null);
     setResults([]);
-    setLastAmount(amount);
 
     try {
       const [coinbasePrice, binancePrice, firiPrice, krakenPrice, nbxPrice, bareBitcoinPrice, revolutPrice, cryptoComPrice, buyBitcoinPrice] = await Promise.allSettled([
@@ -158,12 +151,12 @@ export default function App({ initialPage }: { initialPage?: Page }) {
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-6">
             {[
-              { id: 'live', label: 'Sammenlign Priser' },
               { id: 'price', label: 'Bitcoin kurs' },
-              { id: 'all', label: 'Alle' },
               { id: 'norway', label: 'Børser i Norge' },
-              { id: 'overview', label: 'Lær Mer' },
-              { id: 'contact', label: 'Kontakt' }
+              { id: 'firiNbx', label: 'Firi vs NBX' },
+              { id: 'overview', label: 'Guide' },
+              { id: 'tax', label: 'Skatt' },
+              { id: 'about', label: 'Om oss' }
             ].map((item) => (
               <a
                 key={item.id}
@@ -221,15 +214,13 @@ export default function App({ initialPage }: { initialPage?: Page }) {
               <div className="flex-1 overflow-y-auto p-6 space-y-2">
                 {[
                   { id: 'home', label: 'Forside', icon: '🏠' },
-                  { id: 'live', label: 'Live Priser', icon: '📊' },
                   { id: 'price', label: 'Bitcoin kurs i dag', icon: '📈' },
-                  { id: 'all', label: 'Alle Børser', icon: '🌎' },
                   { id: 'norway', label: 'Bitcoin i Norge', icon: '🇳🇴' },
                   { id: 'firiNbx', label: 'Firi vs NBX', icon: '⚖️' },
                   { id: 'vipps', label: 'Kjøp med Vipps', icon: '📱' },
                   { id: 'overview', label: 'Guide & Kunnskap', icon: '📚' },
                   { id: 'tax', label: 'Skatt på Bitcoin', icon: '🧾' },
-                  { id: 'contact', label: 'Kontakt oss', icon: '✉️' }
+                  { id: 'about', label: 'Om oss og kontakt', icon: '✉️' }
                 ].map((item) => (
                   <a
                     key={item.id}
@@ -320,10 +311,14 @@ export default function App({ initialPage }: { initialPage?: Page }) {
 
               <p className="text-center text-sm text-slate-500">
                 Vil du regne på et eget beløp?{' '}
-                <a href="/sammenlign" onClick={(e) => navigateTo('live', e)} className="font-semibold text-brand hover:underline">
-                  Sammenlign Bitcoin priser med kalkulatoren
+                <a href="#kalkulator" className="font-semibold text-brand hover:underline">
+                  Bruk Bitcoin-kalkulatoren
                 </a>
               </p>
+            </section>
+
+            <section id="kalkulator" className="max-w-5xl mx-auto px-4 pb-14 scroll-mt-20">
+              <BitcoinCalculator results={results} isLoading={isLoading} />
             </section>
 
             <FeeOverview />
@@ -350,8 +345,7 @@ export default function App({ initialPage }: { initialPage?: Page }) {
                     Mange børser reklamerer med lave gebyrer, men tar betalt gjennom spread eller innskuddsgebyr ved Vipps og kort. Les{' '}
                     <a href="/guide" onClick={(e) => navigateTo('overview', e)} className="text-brand hover:underline">guiden til å kjøpe Bitcoin trygt</a>{' '}
                     eller se{' '}
-                    <a href="/alle-borser" onClick={(e) => navigateTo('all', e)} className="text-brand hover:underline">alle børser</a>{' '}
-                    vi sammenligner.
+                    <a href={PAGE_PATHS.vipps} onClick={(e) => navigateTo('vipps', e)} className="text-brand hover:underline">hva det koster å kjøpe Bitcoin med Vipps</a>.
                   </p>
                 </div>
               </div>
@@ -378,87 +372,11 @@ export default function App({ initialPage }: { initialPage?: Page }) {
           </div>
         )}
 
-          {/* Page: Live Prices (Comparison Tool) */}
-          {currentPage === 'live' && (
-            <div id="live-prices-page" className="space-y-16 animate-fade-in">
-              <div className="text-center max-w-2xl mx-auto space-y-4">
-                <h1 className="text-4xl font-display font-bold tracking-tight">Sammenlign Bitcoin priser live</h1>
-                <p className="text-slate-600 font-medium leading-relaxed">
-                  Vi henter priser direkte fra børsene og regner ut nøyaktig hvor mye krypto du sitter igjen med etter alle gebyrer.
-                </p>
-              </div>
-
-              <div id="live-prices-content" className="space-y-12">
-                <div className="card-premium p-1">
-                  <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} />
-                </div>
-                
-                <div className="flex flex-col md:flex-row gap-12 pt-8">
-                  <div className="flex-1">
-                    <VippsComparisonSection results={results} amount={lastAmount} />
-                  </div>
-                  <div className="md:w-80 space-y-6">
-                    <div className="card-premium p-6 bg-slate-900 text-white border-none">
-                      <h3 className="text-xl font-bold font-display mb-4">Hvorfor sammenligne?</h3>
-                      <p className="text-slate-300 text-sm leading-relaxed mb-6">
-                        Forskjellen mellom den billigste og dyreste plattformen kan være over 5% på små beløp. Det betyr 500 kr spart per 10 000 kr du investerer.
-                      </p>
-                      <a
-                        href={PAGE_PATHS.overview}
-                        onClick={(e) => navigateTo('overview', e)}
-                        className="block text-center w-full py-3 bg-white text-slate-900 rounded-xl font-bold text-sm hover:bg-slate-100 transition-colors"
-                      >
-                        Lær mer om gebyrer
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bitcoin Calculator Section */}
-              <div className="max-w-5xl mx-auto px-4 pb-12">
-                <BitcoinCalculator results={results} isLoading={isLoading} />
-              </div>
-
-              {/* Firi vs NBX Section */}
-              <div className="max-w-5xl mx-auto px-4 pb-20">
-                <FiriVsNbx results={results} />
-              </div>
-
-              {/* SEO Content Section */}
-              <div className="max-w-4xl mx-auto px-4 pb-24 border-t border-slate-50 pt-20">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-slate-900">Kjøpe Bitcoin i Norge</h3>
-                    <p className="text-sm text-slate-500 leading-relaxed">
-                      Det har aldri vært enklere å <strong>kjøpe bitcoin i Norge</strong>. Med BankID og norske børser som Firi og NBX kan du handle trygt på få minutter. Vår tjeneste overvåker markedet slik at du alltid finner den beste <strong>bitcoin prisen</strong> tilgjengelig akkurat nå.
-                    </p>
-                  </div>
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-slate-900">Live Bitcoin kurs</h3>
-                    <p className="text-sm text-slate-500 leading-relaxed">
-                      Følg med på <strong>Bitcoin kurs</strong> live og se hvordan prisen endrer seg på tvers av globale og norske markeder. Ved å sammenligne <strong>Bitcoin norge</strong> priser kan du spare betydelige beløp på handelsgebyrer og spread.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Page: Platforms Overview */}
-          {currentPage === 'platforms' && <div className="animate-fade-in"><ExchangeOverview /></div>}
-
-          {/* Page: All Exchanges */}
-          {currentPage === 'all' && <div className="animate-fade-in max-w-5xl mx-auto px-4 py-12"><AllExchanges /></div>}
-
           {/* Page: Knowledge Overview */}
           {currentPage === 'overview' && <div className="animate-fade-in"><Overview /></div>}
 
           {/* Page: Norway Exchanges */}
           {currentPage === 'norway' && <div className="animate-fade-in"><NorwayExchanges /></div>}
-
-          {/* Page: Contact */}
-          {currentPage === 'contact' && <div className="animate-fade-in"><ContactPage /></div>}
 
           {/* Redaksjonelle landingssider */}
           {currentPage === 'price' && <BitcoinKursPage results={results} isLoading={isLoading} error={error} navigateTo={navigateTo} />}

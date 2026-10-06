@@ -12,9 +12,10 @@ interface Props {
 export default function BitcoinKursPage({ results, isLoading, error, navigateTo }: Props) {
   return (
     <ArticleLayout
+      page="price"
       title={<>Bitcoin kurs i dag <span className="text-brand">(NOK)</span></>}
       intro="Her ser du Bitcoin-prisen i norske kroner akkurat nå, hentet direkte fra norske og internasjonale kryptobørser. Prisen varierer litt fra børs til børs – tabellen viser hvor du får mest Bitcoin for pengene."
-      related={['live', 'firiNbx', 'vipps', 'tax']}
+      related={['norway', 'firiNbx', 'vipps', 'tax']}
       navigateTo={navigateTo}
     >
       <section>
@@ -41,7 +42,7 @@ export default function BitcoinKursPage({ results, isLoading, error, navigateTo 
         </ul>
         <p>
           Spotprisen alene sier derfor lite om hva du faktisk betaler. Bruk{' '}
-          <InternalLink to="live" navigateTo={navigateTo}>priskalkulatoren</InternalLink> for å se hvor mye Bitcoin du sitter
+          <InternalLink to="home" navigateTo={navigateTo}>priskalkulatoren på forsiden</InternalLink> for å se hvor mye Bitcoin du sitter
           igjen med etter alle gebyrer.
         </p>
       </section>

@@ -25,16 +25,13 @@ export default function Footer({ setCurrentPage, currentPage }: FooterProps) {
           <nav id="footer-nav" className="flex flex-wrap justify-center gap-x-8 gap-y-4">
             {[
               { id: 'home', label: 'Hjem' },
-              { id: 'live', label: 'Sammenlign' },
               { id: 'price', label: 'Bitcoin kurs' },
-              { id: 'all', label: 'Alle Børser' },
               { id: 'norway', label: 'Norske børser' },
               { id: 'firiNbx', label: 'Firi vs NBX' },
               { id: 'vipps', label: 'Kjøp med Vipps' },
               { id: 'overview', label: 'Guide' },
               { id: 'tax', label: 'Skatt' },
-              { id: 'about', label: 'Om oss' },
-              { id: 'contact', label: 'Kontakt' }
+              { id: 'about', label: 'Om oss og kontakt' }
             ].map((item) => (
               <a
                 key={item.id}

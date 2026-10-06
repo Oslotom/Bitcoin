@@ -5,6 +5,7 @@ const SKATTEETATEN_URL = 'https://www.skatteetaten.no/person/skatt/hjelp-til-rik
 export default function TaxPage({ navigateTo }: { navigateTo: NavigateFn }) {
   return (
     <ArticleLayout
+      page="tax"
       title={<>Skatt på <span className="text-brand">Bitcoin</span> i Norge</>}
       intro="Bitcoin og annen kryptovaluta regnes som formuesobjekt i Norge. Gevinst er skattepliktig, tap gir fradrag, og verdien ved årsskiftet skal føres opp som formue i skattemeldingen."
       related={['overview', 'norway', 'firiNbx', 'price']}

@@ -1,4 +1,5 @@
 import { feeRows } from '../FeeOverview';
+import ContactPage from '../ContactPage';
 import ArticleLayout, { InternalLink, type NavigateFn } from './ArticleLayout';
 
 export default function AboutPage({ navigateTo }: { navigateTo: NavigateFn }) {
@@ -6,9 +7,10 @@ export default function AboutPage({ navigateTo }: { navigateTo: NavigateFn }) {
 
   return (
     <ArticleLayout
+      page="about"
       title={<>Om <span className="text-brand">KjøpeBitcoin.no</span></>}
       intro="KjøpeBitcoin.no er en norsk sammenligningstjeneste som hjelper deg å finne den billigste og tryggeste måten å kjøpe Bitcoin på i Norge."
-      related={['live', 'norway', 'overview', 'contact']}
+      related={['norway', 'overview', 'price', 'tax']}
       navigateTo={navigateTo}
     >
       <section>
@@ -43,11 +45,13 @@ export default function AboutPage({ navigateTo }: { navigateTo: NavigateFn }) {
         </p>
       </section>
 
-      <section>
-        <h2>Kontakt</h2>
+      <section id="kontakt" className="scroll-mt-20">
+        <h2>Kontakt oss</h2>
         <p>
-          Har du funnet en feil, eller vil du foreslå en børs vi bør ta med? <InternalLink to="contact" navigateTo={navigateTo}>Send oss en melding</InternalLink>.
+          Har du funnet en feil, spørsmål om annonsering, eller vil du foreslå en børs vi bør ta med? Send oss en melding
+          med skjemaet under, så svarer vi innen 24 timer.
         </p>
+        <ContactPage />
       </section>
     </ArticleLayout>
   );

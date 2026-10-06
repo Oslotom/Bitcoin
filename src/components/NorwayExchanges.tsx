@@ -13,7 +13,8 @@ interface NorwayExchange {
   type: 'Børs' | 'Megler' | 'Ressurs';
 }
 
-const norwayExchanges: NorwayExchange[] = [
+// Eksporteres også til ItemList-schema (JSON-LD) ved forhåndsrendring
+export const norwayExchanges: NorwayExchange[] = [
   {
     id: Exchange.Firi,
     name: 'Firi',
