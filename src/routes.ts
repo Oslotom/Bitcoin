@@ -57,6 +57,15 @@ export const PAGE_DESCRIPTIONS: Partial<Record<Page, string>> = {
 // Sider som er redaksjonelle artikler (får Article-schema ved forhåndsrendring)
 export const ARTICLE_PAGES: Page[] = ['overview', 'price', 'firiNbx', 'vipps', 'tax'];
 
+// Første publiseringsdato (datePublished i Article-schema). dateModified settes til byggedato.
+export const ARTICLE_PUBLISHED: Partial<Record<Page, string>> = {
+  overview: '2026-04-16',
+  price: '2026-10-06',
+  firiNbx: '2026-10-06',
+  vipps: '2026-10-06',
+  tax: '2026-10-06',
+};
+
 export const pageFromPath = (path: string): Page => {
   // /guide, /guide/ og /guide.html (den forhåndsrendrede filen) er samme side
   const normalized = path.replace(/\.html$/, '').replace(/\/+$/, '') || '/';

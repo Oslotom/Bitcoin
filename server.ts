@@ -135,11 +135,11 @@ async function startServer() {
       }
     }));
 
-    // Redirect www to apex (non-www)
+    // Redirect apex to www (samme kanoniske vertsnavn som GitHub Pages bruker)
     app.use((req, res, next) => {
       const host = req.get("host");
-      if (host && host.startsWith("www.xn--")) {
-        return res.redirect(301, `https://xn--kjpebitcoin-hgb.no${req.originalUrl}`);
+      if (host && host.startsWith("xn--")) {
+        return res.redirect(301, `https://www.xn--kjpebitcoin-hgb.no${req.originalUrl}`);
       }
       next();
     });
