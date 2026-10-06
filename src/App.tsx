@@ -6,6 +6,11 @@ import VippsComparisonSection from './components/VippsComparisonSection';
 import Overview from './components/Overview';
 import FAQSection from './components/FAQSection';
 import FeeOverview from './components/FeeOverview';
+import BitcoinKursPage from './components/pages/BitcoinKursPage';
+import FiriVsNbxPage from './components/pages/FiriVsNbxPage';
+import VippsPage from './components/pages/VippsPage';
+import TaxPage from './components/pages/TaxPage';
+import AboutPage from './components/pages/AboutPage';
 import { ExchangeIcon } from './components/icons';
 import CountUp from 'react-countup';
 import NorwayExchanges from './components/NorwayExchanges';
@@ -151,9 +156,10 @@ export default function App({ initialPage }: { initialPage?: Page }) {
           </a>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-6">
             {[
               { id: 'live', label: 'Sammenlign Priser' },
+              { id: 'price', label: 'Bitcoin kurs' },
               { id: 'all', label: 'Alle' },
               { id: 'norway', label: 'Børser i Norge' },
               { id: 'overview', label: 'Lær Mer' },
@@ -216,9 +222,13 @@ export default function App({ initialPage }: { initialPage?: Page }) {
                 {[
                   { id: 'home', label: 'Forside', icon: '🏠' },
                   { id: 'live', label: 'Live Priser', icon: '📊' },
+                  { id: 'price', label: 'Bitcoin kurs i dag', icon: '📈' },
                   { id: 'all', label: 'Alle Børser', icon: '🌎' },
                   { id: 'norway', label: 'Bitcoin i Norge', icon: '🇳🇴' },
+                  { id: 'firiNbx', label: 'Firi vs NBX', icon: '⚖️' },
+                  { id: 'vipps', label: 'Kjøp med Vipps', icon: '📱' },
                   { id: 'overview', label: 'Guide & Kunnskap', icon: '📚' },
+                  { id: 'tax', label: 'Skatt på Bitcoin', icon: '🧾' },
                   { id: 'contact', label: 'Kontakt oss', icon: '✉️' }
                 ].map((item) => (
                   <a
@@ -346,6 +356,23 @@ export default function App({ initialPage }: { initialPage?: Page }) {
                 </div>
               </div>
 
+              <nav aria-label="Populære guider" className="mt-12">
+                <h2 className="text-xl font-bold text-slate-900 mb-4">Populære guider</h2>
+                <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                  {(['price', 'firiNbx', 'vipps', 'tax'] as Page[]).map((page) => (
+                    <li key={page}>
+                      <a
+                        href={PAGE_PATHS[page]}
+                        onClick={(e) => navigateTo(page, e)}
+                        className="block h-full card-premium px-4 py-3 text-sm font-semibold text-slate-900 hover:text-brand"
+                      >
+                        {PAGE_TITLES[page]?.split(' | ')[0]}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+
               <FAQSection />
             </section>
           </div>
@@ -376,12 +403,13 @@ export default function App({ initialPage }: { initialPage?: Page }) {
                       <p className="text-slate-300 text-sm leading-relaxed mb-6">
                         Forskjellen mellom den billigste og dyreste plattformen kan være over 5% på små beløp. Det betyr 500 kr spart per 10 000 kr du investerer.
                       </p>
-                      <button 
-                        onClick={() => navigateTo('overview')}
-                        className="w-full py-3 bg-white text-slate-900 rounded-xl font-bold text-sm hover:bg-slate-100 transition-colors"
+                      <a
+                        href={PAGE_PATHS.overview}
+                        onClick={(e) => navigateTo('overview', e)}
+                        className="block text-center w-full py-3 bg-white text-slate-900 rounded-xl font-bold text-sm hover:bg-slate-100 transition-colors"
                       >
                         Lær mer om gebyrer
-                      </button>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -431,6 +459,13 @@ export default function App({ initialPage }: { initialPage?: Page }) {
 
           {/* Page: Contact */}
           {currentPage === 'contact' && <div className="animate-fade-in"><ContactPage /></div>}
+
+          {/* Redaksjonelle landingssider */}
+          {currentPage === 'price' && <BitcoinKursPage results={results} isLoading={isLoading} error={error} navigateTo={navigateTo} />}
+          {currentPage === 'firiNbx' && <FiriVsNbxPage results={results} navigateTo={navigateTo} />}
+          {currentPage === 'vipps' && <VippsPage results={results} navigateTo={navigateTo} />}
+          {currentPage === 'tax' && <TaxPage navigateTo={navigateTo} />}
+          {currentPage === 'about' && <AboutPage navigateTo={navigateTo} />}
         </main>
       
       {/* Edit Mode Button - Bottom Right */}

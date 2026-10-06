@@ -8,7 +8,7 @@ interface VippsComparisonSectionProps {
   className?: string;
 }
 
-const FIRI_VIPPS_EXTRA_FEE = 0.039;
+export const FIRI_VIPPS_EXTRA_FEE = 0.039;
 
 const VippsLogo = () => (
   <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FF5B24] text-xl font-black text-white shadow-sm">

@@ -13,7 +13,7 @@ const SITE_NAME = 'KjøpeBitcoin.no';
 const SSR_DIR = 'dist-ssr';
 const today = new Date().toISOString().slice(0, 10);
 
-const { render, PAGE_PATHS, PAGE_TITLES, PAGE_DESCRIPTIONS, FAQS, feeRows } = await import(
+const { render, PAGE_PATHS, PAGE_TITLES, PAGE_DESCRIPTIONS, ARTICLE_PAGES, FAQS, feeRows } = await import(
   pathToFileURL(resolve(SSR_DIR, 'entry-server.js')).href
 );
 
@@ -58,6 +58,20 @@ for (const page of pages) {
       }),
     },
   ];
+  if (ARTICLE_PAGES.includes(page)) {
+    structuredData.push({
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: title.split(' | ')[0],
+      description,
+      inLanguage: 'nb-NO',
+      dateModified: today,
+      mainEntityOfPage: { '@id': `${url}#webpage` },
+      image: `${SITE}/og-image.png`,
+      author: { '@id': `${SITE}/#organization` },
+      publisher: { '@id': `${SITE}/#organization` },
+    });
+  }
   if (page === 'home') {
     structuredData.push({
       '@context': 'https://schema.org',
@@ -90,7 +104,7 @@ for (const page of pages) {
 }
 
 // Sitemap
-const priority = { home: '1.0', live: '0.9', norway: '0.8', all: '0.8', overview: '0.7', contact: '0.3' };
+const priority = { home: '1.0', live: '0.9', price: '0.9', norway: '0.8', all: '0.8', firiNbx: '0.8', vipps: '0.8', overview: '0.7', tax: '0.7', about: '0.4', contact: '0.3' };
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${pages
