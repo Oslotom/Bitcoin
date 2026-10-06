@@ -79,9 +79,9 @@ export default function AllExchanges() {
   return (
     <div id="all-exchanges-page" className="space-y-12 animate-fade-in font-table">
       <div className="text-center space-y-4">
-        <h2 className="text-4xl font-display font-bold tracking-tight text-slate-900">
+        <h1 className="text-4xl font-display font-bold tracking-tight text-slate-900">
           Alle handelsplasser for <span className="text-brand">Bitcoin</span>
-        </h2>
+        </h1>
         <p className="text-slate-500 text-lg font-medium max-w-2xl mx-auto leading-relaxed">
           En komplett oversikt over 50 plattformer hvor du kan kjøpe, selge og handle kryptovaluta.
         </p>

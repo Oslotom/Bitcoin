@@ -82,9 +82,9 @@ export default function NorwayExchanges() {
   return (
     <div id="norway-exchanges-section" className="space-y-12 animate-fade-in">
       <div className="text-center space-y-4">
-        <h2 className="text-4xl font-display font-bold tracking-tight text-slate-900">
-          Kjøp Bitcoin i <span className="text-brand">Norge</span>
-        </h2>
+        <h1 className="text-4xl font-display font-bold tracking-tight text-slate-900">
+          Norske kryptobørser: kjøp Bitcoin i <span className="text-brand">Norge</span>
+        </h1>
         <p className="text-slate-500 text-lg font-medium max-w-2xl mx-auto leading-relaxed">
           Oversikt over de tryggeste og mest populære norske handelsplattformene registrert hos Finanstilsynet.
         </p>

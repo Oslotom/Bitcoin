@@ -10,6 +10,8 @@ export default defineConfig(({mode}) => {
     base: '/',
     define: {
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+      // Vises som «Sist oppdatert» og brukes som dateModified i strukturert data
+      __BUILD_DATE__: JSON.stringify(new Date().toISOString().slice(0, 10)),
     },
     resolve: {
       alias: {

@@ -1,5 +1,7 @@
+import { PAGE_PATHS, type Page } from '../routes';
+
 interface FooterProps {
-  setCurrentPage: (page: 'home' | 'live' | 'overview' | 'platforms' | 'norway' | 'contact' | 'all') => void;
+  setCurrentPage: (page: Page, event?: { preventDefault: () => void }) => void;
   currentPage: string;
 }
 
@@ -29,15 +31,16 @@ export default function Footer({ setCurrentPage, currentPage }: FooterProps) {
               { id: 'overview', label: 'Guide' },
               { id: 'contact', label: 'Kontakt' }
             ].map((item) => (
-              <button 
+              <a
                 key={item.id}
-                onClick={() => setCurrentPage(item.id as any)}
+                href={PAGE_PATHS[item.id as Page]}
+                onClick={(e) => setCurrentPage(item.id as Page, e)}
                 className={`text-sm font-semibold transition-colors ${
                   currentPage === item.id ? 'text-brand' : 'text-slate-500 hover:text-brand'
                 }`}
               >
                 {item.label}
-              </button>
+              </a>
             ))}
           </nav>
 

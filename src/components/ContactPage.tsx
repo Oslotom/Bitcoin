@@ -62,9 +62,9 @@ export default function ContactPage() {
         <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 border border-blue-100 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] text-brand mb-4">
           <Mail size={12} /> Kontakt oss
         </div>
-        <h2 className="text-5xl font-display font-bold tracking-tight text-slate-900">
+        <h1 className="text-5xl font-display font-bold tracking-tight text-slate-900">
           Har du <span className="text-brand">spørsmål</span>?
-        </h2>
+        </h1>
         <p className="text-slate-500 text-xl font-medium max-w-2xl mx-auto leading-relaxed">
           Vi setter pris på alle tilbakemeldinger, spørsmål om annonsering eller tips til nye børser vi bør liste.
         </p>

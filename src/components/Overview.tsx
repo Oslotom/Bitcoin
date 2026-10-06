@@ -179,7 +179,7 @@ const Overview: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-16"
         >
-          <h1 className="text-4xl font-display font-bold text-slate-900 mb-4">Alternativer for kjøp</h1>
+          <h1 className="text-4xl font-display font-bold text-slate-900 mb-4">Guide: slik kjøper du Bitcoin i Norge</h1>
           <p className="text-lg font-medium text-slate-500 max-w-2xl leading-relaxed">
             En omfattende sammenligning av ulike metoder for å kjøpe Bitcoin, fra norske børser til hardware-lommebøker.
           </p>

@@ -5,6 +5,7 @@ import ResultsTable from './components/ResultsTable';
 import VippsComparisonSection from './components/VippsComparisonSection';
 import Overview from './components/Overview';
 import FAQSection from './components/FAQSection';
+import FeeOverview from './components/FeeOverview';
 import { ExchangeIcon } from './components/icons';
 import CountUp from 'react-countup';
 import NorwayExchanges from './components/NorwayExchanges';
@@ -18,14 +19,16 @@ import { ExternalLink, Edit2, Save, Menu, X, Zap, Globe, CreditCard } from 'luci
 import { useContent } from './contexts/ContentContext';
 import EditableText from './components/EditableText';
 import { motion, AnimatePresence } from 'motion/react';
+import { PAGE_PATHS, PAGE_TITLES, pageFromPath, type Page } from './routes';
 
-export default function App() {
+// initialPage settes ved forhåndsrendring på byggetidspunktet (der window ikke finnes)
+export default function App({ initialPage }: { initialPage?: Page }) {
   const { isEditMode, setIsEditMode, saveContent } = useContent();
   const [results, setResults] = useState<ComparisonResult[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastAmount, setLastAmount] = useState<number | null>(10000);
-  const [currentPage, setCurrentPage] = useState<'home' | 'live' | 'overview' | 'platforms' | 'norway' | 'contact' | 'all'>('home');
+  const [currentPage, setCurrentPage] = useState<Page>(() => initialPage ?? pageFromPath(window.location.pathname));
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const didInitCalculate = useRef(false);
 
@@ -94,35 +97,30 @@ export default function App() {
   };
 
   useEffect(() => {
-    // Basic routing logic for SEO paths
-    const path = window.location.pathname;
-    if (path === '/sammenlign') setCurrentPage('live');
-    else if (path === '/alle-borser') setCurrentPage('all');
-    else if (path === '/norske-borser') setCurrentPage('norway');
-    else if (path === '/guide') setCurrentPage('overview');
-    else if (path === '/kontakt') setCurrentPage('contact');
+    const onPopState = () => setCurrentPage(pageFromPath(window.location.pathname));
+    window.addEventListener('popstate', onPopState);
 
-    if (didInitCalculate.current) return;
-    didInitCalculate.current = true;
-    handleCalculate(10000);
+    if (!didInitCalculate.current) {
+      didInitCalculate.current = true;
+      handleCalculate(10000);
+    }
+    return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
-  const navigateTo = (page: 'home' | 'live' | 'overview' | 'platforms' | 'norway' | 'contact' | 'all') => {
+  useEffect(() => {
+    const title = PAGE_TITLES[currentPage];
+    if (title) document.title = title;
+  }, [currentPage]);
+
+  const navigateTo = (page: Page, event?: { preventDefault: () => void }) => {
+    event?.preventDefault();
     setCurrentPage(page);
     setIsMobileMenuOpen(false);
     window.scrollTo(0, 0);
-    
-    // Update URL without reloading for SEO
-    const paths: Record<string, string> = {
-      home: '/',
-      live: '/sammenlign',
-      all: '/alle-borser',
-      norway: '/norske-borser',
-      overview: '/guide',
-      contact: '/kontakt'
-    };
-    if (paths[page]) {
-      window.history.pushState({}, '', paths[page]);
+
+    const path = PAGE_PATHS[page];
+    if (path && path !== window.location.pathname) {
+      window.history.pushState({}, '', path);
     }
   };
 
@@ -138,8 +136,10 @@ export default function App() {
       {/* Header / Nav */}
       <header className="sticky top-0 z-40 w-full bg-transparent backdrop-blur-s" style={{ marginBottom: '-20px' }}>
         <div className="max-w-5xl mx-auto px-4 h-20 flex items-center justify-between">
-          <div 
-            onClick={() => navigateTo('home')}
+          <a
+            href="/"
+            onClick={(e) => navigateTo('home', e)}
+            aria-label="KjøpeBitcoin.no – forside"
             className="flex items-center gap-2 cursor-pointer group"
           >
             <div className="w-8 h-8 bg-brand rounded-lg flex items-center justify-center text-white font-black text-lg shadow-lg shadow-blue-100 group-hover:scale-105 transition-transform">
@@ -148,7 +148,7 @@ export default function App() {
             <span className="font-display font-bold text-lg tracking-tight text-slate-900">
               KjøpeBitcoin<span className="text-brand">.no</span>
             </span>
-          </div>
+          </a>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
@@ -159,21 +159,23 @@ export default function App() {
               { id: 'overview', label: 'Lær Mer' },
               { id: 'contact', label: 'Kontakt' }
             ].map((item) => (
-              <button 
+              <a
                 key={item.id}
-                onClick={() => navigateTo(item.id as any)}
+                href={PAGE_PATHS[item.id as Page]}
+                onClick={(e) => navigateTo(item.id as Page, e)}
                 className={`text-sm font-semibold transition-colors ${
                   currentPage === item.id ? 'text-brand' : 'text-slate-500 hover:text-brand'
                 }`}
               >
                 {item.label}
-              </button>
+              </a>
             ))}
           </nav>
 
           {/* Mobile Menu Toggle */}
           <button 
             onClick={() => setIsMobileMenuOpen(true)}
+            aria-label="Åpne meny"
             className="md:hidden p-2 text-slate-500 hover:text-slate-900 transition-colors"
           >
             <Menu size={24} />
@@ -203,6 +205,7 @@ export default function App() {
                 <span className="font-black text-[10px] uppercase tracking-widest text-slate-400">Meny</span>
                 <button 
                   onClick={() => setIsMobileMenuOpen(false)}
+                  aria-label="Lukk meny"
                   className="p-2 text-slate-400 hover:text-slate-900 transition-colors"
                 >
                   <X size={20} />
@@ -218,9 +221,10 @@ export default function App() {
                   { id: 'overview', label: 'Guide & Kunnskap', icon: '📚' },
                   { id: 'contact', label: 'Kontakt oss', icon: '✉️' }
                 ].map((item) => (
-                  <button
+                  <a
                     key={item.id}
-                    onClick={() => navigateTo(item.id as any)}
+                    href={PAGE_PATHS[item.id as Page]}
+                    onClick={(e) => navigateTo(item.id as Page, e)}
                     className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-sm font-bold transition-all ${
                       currentPage === item.id 
                         ? 'bg-orange-50 text-orange-600' 
@@ -229,7 +233,7 @@ export default function App() {
                   >
                     <span className="text-xl">{item.icon}</span>
                     {item.label}
-                  </button>
+                  </a>
                 ))}
               </div>
 
@@ -252,12 +256,12 @@ export default function App() {
             
                 
                 <h1 className="text-5xl md:text-6xl font-display font-bold tracking-tight text-slate-900 leading-[1.1]">
-                  Finn beste <span className="text-brand">Bitcoin kurs</span><br />
-                  og pris i Norge
+                  <span className="text-brand">Kjøpe Bitcoin</span> i Norge{" "}<br />
+                  – finn beste kurs og pris
                 </h1>
-                
+
                 <p className="max-w-2xl mx-auto text-lg md:text-lg text-slate-600 leading-relaxed font-medium">
-                  Planlegger du å kjøpe bitcoin.? Vi sammenligner priser, gebyrer og spredning på tvers av alle børser i Norge.
+                  Planlegger du å kjøpe Bitcoin? Vi sammenligner live Bitcoin kurs, gebyrer og spread hos Firi, Bare Bitcoin, NBX, Kraken, Binance og flere – så du ser hvor du får mest Bitcoin for pengene.
                 </p>
 
 
@@ -303,6 +307,46 @@ export default function App() {
               <div className="card-premium overflow-hidden">
                 <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} />
               </div>
+
+              <p className="text-center text-sm text-slate-500">
+                Vil du regne på et eget beløp?{' '}
+                <a href="/sammenlign" onClick={(e) => navigateTo('live', e)} className="font-semibold text-brand hover:underline">
+                  Sammenlign Bitcoin priser med kalkulatoren
+                </a>
+              </p>
+            </section>
+
+            <FeeOverview />
+
+            {/* SEO-innhold: forklarende tekst om kjøp av Bitcoin i Norge */}
+            <section className="max-w-5xl mx-auto px-4 pb-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="space-y-3">
+                  <h2 className="text-xl font-bold text-slate-900">Hvor bør du kjøpe Bitcoin i Norge?</h2>
+                  <p className="text-sm text-slate-600 leading-relaxed">
+                    Det billigste stedet å <strong>kjøpe Bitcoin i Norge</strong> avhenger av beløpet og hvordan du betaler. Tabellen over viser hvor mye Bitcoin du faktisk får etter handelsgebyr og spread, slik at du kan sammenligne børsene direkte. Se også oversikten over{' '}
+                    <a href="/norske-borser" onClick={(e) => navigateTo('norway', e)} className="text-brand hover:underline">norske kryptobørser</a>.
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  <h2 className="text-xl font-bold text-slate-900">Live Bitcoin kurs i NOK</h2>
+                  <p className="text-sm text-slate-600 leading-relaxed">
+                    <strong>Bitcoin kursen</strong> hentes direkte fra børsene hver gang du besøker siden. Prisene vises i norske kroner, slik at du får en rettferdig sammenligning av <strong>Bitcoin prisen</strong> hos både norske og utenlandske aktører.
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  <h2 className="text-xl font-bold text-slate-900">Gebyrer, spread og Vipps</h2>
+                  <p className="text-sm text-slate-600 leading-relaxed">
+                    Mange børser reklamerer med lave gebyrer, men tar betalt gjennom spread eller innskuddsgebyr ved Vipps og kort. Les{' '}
+                    <a href="/guide" onClick={(e) => navigateTo('overview', e)} className="text-brand hover:underline">guiden til å kjøpe Bitcoin trygt</a>{' '}
+                    eller se{' '}
+                    <a href="/alle-borser" onClick={(e) => navigateTo('all', e)} className="text-brand hover:underline">alle børser</a>{' '}
+                    vi sammenligner.
+                  </p>
+                </div>
+              </div>
+
+              <FAQSection />
             </section>
           </div>
         )}
@@ -311,7 +355,7 @@ export default function App() {
           {currentPage === 'live' && (
             <div id="live-prices-page" className="space-y-16 animate-fade-in">
               <div className="text-center max-w-2xl mx-auto space-y-4">
-                <h2 className="text-4xl font-display font-bold tracking-tight">Live Prissammenligning</h2>
+                <h1 className="text-4xl font-display font-bold tracking-tight">Sammenlign Bitcoin priser live</h1>
                 <p className="text-slate-600 font-medium leading-relaxed">
                   Vi henter priser direkte fra børsene og regner ut nøyaktig hvor mye krypto du sitter igjen med etter alle gebyrer.
                 </p>
@@ -408,7 +452,7 @@ export default function App() {
         )}
       </div>
 
-      <Footer setCurrentPage={navigateTo as any} currentPage={currentPage} />
+      <Footer setCurrentPage={navigateTo} currentPage={currentPage} />
     </div>
 );
 }
