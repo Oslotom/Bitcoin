@@ -11,12 +11,12 @@ export default function FAQSection() {
   };
 
   return (
-    <section className="mt-16 space-y-16 border-t border-slate-100 pt-16" aria-label="SEO og FAQ Seksjon">
+    <section className="mt-16 space-y-16 border-t border-slate-100 pt-16" aria-label="Ofte stilte spørsmål om å kjøpe Bitcoin">
       {/* 2-Column Educational Info & SEO keywords */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
         <div className="space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-orange-50 text-orange-700 rounded-full text-xs font-black uppercase tracking-wider">
-            <Shield size={12} /> Trygg crypto-guide
+            <Shield size={12} /> Trygt Bitcoin-kjøp
           </div>
           <h2 className="text-2xl font-black tracking-tight text-slate-900 uppercase">
             <EditableText contentKey="faqHeroTitle" />
@@ -48,7 +48,7 @@ export default function FAQSection() {
 
         <div className="bg-slate-50/50 border border-slate-100 p-6 rounded-2xl space-y-6">
           <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
-            <Award className="text-orange-600" size={18} /> Slik lykkes du trinn-for-trinn
+            <Award className="text-orange-600" size={18} /> Slik kjøper du Bitcoin – steg for steg
           </h3>
           
           <ol className="space-y-4 text-xs font-medium text-slate-700">
@@ -73,6 +73,13 @@ export default function FAQSection() {
                 <p className="text-slate-500 font-normal leading-relaxed">Overfør beløpet du ønsker å investere med Vipps eller bank. Så snart pengene har ankommet kontoen, kan du gjennomføre ditt kjøp.</p>
               </div>
             </li>
+            <li className="flex gap-3">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-900 text-white font-mono font-black text-xs">4</span>
+              <div className="space-y-0.5">
+                <span className="font-bold text-slate-900 text-sm block">Oppbevar Bitcoin trygt</span>
+                <p className="text-slate-500 font-normal leading-relaxed">Skal du eie Bitcoin over tid, bør du vurdere å flytte dem til en egen lommebok (gjerne en hardware-lommebok) som bare du har nøklene til.</p>
+              </div>
+            </li>
           </ol>
         </div>
       </div>
@@ -83,7 +90,7 @@ export default function FAQSection() {
           <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-black uppercase tracking-wider">
             <HelpCircle size={10} /> FAQ
           </div>
-          <h3 className="text-xl font-bold text-slate-900">Ofte stilte spørsmål</h3>
+          <h2 className="text-xl font-bold text-slate-900">Ofte stilte spørsmål om å kjøpe Bitcoin</h2>
           <p className="text-xs text-slate-400 font-black uppercase tracking-widest">Alt du trenger å vite om Bitcoin-handel i Norge</p>
         </div>
 
@@ -92,8 +99,10 @@ export default function FAQSection() {
             const isOpen = openIndex === index;
             return (
               <div key={index} className="py-4">
+                <h3>
                 <button
                   onClick={() => toggleFAQ(index)}
+                  aria-expanded={isOpen}
                   className="w-full flex justify-between items-center text-left py-2 font-bold text-slate-900 hover:text-orange-600 transition-colors text-sm md:text-base outline-none group"
                 >
                   <span>{faq.question}</span>
@@ -101,7 +110,8 @@ export default function FAQSection() {
                     {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                   </span>
                 </button>
-                
+                </h3>
+
                 <div 
                   className={`overflow-hidden transition-all duration-300 ease-in-out ${
                     isOpen ? 'max-h-[300px] opacity-100 mt-2' : 'max-h-0 opacity-0'

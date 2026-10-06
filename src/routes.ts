@@ -20,7 +20,7 @@ export const PAGE_PATHS: Partial<Record<Page, string>> = {
 };
 
 export const PAGE_TITLES: Partial<Record<Page, string>> = {
-  home: 'Kjøpe Bitcoin i Norge | Se Live Bitcoin Kurs & Pris (2026)',
+  home: 'Kjøpe Bitcoin i Norge (2026) – sammenlign pris og gebyrer',
   price: 'Bitcoin kurs i dag i NOK – live pris fra norske børser | KjøpeBitcoin.no',
   norway: 'Norske kryptobørser for Bitcoin (2026) | KjøpeBitcoin.no',
   firiNbx: 'Firi vs NBX (2026): gebyrer og hvem er billigst? | KjøpeBitcoin.no',
@@ -31,7 +31,7 @@ export const PAGE_TITLES: Partial<Record<Page, string>> = {
 };
 
 export const PAGE_DESCRIPTIONS: Partial<Record<Page, string>> = {
-  home: 'Finn beste Bitcoin pris i Norge. Sammenlign live Bitcoin kurs og gebyrer fra Firi, Bare Bitcoin, NBX, Kraken og Binance. Guide til å kjøpe Bitcoin i Norge trygt.',
+  home: 'Hvor er det billigst å kjøpe Bitcoin i Norge? Sammenlign live pris, gebyr og spread hos Firi, NBX, Bare Bitcoin, Kraken og Binance – og se hva du faktisk får.',
   price: 'Se Bitcoin kursen i norske kroner akkurat nå, hentet live fra Firi, NBX, Bare Bitcoin, Kraken, Binance og flere. Forstå hvorfor prisen varierer mellom børsene.',
   norway: 'Sammenlign norske kryptobørser registrert hos Finanstilsynet: Firi, Bare Bitcoin, NBX og flere. BankID, Vipps og skatterapport.',
   firiNbx: 'Firi eller NBX? Vi sammenligner handelsgebyr, spread og funksjoner hos de to norske kryptobørsene, med live regnestykke for kjøp av Bitcoin.',

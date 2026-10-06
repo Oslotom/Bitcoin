@@ -3,7 +3,7 @@ import Footer from './components/Footer';
 import ResultsTable from './components/ResultsTable';
 import Overview from './components/Overview';
 import FAQSection from './components/FAQSection';
-import FeeOverview, { feeRows } from './components/FeeOverview';
+import FeeOverview, { feeRows, cheapestSummary } from './components/FeeOverview';
 import BitcoinKursPage from './components/pages/BitcoinKursPage';
 import FiriVsNbxPage from './components/pages/FiriVsNbxPage';
 import VippsPage from './components/pages/VippsPage';
@@ -299,8 +299,8 @@ export default function App({ initialPage }: { initialPage?: Page }) {
             <section className="py-14 max-w-5xl mx-auto px-4 space-y-8">
               <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                 <div className="space-y-2">
-                  <h2 className="text-3xl font-display font-bold tracking-tight">Live Bitcoin priser</h2>
-                  <p className="text-slate-500 font-medium">Prisene blir automatisk hentet</p>
+                  <h2 className="text-3xl font-display font-bold tracking-tight">Bitcoin pris nå hos {feeRows().length} børser</h2>
+                  <p className="text-slate-500 font-medium">Hentet live fra børsene, med handelsgebyr og spread trukket fra</p>
                 </div>
             
               </div>
@@ -327,24 +327,25 @@ export default function App({ initialPage }: { initialPage?: Page }) {
             <section className="max-w-5xl mx-auto px-4 pb-8">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="space-y-3">
-                  <h2 className="text-xl font-bold text-slate-900">Hvor bør du kjøpe Bitcoin i Norge?</h2>
+                  <h2 className="text-xl font-bold text-slate-900">Hvor er det billigst å kjøpe Bitcoin i Norge?</h2>
+                  <p className="text-sm text-slate-600 leading-relaxed">{cheapestSummary()}</p>
                   <p className="text-sm text-slate-600 leading-relaxed">
-                    Det billigste stedet å <strong>kjøpe Bitcoin i Norge</strong> avhenger av beløpet og hvordan du betaler. Tabellen over viser hvor mye Bitcoin du faktisk får etter handelsgebyr og spread, slik at du kan sammenligne børsene direkte. Se også oversikten over{' '}
-                    <a href="/norske-borser" onClick={(e) => navigateTo('norway', e)} className="text-brand hover:underline">norske kryptobørser</a>.
+                    Utenlandske børser har ofte lavest gebyr, men krever valutaveksling og har ikke norsk skatterapport. Se alle{' '}
+                    <a href={PAGE_PATHS.norway} onClick={(e) => navigateTo('norway', e)} className="text-brand hover:underline">norske kryptobørser</a>.
                   </p>
                 </div>
                 <div className="space-y-3">
-                  <h2 className="text-xl font-bold text-slate-900">Live Bitcoin kurs i NOK</h2>
+                  <h2 className="text-xl font-bold text-slate-900">Hvordan kjøper jeg Bitcoin?</h2>
                   <p className="text-sm text-slate-600 leading-relaxed">
-                    <strong>Bitcoin kursen</strong> hentes direkte fra børsene hver gang du besøker siden. Prisene vises i norske kroner, slik at du får en rettferdig sammenligning av <strong>Bitcoin prisen</strong> hos både norske og utenlandske aktører.
+                    Du <strong>kjøper Bitcoin</strong> ved å opprette konto hos en kryptobørs, verifisere deg med BankID, sette inn norske kroner og legge inn en kjøpsordre. Det tar vanligvis bare noen minutter. Les{' '}
+                    <a href={PAGE_PATHS.overview} onClick={(e) => navigateTo('overview', e)} className="text-brand hover:underline">guiden til å kjøpe Bitcoin trygt</a>, eller følg{' '}
+                    <a href={PAGE_PATHS.price} onClick={(e) => navigateTo('price', e)} className="text-brand hover:underline">Bitcoin kursen i dag</a>.
                   </p>
                 </div>
                 <div className="space-y-3">
                   <h2 className="text-xl font-bold text-slate-900">Gebyrer, spread og Vipps</h2>
                   <p className="text-sm text-slate-600 leading-relaxed">
-                    Mange børser reklamerer med lave gebyrer, men tar betalt gjennom spread eller innskuddsgebyr ved Vipps og kort. Les{' '}
-                    <a href="/guide" onClick={(e) => navigateTo('overview', e)} className="text-brand hover:underline">guiden til å kjøpe Bitcoin trygt</a>{' '}
-                    eller se{' '}
+                    Mange børser reklamerer med lave gebyrer, men tar betalt gjennom spread eller innskuddsgebyr ved Vipps og kort. Bankoverføring er nesten alltid billigst. Se{' '}
                     <a href={PAGE_PATHS.vipps} onClick={(e) => navigateTo('vipps', e)} className="text-brand hover:underline">hva det koster å kjøpe Bitcoin med Vipps</a>.
                   </p>
                 </div>

@@ -22,6 +22,16 @@ export const feeRows = () =>
     }))
     .sort((a, b) => a.total - b.total);
 
+// Kort, datadrevet svar på «hvor er det billigst å kjøpe Bitcoin?» (forsiden og FAQPage-schema)
+export const cheapestSummary = () => {
+  const rows = feeRows();
+  const cheapest = rows[0];
+  const cheapestNorwegian = rows.find((row) => row.norwegian)!;
+  const priciest = rows[rows.length - 1];
+  const fee = (row: (typeof rows)[number]) => Math.round(10000 * row.total);
+  return `Regner du med både handelsgebyr og spread, er ${cheapest.exchange} billigst totalt (${formatPercent(cheapest.total)}), og ${cheapestNorwegian.exchange} billigst av de norske børsene (${formatPercent(cheapestNorwegian.total)}). På et kjøp av 10 000 kr betaler du ${fee(cheapest)} kr i gebyr hos ${cheapest.exchange}, ${fee(cheapestNorwegian)} kr hos ${cheapestNorwegian.exchange} og ${fee(priciest)} kr hos ${priciest.exchange}. Innskudd med Vipps eller kort koster ekstra.`;
+};
+
 // Statisk gebyroversikt: synlig uten at live-prisene må lastes, slik at både Google
 // og AI-crawlere (som ikke kjører JavaScript) får med seg tallene.
 export default function FeeOverview() {

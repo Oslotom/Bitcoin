@@ -51,7 +51,7 @@ export default function BitcoinCalculator({ results, isLoading }: BitcoinCalcula
           <Calculator size={12} /> Verktøy
         </div>
         <h2 className="text-4xl font-display font-bold tracking-tight text-slate-900">
-          Bitcoin <span className="text-brand">Kalkulator</span>
+          Bitcoin-kalkulator: <span className="text-brand">hvor mye Bitcoin får du?</span>
         </h2>
         <p className="text-slate-500 text-lg font-medium max-w-2xl mx-auto leading-relaxed">
           Se nøyaktig hvor mye du sitter igjen med etter alle gebyrer og kurtasje er trukket fra.
