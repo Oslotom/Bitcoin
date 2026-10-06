@@ -257,7 +257,7 @@ export default function App() {
                 </h1>
                 
                 <p className="max-w-2xl mx-auto text-lg md:text-lg text-slate-600 leading-relaxed font-medium">
-                  Planlegger du å kjøpe bitcoin? Vi sammenligner priser, gebyrer og spredning på tvers av alle børser i Norge.
+                  Planlegger du å kjøpe bitcoin.? Vi sammenligner priser, gebyrer og spredning på tvers av alle børser i Norge.
                 </p>
 
 
