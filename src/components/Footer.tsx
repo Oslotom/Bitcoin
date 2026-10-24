@@ -45,6 +45,7 @@ export default function Footer({ setCurrentPage, currentPage }: FooterProps) {
               </a>
             ))}
           </nav>
+          <a href="/sitemap.xml" className="text-sm text-slate-500 hover:text-brand">Nettstedkart</a>
 
           <div className="pt-8 border-t border-slate-50 w-full space-y-4">
             <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-slate-400">

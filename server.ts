@@ -2,6 +2,7 @@ import express from "express";
 import axios from "axios";
 import path from "path";
 import { Resend } from 'resend';
+import { PAGE_PATHS, REDIRECTS } from './src/routes';
 
 async function startServer() {
   const app = express();
@@ -112,8 +113,25 @@ async function startServer() {
     
     console.log(`Production mode: Serving static files from ${distPath}`);
     
-    // Serve static files with explicit MIME types
+    // Canonical host and legacy redirects must run before static serving.
+    app.use((req, res, next) => {
+      if (req.hostname === 'xn--kjpebitcoin-hgb.no') {
+        return res.redirect(301, `https://www.xn--kjpebitcoin-hgb.no${req.originalUrl}`);
+      }
+      const clean = req.path.replace(/\.html$/, '').replace(/\/+$/, '') || '/';
+      const targetPage = REDIRECTS[clean];
+      const destination = targetPage ? PAGE_PATHS[targetPage] : clean;
+      const known = Object.values(PAGE_PATHS).includes(clean);
+      if (targetPage || (known && req.path !== clean)) {
+        const query = req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : '';
+        return res.redirect(301, destination + query);
+      }
+      next();
+    });
+
+    // Serve prerendered pages at their extensionless canonical URL.
     app.use(express.static(distPath, {
+      extensions: ['html'],
       setHeaders: (res, filePath) => {
         const ext = path.extname(filePath).toLowerCase();
         if (ext === ".js" || ext === ".mjs") {
@@ -157,8 +175,8 @@ async function startServer() {
         return res.status(404).type('text/plain').send("Not found");
       }
 
-      const indexPath = path.join(distPath, "index.html");
-      res.sendFile(indexPath, (err) => {
+      const indexPath = path.join(distPath, "404.html");
+      res.status(404).sendFile(indexPath, (err) => {
         if (err) {
           console.error(`Error sending index.html from ${indexPath}:`, err);
           if (!res.headersSent) {

@@ -29,7 +29,7 @@ export const cheapestSummary = () => {
   const cheapestNorwegian = rows.find((row) => row.norwegian)!;
   const priciest = rows[rows.length - 1];
   const fee = (row: (typeof rows)[number]) => Math.round(10000 * row.total);
-  return `Regner du med både handelsgebyr og spread, er ${cheapest.exchange} billigst totalt (${formatPercent(cheapest.total)}), og ${cheapestNorwegian.exchange} billigst av de norske børsene (${formatPercent(cheapestNorwegian.total)}). På et kjøp av 10 000 kr betaler du ${fee(cheapest)} kr i gebyr hos ${cheapest.exchange}, ${fee(cheapestNorwegian)} kr hos ${cheapestNorwegian.exchange} og ${fee(priciest)} kr hos ${priciest.exchange}. Innskudd med Vipps eller kort koster ekstra.`;
+  return `Med handelsgebyrene og estimert spread i vår sammenligning har ${cheapest.exchange} lavest beregnet kostnad (${formatPercent(cheapest.total)}), og ${cheapestNorwegian.exchange} lavest blant de norske børsene (${formatPercent(cheapestNorwegian.total)}). På et kjøp av 10 000 kr tilsvarer det anslagsvis ${fee(cheapest)} kr hos ${cheapest.exchange}, ${fee(cheapestNorwegian)} kr hos ${cheapestNorwegian.exchange} og ${fee(priciest)} kr hos ${priciest.exchange}. Valutaveksling, innskudd og uttak kommer i tillegg. Hvilken børs som er billigst for deg avhenger også av betalingsmåte og gjeldende vilkår.`;
 };
 
 // Statisk gebyroversikt: synlig uten at live-prisene må lastes, slik at både Google

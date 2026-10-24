@@ -27,6 +27,11 @@ export default function ArticleLayout({ page, title, intro, related, navigateTo,
   const modified = __PAGE_DATES__[page];
   return (
     <article className="max-w-3xl mx-auto px-4 pt-20 pb-16 animate-fade-in">
+      <nav aria-label="Brødsmuler" className="mb-6 text-sm text-slate-500">
+        <a href={PAGE_PATHS.home} className="hover:text-brand">Kjøpe Bitcoin</a>
+        <span aria-hidden="true"> / </span>
+        <span aria-current="page">{PAGE_TITLES[page]?.split(' | ')[0]}</span>
+      </nav>
       <header className="space-y-4 mb-10">
         <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight text-slate-900 leading-[1.1]">{title}</h1>
         <p className="text-lg text-slate-600 leading-relaxed font-medium">{intro}</p>

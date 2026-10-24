@@ -111,14 +111,12 @@ export default function App({ initialPage }: { initialPage?: Page }) {
   }, [currentPage]);
 
   const navigateTo = (page: Page, event?: { preventDefault: () => void }) => {
-    event?.preventDefault();
-    setCurrentPage(page);
-    setIsMobileMenuOpen(false);
-    window.scrollTo(0, 0);
-
     const path = PAGE_PATHS[page];
+    // Load the prerendered document, including its canonical and JSON-LD.
+    // For links, preserve native navigation (including Ctrl/Cmd-click).
+    if (event) return;
     if (path && path !== window.location.pathname) {
-      window.history.pushState({}, '', path);
+      window.location.assign(path);
     }
   };
 

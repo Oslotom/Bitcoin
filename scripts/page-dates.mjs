@@ -25,7 +25,8 @@ const git = (args) => {
 export function getPageDates() {
   const today = new Date().toISOString().slice(0, 10);
   return Object.fromEntries(
-    Object.entries(PAGE_SOURCES).map(([page, files]) => {
+    Object.entries(PAGE_SOURCES).map(([page, sources]) => {
+      const files = [...sources, 'src/routes.ts', ...(page === 'home' || page === 'norway' || page === 'overview' ? [] : ['src/components/pages/ArticleLayout.tsx'])];
       // Ucommittede endringer (lokal utvikling) eller manglende historikk -> dagens dato
       const dirty = git(['status', '--porcelain', '--', ...files]);
       const committed = git(['log', '-1', '--format=%cs', '--', ...files]);

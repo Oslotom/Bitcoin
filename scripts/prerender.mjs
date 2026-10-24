@@ -41,7 +41,11 @@ const htmlToMarkdown = (html) => {
   return decodeEntities(
     main
       .replace(/<!-- -->/g, '')
-      .replace(/<(script|style|svg|button|form)[\s\S]*?<\/\1>/g, '')
+      .replace(/<(script|style|svg|form)[\s\S]*?<\/\1>/g, '')
+      .replace(/<a\b[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g, (_, href, label) => {
+        const text = label.replace(/<[^>]+>/g, '').trim();
+        return text ? `[${text}](${new URL(decodeEntities(href), SITE).href})` : '';
+      })
       .replace(/<h([1-4])[^>]*>([\s\S]*?)<\/h\1>/g, (_, level, text) => `\n\n${'#'.repeat(Number(level))} ${text.replace(/<[^>]+>/g, '').trim()}\n\n`)
       .replace(/<li[^>]*>/g, '\n- ')
       .replace(/<tr[^>]*>/g, '\n| ')
@@ -177,7 +181,7 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 ${pages
   .map(
     (page) => `  <url>
-    <loc>${page === 'home' ? `${SITE}/` : `${SITE}${PAGE_PATHS[page]}`}</loc>
+    <loc>${escapeAttr(page === 'home' ? `${SITE}/` : `${SITE}${PAGE_PATHS[page]}`)}</loc>
     <lastmod>${pageDates[page] ?? today}</lastmod>
   </url>`,
   )
@@ -197,10 +201,15 @@ Sist oppdatert: ${today}
 
 ## Sider
 
+- [Kjøpe Bitcoin – sammenlign priser og gebyrer](${SITE}/): ${PAGE_DESCRIPTIONS.home}
 ${pages
   .filter((page) => page !== 'home')
   .map((page) => `- [${PAGE_TITLES[page].split(' | ')[0]}](${SITE}${PAGE_PATHS[page]}): ${PAGE_DESCRIPTIONS[page]}`)
   .join('\n')}
+
+## Fullstendig tekst
+
+- [Alle sider som tekst](${SITE}/llms-full.txt): Innhold med kildelenker. Gebyrer og spread er sammenligningsestimater, ikke bindende tilbud.
 
 ## Gebyrer for kjøp av Bitcoin (sortert fra billigst)
 

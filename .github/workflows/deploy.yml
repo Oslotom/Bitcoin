@@ -48,6 +48,8 @@ jobs:
           VITE_CONTACT_ENDPOINT: ${{ vars.VITE_CONTACT_ENDPOINT }}
       - name: Setup Pages
         uses: actions/configure-pages@v4
+      - name: Check types and SEO
+        run: npm run lint && npm run seo:check
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
