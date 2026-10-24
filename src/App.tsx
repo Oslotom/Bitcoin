@@ -282,7 +282,7 @@ export default function App({ initialPage }: { initialPage?: Page }) {
             
               </div>
               
-              <div className="card-premium overflow-hidden">
+              <div className="overflow-hidden">
                 <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} compact />
               </div>
 

@@ -159,35 +159,37 @@ export default function ResultsTable({ results, isLoading, error, crypto, compac
   }
 
   if (compact) {
+    const sortButtonClass = (column: SortKey) => `inline-flex items-center gap-1 rounded-sm py-1 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${sortConfig.key === column ? 'text-brand' : 'text-slate-500 hover:text-slate-950'}`;
     return (
-      <div id="results-table-compact" className="overflow-x-auto font-table">
-        <table className="w-full text-sm">
+      <div id="results-table-compact" className="overflow-x-auto bg-white font-sans">
+        <table className="w-full border-collapse text-[15px]">
           <caption className="sr-only">Bitcoin-pris per BTC i norske kroner og beregnet handelsgebyr med estimert spread</caption>
-          <thead className="border-b border-slate-100 bg-slate-50/50 text-xs text-slate-500">
+          <thead className="border-b border-slate-200 bg-white text-xs sm:text-[13px] text-slate-500">
             <tr>
-              <th scope="col" className="px-3 sm:px-4 py-2 text-left" aria-sort={sortConfig.key === 'exchange' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}>
-                <button type="button" onClick={() => handleSort('exchange')} className="inline-flex items-center font-semibold">Børs <SortIndicator column="exchange" /></button>
+              <th scope="col" className="w-[46%] pl-2 pr-3 sm:pl-4 py-2 text-left" aria-sort={sortConfig.key === 'exchange' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}>
+                <button type="button" onClick={() => handleSort('exchange')} className={sortButtonClass('exchange')}>Børs <SortIndicator column="exchange" /></button>
               </th>
               <th scope="col" className="px-3 sm:px-4 py-2 text-right" aria-sort={sortConfig.key === 'spotPrice' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}>
-                <button type="button" onClick={() => handleSort('spotPrice')} className="inline-flex items-center font-semibold">Pris per BTC (NOK) <SortIndicator column="spotPrice" /></button>
+                <button type="button" onClick={() => handleSort('spotPrice')} className={sortButtonClass('spotPrice')}>Pris per BTC (NOK) <SortIndicator column="spotPrice" /></button>
               </th>
               <th scope="col" className="px-3 sm:px-4 py-2 text-right" aria-sort={sortConfig.key === 'feePercent' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}>
-                <button type="button" onClick={() => handleSort('feePercent')} className="inline-flex items-center font-semibold">Gebyr + spread <SortIndicator column="feePercent" /></button>
+                <button type="button" onClick={() => handleSort('feePercent')} className={sortButtonClass('feePercent')}>Gebyr + spread <SortIndicator column="feePercent" /></button>
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
-            {sortedResults.map((result) => (
-              <tr key={result.exchange} className="hover:bg-slate-50/80">
-                <th scope="row" className="px-3 sm:px-4 py-2 text-left font-semibold">
-                  <div className="flex items-center gap-2 whitespace-nowrap">
-                    <span className="shrink-0"><ExchangeIcon exchange={result.exchange} size={24} /></span>
-                    <a href={PLATFORM_DATA[result.exchange].link} target="_blank" rel="noopener noreferrer" className="text-slate-900 hover:text-brand hover:underline">{result.exchange}</a>
-                    {bestResult?.exchange === result.exchange && <span className="hidden sm:inline text-[10px] font-semibold text-emerald-700">Beste pris</span>}
+          <tbody className="divide-y divide-slate-100 border-b border-slate-200">
+            {sortedResults.map((result, index) => (
+              <tr key={result.exchange} className="group transition-colors hover:bg-[#f7f8fa] focus-within:bg-[#f7f8fa]">
+                <th scope="row" className="pl-2 pr-3 sm:pl-4 py-1.5 text-left font-medium">
+                  <div className="flex items-center gap-2.5 sm:gap-3 whitespace-nowrap">
+                    <span aria-hidden="true" className="hidden sm:block w-4 shrink-0 text-right text-xs font-normal tabular-nums text-slate-400">{index + 1}</span>
+                    <span className="shrink-0"><ExchangeIcon exchange={result.exchange} size={28} /></span>
+                    <a href={PLATFORM_DATA[result.exchange].link} target="_blank" rel="noopener noreferrer" className="rounded-sm text-slate-950 hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40">{result.exchange}</a>
+                    {bestResult?.exchange === result.exchange && <span className="hidden sm:inline rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">Beste pris</span>}
                   </div>
                 </th>
-                <td className="px-3 sm:px-4 py-2 text-right font-semibold tabular-nums text-slate-900 whitespace-nowrap">{result.spotPrice.toLocaleString('nb-NO', { maximumFractionDigits: 0 })}</td>
-                <td className="px-3 sm:px-4 py-2 text-right tabular-nums text-slate-600 whitespace-nowrap">{((result.feeInNok / result.totalCost) * 100).toLocaleString('nb-NO', { maximumFractionDigits: 2 })} %</td>
+                <td className="px-3 sm:px-4 py-1.5 text-right font-medium tabular-nums tracking-[-0.01em] text-slate-950 whitespace-nowrap">{result.spotPrice.toLocaleString('nb-NO', { maximumFractionDigits: 0 })}</td>
+                <td className="px-3 sm:px-4 py-1.5 text-right font-normal tabular-nums text-slate-600 whitespace-nowrap">{((result.feeInNok / result.totalCost) * 100).toLocaleString('nb-NO', { maximumFractionDigits: 2 })} %</td>
               </tr>
             ))}
           </tbody>
