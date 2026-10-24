@@ -6,7 +6,7 @@ import { execFileSync } from 'node:child_process';
 const PAGE_SOURCES = {
   home: ['src/App.tsx', 'src/components/FeeOverview.tsx', 'src/components/FAQSection.tsx', 'src/data/faqs.ts', 'src/services/api.ts'],
   price: ['src/components/pages/BitcoinKursPage.tsx'],
-  norway: ['src/components/NorwayExchanges.tsx'],
+  norway: ['src/components/NorwayExchanges.tsx', 'src/components/FeeOverview.tsx', 'src/services/api.ts'],
   firiNbx: ['src/components/pages/FiriVsNbxPage.tsx', 'src/components/FiriVsNbx.tsx'],
   vipps: ['src/components/pages/VippsPage.tsx', 'src/components/VippsComparisonSection.tsx'],
   overview: ['src/components/Overview.tsx'],
@@ -26,7 +26,7 @@ export function getPageDates() {
   const today = new Date().toISOString().slice(0, 10);
   return Object.fromEntries(
     Object.entries(PAGE_SOURCES).map(([page, sources]) => {
-      const files = [...sources, 'src/routes.ts', ...(page === 'home' || page === 'norway' || page === 'overview' ? [] : ['src/components/pages/ArticleLayout.tsx'])];
+      const files = [...sources, 'src/routes.ts', ...(page === 'home' ? [] : ['src/components/pages/ArticleLayout.tsx'])];
       // Ucommittede endringer (lokal utvikling) eller manglende historikk -> dagens dato
       const dirty = git(['status', '--porcelain', '--', ...files]);
       const committed = git(['log', '-1', '--format=%cs', '--', ...files]);

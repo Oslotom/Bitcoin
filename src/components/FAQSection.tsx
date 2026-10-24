@@ -56,14 +56,14 @@ export default function FAQSection() {
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange-600 text-white font-mono font-black text-xs">1</span>
               <div className="space-y-0.5">
                 <span className="font-bold text-slate-900 text-sm block">Sammenlign live kurser</span>
-                <p className="text-slate-500 font-normal leading-relaxed">Bruk vår sanntidskalkulator til å beregne nøyaktig hvor mye Bitcoin (BTC) du får utbetalt etter alle gebyrer og spredninger.</p>
+                <p className="text-slate-500 font-normal leading-relaxed">Bruk kalkulatoren til å anslå hvor mye Bitcoin (BTC) du får etter handelsgebyr og estimert spread. Innskudd, uttak og valutaveksling kan koste ekstra.</p>
               </div>
             </li>
             <li className="flex gap-3">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-900 text-white font-mono font-black text-xs">2</span>
               <div className="space-y-0.5">
                 <span className="font-bold text-slate-900 text-sm block">Verifiser med BankID</span>
-                <p className="text-slate-500 font-normal leading-relaxed">Norske kryptobørser krever hvitvasking-verifisering (KYC). Dette tar mindre enn ett minutt ved hjelp av elektronisk BankID.</p>
+                <p className="text-slate-500 font-normal leading-relaxed">Tilbyderen må kontrollere identiteten din. Flere norske børser støtter BankID, men krav til dokumentasjon og behandlingstid varierer.</p>
               </div>
             </li>
             <li className="flex gap-3">
@@ -126,6 +126,11 @@ export default function FAQSection() {
           })}
         </div>
       </div>
+      <p className="text-sm text-slate-500">
+        Kilder: <a href="https://www.finanstilsynet.no/nyhetsarkiv/nyheter/2025/investeringer-i-kryptoeiendeler-kan-vare-risikable/" className="text-brand hover:underline">Finanstilsynets veiledning om kryptorisiko</a>{' '}
+        og <a href="https://www.skatteetaten.no/person/skatt/hjelp-til-riktig-skatt/aksjer-og-verdipapirer/om/virtuell-valuta/skatteregler---virtuell-valuta/" className="text-brand hover:underline">Skatteetatens regler for virtuelle eiendeler</a>.
+        Tjenestene er beskrevet på <a href="/norske-borser" className="text-brand hover:underline">siden om norske kryptobørser</a> med lenker til tilbyderne.
+      </p>
     </section>
   );
 }

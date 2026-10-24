@@ -62,9 +62,9 @@ export default function TaxPage({ navigateTo }: { navigateTo: NavigateFn }) {
           samlede nettoformue og bunnfradraget det aktuelle året.
         </p>
         <p>
-          Skatteetaten oppgir en kurs du kan bruke: for skattemeldingen for 2025 er Bitcoin satt til{' '}
-          <strong>881 206,06 kr</strong> (kurs per 1. januar 2026). Eier du for eksempel 0,2 BTC, blir formuesverdien
-          omtrent 176 241 kr.
+          Beregn formuesverdien som antall BTC multiplisert med markedsverdien i norske kroner på verdsettelsesdatoen.
+          Ta vare på kursgrunnlaget. Et rent regneeksempel: med 0,2 BTC og en antatt kurs på 1 000 000 kr per BTC
+          er formuesverdien 200 000 kr. Dette er en illustrasjon, ikke en historisk eller gjeldende Bitcoin-kurs.
         </p>
       </section>
 

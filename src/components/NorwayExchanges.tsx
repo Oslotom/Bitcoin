@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
 import { Exchange } from '../types';
-import { ExchangeIcon } from './icons';
-import { ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { feeRows } from './FeeOverview';
+import ArticleLayout, { InternalLink, type NavigateFn } from './pages/ArticleLayout';
 
 interface NorwayExchange {
-  id: string;
+  id: Exchange;
   name: string;
   description: string;
   url: string;
@@ -13,193 +11,93 @@ interface NorwayExchange {
   type: 'Børs' | 'Megler' | 'Ressurs';
 }
 
-// Eksporteres også til ItemList-schema (JSON-LD) ved forhåndsrendring
+// Samme utvalg som de norske børsene i prissammenligningen. Ingen sikkerhetsrangering.
 export const norwayExchanges: NorwayExchange[] = [
   {
     id: Exchange.Firi,
     name: 'Firi',
-    description: 'Norges største kryptobørs. Registrert hos Finanstilsynet, tilbyr enkel registrering med BankID og raske innskudd med Vipps.',
-    url: 'https://firi.com',
-    features: ['BankID', 'Vipps', 'Automatisk skatteberegning', 'Norsk kundeservice'],
-    type: 'Børs'
+    description: 'Norsk kryptobørs med kjøp og salg av Bitcoin og andre kryptovalutaer. Firi oppgir støtte for BankID og verktøy for skatteberegning.',
+    url: 'https://firi.com/no',
+    features: ['BankID', 'Skatteberegning', 'Flere kryptovalutaer'],
+    type: 'Børs',
   },
   {
     id: Exchange.NBX,
     name: 'NBX (Norwegian Block Exchange)',
-    description: 'Norsk børs med fokus på sikkerhet og profesjonelle verktøy. Tilbyr BankID, kredittkort med krypto-cashback og er børsnotert.',
-    url: 'https://nbx.com',
-    features: ['BankID', 'Kredittkort med cashback', 'Børsnotert', 'Institusjonelle løsninger'],
-    type: 'Børs'
+    description: 'Norsk kryptobørs med handel i norske kroner. NBX oppgir støtte for BankID, ordrebok og kjøp av flere kryptovalutaer.',
+    url: 'https://nbx.com/',
+    features: ['BankID', 'Ordrebok', 'Handel i NOK'],
+    type: 'Børs',
   },
   {
     id: Exchange.BareBitcoin,
     name: 'Bare Bitcoin',
-    description: 'Norsk spesialist-app eksklusivt for Bitcoin. Lynrask, ekstremt sikker, og optimert for sparing (DCA) med Lightning Network-støtte.',
-    url: 'https://barebitcoin.no',
-    features: ['Bitcoin-spesialist', 'Lightning Network', 'DCA / Spareavtaler', 'BankID'],
-    type: 'Børs'
+    description: 'Norsk tjeneste som fokuserer på Bitcoin. Tilbyr kjøp og salg, autosparing og oversikt over skattetall som du kan bruke i skattemeldingen.',
+    url: 'https://barebitcoin.no/',
+    features: ['Kun Bitcoin', 'Autosparing', 'Skatteoversikt'],
+    type: 'Børs',
   },
-  {
-    id: 'kaupang',
-    name: 'Kaupang Krypto',
-    description: 'Norsk kryptomegler som tilbyr et bredt utvalg av kryptovalutaer og personlig oppfølging for større handler (OTC).',
-    url: 'https://kaupangkrypto.no',
-    features: ['Bredt utvalg', 'OTC-tjenester', 'BankID', 'Norsk megler'],
-    type: 'Megler'
-  },
-  {
-    id: 'kryptopris',
-    name: 'Kryptopris.no',
-    description: 'Uavhengig sammenligningstjeneste for norske kryptobørser. Hjelper deg å finne de laveste gebyrene og beste prisene.',
-    url: 'https://kryptopris.no',
-    features: ['Sammenligning', 'Gebyr-oversikt', 'Uavhengig', 'Guider'],
-    type: 'Ressurs'
-  },
-  {
-    id: 'bitnord',
-    name: 'Bitnord',
-    description: 'Norsk handelsplattform som fokuserer på enkelhet og brukervennlighet for kjøp og salg av krypto.',
-    url: 'https://bitnord.no',
-    features: ['Enkel handel', 'Norsk språk', 'BankID', 'Raske oppgjør'],
-    type: 'Børs'
-  },
-  {
-    id: 'vebit',
-    name: 'Vebit',
-    description: 'Norsk aktør som tilbyr enkel inngang til kryptomarkedet med fokus på trygghet og etterlevelse.',
-    url: 'https://vebit.no',
-    features: ['Sikkerhet', 'BankID', 'Enkel registrering'],
-    type: 'Megler'
-  }
 ];
 
-export default function NorwayExchanges() {
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-
-  const toggleExpand = (id: string) => {
-    setExpandedId(expandedId === id ? null : id);
-  };
-
+export default function NorwayExchanges({ navigateTo }: { navigateTo: NavigateFn }) {
+  const fees = feeRows();
   return (
-    <div id="norway-exchanges-section" className="space-y-12 animate-fade-in">
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl font-display font-bold tracking-tight text-slate-900">
-          Norske kryptobørser: kjøp Bitcoin i <span className="text-brand">Norge</span>
-        </h1>
-        <p className="text-slate-500 text-lg font-medium max-w-2xl mx-auto leading-relaxed">
-          Oversikt over de tryggeste og mest populære norske handelsplattformene registrert hos Finanstilsynet.
-        </p>
-      </div>
-
-      <div className="card-premium overflow-hidden">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-slate-50/50 border-b border-slate-100">
-              <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Plattform</th>
-              <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden md:table-cell">Type</th>
-              <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:table-cell">Egenskaper</th>
-              <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Detaljer</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-50">
-            {norwayExchanges.map((exchange) => (
-              <React.Fragment key={exchange.id}>
-                <tr 
-                  onClick={() => toggleExpand(exchange.id)}
-                  className="group cursor-pointer hover:bg-slate-50/80 transition-colors"
-                >
-                  <td className="px-6 py-6">
-                    <div className="flex items-center gap-4">
-                      <div className="shrink-0 group-hover:scale-110 transition-transform">
-                        <ExchangeIcon exchange={exchange.id} size={40} />
-                      </div>
-                      <div>
-                        <div className="text-base font-bold text-slate-900">{exchange.name}</div>
-                        <div className="text-[11px] text-slate-400 font-medium md:hidden mt-1 flex items-center gap-2">
-                          <span className="w-1 h-1 rounded-full bg-brand" /> {exchange.type}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-6 hidden md:table-cell">
-                    <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                      exchange.type === 'Børs' ? 'bg-blue-50 text-brand border border-blue-100' : 
-                      exchange.type === 'Megler' ? 'bg-purple-50 text-purple-600 border border-purple-100' : 
-                      'bg-slate-100 text-slate-600 border border-slate-200'
-                    }`}>
-                      {exchange.type}
-                    </span>
-                  </td>
-                  <td className="px-6 py-6 hidden sm:table-cell">
-                    <div className="flex flex-wrap gap-2">
-                      {exchange.features.slice(0, 2).map((feature, i) => (
-                        <span key={i} className="text-[10px] font-bold bg-slate-50 text-slate-500 px-2 py-0.5 rounded border border-slate-100 uppercase tracking-tight">
-                          {feature}
-                        </span>
-                      ))}
-                      {exchange.features.length > 2 && (
-                        <span className="text-[10px] font-bold text-slate-300 px-1 py-0.5">
-                          +{exchange.features.length - 2}
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-6 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <div className="text-slate-300 group-hover:text-brand transition-colors">
-                        {expandedId === exchange.id ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <AnimatePresence>
-                  {expandedId === exchange.id && (
-                    <tr>
-                      <td colSpan={4} className="px-0 py-0 border-none">
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden bg-slate-50/50"
-                        >
-                          <div className="mx-6 mb-6 p-8 bg-white rounded-2xl border border-slate-100 shadow-sm space-y-8">
-                            <div className="space-y-3">
-                              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Om plattformen</h4>
-                              <p className="text-base text-slate-600 leading-relaxed max-w-3xl font-medium italic">
-                                "{exchange.description}"
-                              </p>
-                            </div>
-                            
-                            <div className="flex flex-wrap gap-3">
-                              {exchange.features.map((feature, i) => (
-                                <span key={i} className="flex items-center gap-2 text-xs font-bold text-slate-700 bg-slate-50 border border-slate-100 px-4 py-2 rounded-xl">
-                                  <span className="w-1.5 h-1.5 bg-brand rounded-full" />
-                                  {feature}
-                                </span>
-                              ))}
-                            </div>
-
-                            <div className="pt-4 border-t border-slate-50">
-                              <a 
-                                href={exchange.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="btn-primary inline-flex px-8"
-                              >
-                                Besøk {exchange.name} <ExternalLink size={16} />
-                              </a>
-                            </div>
-                          </div>
-                        </motion.div>
-                      </td>
-                    </tr>
-                  )}
-                </AnimatePresence>
-              </React.Fragment>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <ArticleLayout
+      page="norway"
+      title={<>Norske kryptobørser: kjøp Bitcoin i <span className="text-brand">Norge</span></>}
+      intro="Sammenlign Firi, NBX og Bare Bitcoin – de tre norske tilbyderne i vår prissammenligning. Her ser du forskjeller i utvalg, kjøpsmåter og beregnede kostnader før du velger børs."
+      related={['home', 'overview', 'firiNbx', 'vipps']}
+      navigateTo={navigateTo}
+    >
+      <section>
+        <h2>Firi, NBX eller Bare Bitcoin?</h2>
+        <p>En norsk børs kan gjøre det enklere å betale i kroner og få hjelp på norsk. Valget bør likevel bygge på totalkostnad, hvilke tjenester du trenger og hvordan Bitcoin oppbevares. Oversikten er et utvalg, og er ikke en rangering av sikkerhet eller en fullstendig liste over tilbydere i Norge.</p>
+        <div className="overflow-x-auto rounded-2xl border border-slate-100">
+          <table className="w-full text-left text-sm">
+            <caption className="sr-only">Norske Bitcoin-tilbydere og beregnet kostnad på kjøp av 10 000 kroner</caption>
+            <thead className="bg-slate-50"><tr>
+              <th scope="col" className="p-4">Tilbyder</th>
+              <th scope="col" className="p-4">Tjenester</th>
+              <th scope="col" className="p-4">Kostnad på 10 000 kr (est.)</th>
+            </tr></thead>
+            <tbody>{norwayExchanges.map((exchange) => {
+              const row = fees.find((fee) => fee.exchange === exchange.id)!;
+              return <tr key={exchange.id} className="border-t border-slate-100">
+                <th scope="row" className="p-4"><a href={exchange.url} className="text-brand hover:underline">{exchange.name}</a></th>
+                <td className="p-4">{exchange.features.join(', ')}</td>
+                <td className="p-4">{Math.round(10000 * row.total)} kr</td>
+              </tr>;
+            })}</tbody>
+          </table>
+        </div>
+        <p className="mt-3 text-sm text-slate-500">Kostnaden bygger på handelsgebyr og estimert spread i vår sammenligningsmodell. Innskudd, uttak og eventuell valutaveksling kommer i tillegg. Vilkår varierer med produkt og betalingsmåte; kontroller tilbudet hos børsen.</p>
+      </section>
+      {norwayExchanges.map((exchange) => (
+        <section key={exchange.id}>
+          <h2>{exchange.name}</h2>
+          <p>{exchange.description}</p>
+          <p><a href={exchange.url} className="text-brand hover:underline">Les om tjenester og gjeldende vilkår hos {exchange.name}</a>.</p>
+        </section>
+      ))}
+      <section>
+        <h2>Kontroller tillatelse og risiko før du velger børs</h2>
+        <p>At en tjeneste er norsk eller bruker BankID er ikke en garanti for at pengene dine er trygge. Kontroller tilbyderens gjeldende tillatelse og hvilke tjenester den omfatter i{' '}<a href="https://www.finanstilsynet.no/virksomhetsregisteret/" className="text-brand hover:underline">Finanstilsynets virksomhetsregister</a>.</p>
+        <p>MiCA gir regler for kryptoeiendelstjenester, men forbrukerbeskyttelsen er ikke den samme som for tradisjonelle finansprodukter. Bitcoin kan svinge kraftig i verdi. Finanstilsynet forklarer{' '}<a href="https://www.finanstilsynet.no/nyhetsarkiv/nyheter/2025/investeringer-i-kryptoeiendeler-kan-vare-risikable/" className="text-brand hover:underline">risikoen ved investering i kryptoeiendeler</a>.</p>
+      </section>
+      <section>
+        <h2>Slik sammenligner du norske Bitcoin-børser</h2>
+        <ul>
+          <li><strong>Totalkostnad:</strong> Sammenlign BTC-beløpet du mottar for samme kronebeløp, med samme betalingsmåte.</li>
+          <li><strong>Betaling:</strong> Kontroller støtte for bankoverføring, kort eller Vipps og hva hver metode koster.</li>
+          <li><strong>Uttak:</strong> Undersøk om du kan sende Bitcoin til egen lommebok, samt minstebeløp og gebyr.</li>
+          <li><strong>Dokumentasjon:</strong> Sjekk om du kan eksportere handler og få skatteoversikt. Du har selv ansvar for skattemeldingen.</li>
+        </ul>
+        <p>Bruk{' '}<InternalLink to="home" navigateTo={navigateTo}>pris- og gebyrsammenligningen på forsiden</InternalLink>{' '}for et regneeksempel med ditt eget beløp, eller les{' '}<InternalLink to="firiNbx" navigateTo={navigateTo}>Firi og NBX sammenlignet</InternalLink>.</p>
+      </section>
+      <section>
+        <h2>Kilder til opplysningene</h2>
+        <p>Beskrivelsene bygger på tilbydernes egne nettsider, lenket over. Opplysninger om risiko og tilsyn bygger på Finanstilsynets veiledning. Produktutvalg og betalingsmåter kan endres. Oversikten omfatter de norske tilbyderne som inngår i vår prisberegning.</p>
+      </section>
+    </ArticleLayout>
   );
 }

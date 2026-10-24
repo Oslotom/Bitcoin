@@ -9,7 +9,7 @@ export default function AboutPage({ navigateTo }: { navigateTo: NavigateFn }) {
     <ArticleLayout
       page="about"
       title={<>Om <span className="text-brand">KjøpeBitcoin.no</span></>}
-      intro="KjøpeBitcoin.no er en norsk sammenligningstjeneste som hjelper deg å finne den billigste og tryggeste måten å kjøpe Bitcoin på i Norge."
+      intro="KjøpeBitcoin.no er en norsk sammenligningstjeneste som viser priser, beregnede kostnader og praktiske forskjeller ved kjøp av Bitcoin. Vi sammenligner kostnader, men rangerer ikke børsenes sikkerhet."
       related={['norway', 'overview', 'price', 'tax']}
       navigateTo={navigateTo}
     >

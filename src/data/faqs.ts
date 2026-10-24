@@ -1,4 +1,4 @@
-// Brukes både av FAQ-seksjonen på forsiden og til FAQPage-schema (JSON-LD) ved bygg.
+// Samme svar vises på forsiden, i FAQPage-schema og i llms.txt.
 import { cheapestSummary } from '../components/FeeOverview';
 
 export interface FAQItem {
@@ -8,27 +8,27 @@ export interface FAQItem {
 
 export const FAQS: FAQItem[] = [
   {
-    question: "Hvordan kjøper man Bitcoin i Norge?",
-    answer: "Her er den enkle standardprosedyren for å kjøpe Bitcoin i Norge:\n1. Velg en sikker kryptobørs registrert hos Finanstilsynet (for eksempel Bare Bitcoin, Firi eller NBX).\n2. Opprett en konto og verifiser identiteten din på få sekunder ved hjelp av BankID.\n3. Overfør norske kroner (NOK) raskt og trygt med Vipps, straksbetaling eller vanlig bankoverføring.\n4. Gjennomfør Bitcoin-kjøpet med din innskutte saldo.\n5. Overfør dine Bitcoins til en trygg, personlig hardware-lommebok for sikker langtidsoppbevaring."
+    question: 'Hvordan kjøper man Bitcoin i Norge?',
+    answer: 'Velg en kryptobørs, kontroller tilbyderens tillatelse, opprett konto og bekreft identiteten din. Sett inn norske kroner med en betalingsmåte børsen støtter, velg Bitcoin (BTC) og kontroller mengde og totalkostnad før du bekrefter kjøpet. Etterpå kan du beholde Bitcoin hos tilbyderen eller sende dem til en egen lommebok. Du trenger ikke kjøpe én hel Bitcoin; minstebeløpet bestemmes av børsen.',
   },
   {
-    question: "Hvor er det billigst å kjøpe Bitcoin i Norge?",
-    answer: cheapestSummary()
+    question: 'Hvor er det billigst å kjøpe Bitcoin i Norge?',
+    answer: cheapestSummary(),
   },
   {
-    question: "Hvilken norsk kryptobørs er den beste og billigste?",
-    answer: "Det finnes ingen enkeltstående plattform som er best til absolutt alt, men det avhenger av dine preferanser:\n- Firi er ideell for nybegynnere som ønsker en trygg plattform med automatisk skatteberegning, rask BankID-registrering og Vipps-støtte.\n- Bare Bitcoin er en svært lynrask og optimalisert spesialistplattform for kjøp og fast sparing i kun Bitcoin, med svært lav spredning og Lightning-nettverksstøtte.\n- NBX passer for bedrifter og de som ønsker avanserte handelsmuligheter og kredittkort-fordeler.\n- Globale børser som Kraken og Binance har lavere nominelle handelsgebyrer, men medfører betydelig høyere kostnader ved valutaveksling (fra NOK til EUR/USD) og internasjonale bankgebyrer, i tillegg til at de mangler automatisk skatterapportering."
+    question: 'Hvilken norsk kryptobørs bør jeg velge?',
+    answer: 'Sammenlign Firi, NBX og Bare Bitcoin ut fra hva du trenger, og kontroller gjeldende vilkår hos hver tilbyder. Firi tilbyr flere kryptovalutaer og verktøy for skatteberegning. NBX har blant annet handel i NOK og ordrebok. Bare Bitcoin fokuserer på Bitcoin og tilbyr autosparing og skatteoversikt. Se på totalkostnaden for ditt beløp, betalingsmåte og muligheten til å ta ut Bitcoin til egen lommebok. Listen er ikke en rangering av sikkerhet.',
   },
   {
-    question: "Kan man kjøpe Bitcoin med Vipps?",
-    answer: "Ja, det er fullt mulig og svært populært å kjøpe Bitcoin med Vipps i Norge. Norske børser som Firi lar deg sette inn penger direkte med Vipps. Dette betyr at du kan gjøre innskudd på sekunder og kjøpe krypto umiddelbart, selv om denne innskuddsmetoden ofte har et noe høyere gebyr enn vanlige bankoverføringer."
+    question: 'Kan man kjøpe Bitcoin med Vipps?',
+    answer: 'Ja, hos tilbydere som Firi kan du bruke Vipps i forbindelse med kjøpet. Kontroller om betalingen er et innskudd eller et direkte kjøp, og hvilket betalingsgebyr som gjelder. Vipps- og kortbetaling kan koste mer enn bankoverføring. Se alltid på hvor mye Bitcoin du mottar for hele beløpet du betaler.',
   },
   {
-    question: "Hvordan fungerer beskatning av Bitcoin i Norge?",
-    answer: "Gevinst ved salg av Bitcoin skattes som alminnelig inntekt (22 %), og tap gir fradrag. Det gjelder også når du bytter Bitcoin mot en annen kryptovaluta eller betaler med den. Bitcoin du eier ved årsskiftet føres opp som formue til markedsverdi per 1. januar. Du må selv føre kryptovaluta i skattemeldingen, men norske børser som Firi tilbyr skatterapport som gjør jobben enklere."
+    question: 'Hvordan fungerer skatt på Bitcoin i Norge?',
+    answer: 'Gevinst ved salg, bytte eller bruk av Bitcoin som betaling er normalt skattepliktig som alminnelig inntekt med 22 prosent, og tap kan gi fradrag. Beholdningen ved årsskiftet inngår i formuen til markedsverdi per 1. januar året etter inntektsåret. Du har selv ansvar for opplysningene i skattemeldingen. En rapport fra børsen kan hjelpe, men må kontrolleres og suppleres med andre handler. Se Skatteetatens regler for din situasjon.',
   },
   {
-    question: "Er det lovlig og trygt å investere i Bitcoin i Norge?",
-    answer: "Ja, det er 100 % lovlig å eie, kjøpe og selge Bitcoin i Norge. For din egen sikkerhet anbefales det på det sterkeste å kun benytte kryptovalutatjenester som er offisielt registrert hos det norske Finanstilsynet. Dette forsikrer at plattformen følger strenge norske regler for sikkerhet, hvitvasking og finansiell rapportering."
-  }
+    question: 'Er det trygt å kjøpe Bitcoin i Norge?',
+    answer: 'Bitcoin innebærer høy risiko, og du kan tape hele investeringen. Norsk kundeservice, BankID eller en tillatelse er ingen garanti mot kursfall, svindel eller tap. Kontroller tilbyderens gjeldende tillatelse og hvilke tjenester den omfatter i Finanstilsynets virksomhetsregister. MiCA gir visse rettigheter, men beskyttelsen er ikke den samme som for tradisjonelle finansprodukter. Bruk tofaktorautentisering der det tilbys, og del aldri gjenopprettingsord eller BankID-koder.',
+  },
 ];

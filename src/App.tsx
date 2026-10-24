@@ -372,10 +372,10 @@ export default function App({ initialPage }: { initialPage?: Page }) {
         )}
 
           {/* Page: Knowledge Overview */}
-          {currentPage === 'overview' && <div className="animate-fade-in"><Overview /></div>}
+          {currentPage === 'overview' && <div className="animate-fade-in"><Overview navigateTo={navigateTo} /></div>}
 
           {/* Page: Norway Exchanges */}
-          {currentPage === 'norway' && <div className="animate-fade-in"><NorwayExchanges /></div>}
+          {currentPage === 'norway' && <div className="animate-fade-in"><NorwayExchanges navigateTo={navigateTo} /></div>}
 
           {/* Redaksjonelle landingssider */}
           {currentPage === 'price' && <BitcoinKursPage results={results} isLoading={isLoading} error={error} navigateTo={navigateTo} />}
