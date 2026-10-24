@@ -43,7 +43,7 @@ export default function BitcoinKursPage({ results, isLoading, error, navigateTo 
         <p>
           Spotprisen alene sier derfor lite om hva du faktisk betaler. Bruk{' '}
           <InternalLink to="home" navigateTo={navigateTo}>priskalkulatoren på forsiden</InternalLink> for å se hvor mye Bitcoin du sitter
-          igjen med etter alle gebyrer.
+          igjen med etter beregnet handelsgebyr og estimert spread. Andre kostnader kan komme i tillegg.
         </p>
       </section>
 
@@ -60,7 +60,8 @@ export default function BitcoinKursPage({ results, isLoading, error, navigateTo 
       <section>
         <h2>Hvor bør du kjøpe Bitcoin til best kurs?</h2>
         <p>
-          Den laveste kursen gir ikke nødvendigvis den billigste handelen. Se{' '}
+          Den laveste kursen gir ikke nødvendigvis den billigste handelen. Skal du{' '}
+          <InternalLink to="home" navigateTo={navigateTo}>kjøpe Bitcoin</InternalLink>, sammenlign børser og beregnede kostnader på forsiden. Se også{' '}
           <InternalLink to="norway" navigateTo={navigateTo}>norske kryptobørser</InternalLink> for børser med BankID og
           innskudd i kroner, eller les{' '}
           <InternalLink to="firiNbx" navigateTo={navigateTo}>sammenligningen av Firi og NBX</InternalLink>.

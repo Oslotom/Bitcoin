@@ -22,7 +22,7 @@ export default function Overview({ navigateTo }: { navigateTo: NavigateFn }) {
       </nav>
       <section id="velg-bors" className="scroll-mt-24">
         <h2>1. Velg en børs for kjøp av Bitcoin</h2>
-        <p>Sammenlign hva du får for det samme beløpet i norske kroner. Handelsgebyret alene forteller ikke hele prisen: spread, valutaveksling, innskudd og uttak kan komme i tillegg. Bruk{' '}<InternalLink to="home" navigateTo={navigateTo}>Bitcoin-kalkulatoren og gebyroversikten</InternalLink>{' '}som utgangspunkt, og kontroller det endelige tilbudet hos børsen før du handler.</p>
+        <p>Sammenlign hva du får for det samme beløpet i norske kroner. Handelsgebyret alene forteller ikke hele prisen: spread, valutaveksling, innskudd og uttak kan komme i tillegg. Bruk oversikten over{' '}<InternalLink to="home" navigateTo={navigateTo}>hvor du kan kjøpe Bitcoin og hva det koster</InternalLink>{' '}som utgangspunkt, og kontroller det endelige tilbudet hos børsen før du handler.</p>
         <p>Firi, NBX og Bare Bitcoin er eksempler på norske tjenester. Norske kroner, BankID og norsk kundeservice kan forenkle første kjøp. En utenlandsk børs kan ha lavere handelsgebyr, men du må også undersøke kostnaden ved å veksle og overføre penger. Se{' '}<InternalLink to="norway" navigateTo={navigateTo}>sammenligningen av norske kryptobørser</InternalLink>.</p>
         <p>Sjekk tilbyderens gjeldende tillatelse og hvilke tjenester den omfatter i{' '}<a href="https://www.finanstilsynet.no/virksomhetsregisteret/" className="text-brand hover:underline">Finanstilsynets virksomhetsregister</a>. Regulering gjør ikke Bitcoin risikofritt, og du kan tape hele investeringen.</p>
       </section>

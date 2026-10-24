@@ -24,7 +24,7 @@ export default function Footer({ setCurrentPage, currentPage }: FooterProps) {
           {/* Footer Navigation */}
           <nav id="footer-nav" className="flex flex-wrap justify-center gap-x-8 gap-y-4">
             {[
-              { id: 'home', label: 'Hjem' },
+              { id: 'home', label: 'Kjøpe Bitcoin' },
               { id: 'price', label: 'Bitcoin kurs' },
               { id: 'norway', label: 'Norske børser' },
               { id: 'firiNbx', label: 'Firi vs NBX' },

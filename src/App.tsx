@@ -256,14 +256,19 @@ export default function App({ initialPage }: { initialPage?: Page }) {
                 
                 <h1 className="text-5xl md:text-6xl font-display font-bold tracking-tight text-slate-900 leading-[1.1]">
                   <span className="text-brand">Kjøpe Bitcoin</span> i Norge{" "}<br />
-                  – finn beste kurs og pris
+                  – sammenlign børser og gebyrer
                 </h1>
 
                 <p className="max-w-2xl mx-auto text-lg md:text-lg text-slate-600 leading-relaxed font-medium">
-                  Planlegger du å kjøpe Bitcoin? Vi sammenligner live Bitcoin kurs, gebyrer og spread hos Firi, Bare Bitcoin, NBX, Kraken, Binance og flere – så du ser hvor du får mest Bitcoin for pengene.
+                  Skal du kjøpe Bitcoin? Sammenlign {feeRows().length} børser, se handelsgebyrer og estimert spread,
+                  og beregn hvor mye Bitcoin du får for beløpet ditt. Velg mellom norske tilbydere som Firi, NBX
+                  og Bare Bitcoin eller internasjonale børser som Kraken og Binance.
                 </p>
-
-
+                <div className="flex flex-wrap justify-center gap-3">
+                  <a href="#kjop-bitcoin" className="btn-primary px-6 py-3">Sammenlign før du kjøper</a>
+                  <a href={PAGE_PATHS.overview} className="inline-flex items-center rounded-xl border border-slate-200 px-6 py-3 font-semibold text-slate-700 hover:border-brand hover:text-brand">Slik kjøper du Bitcoin</a>
+                </div>
+                <p className="text-sm text-slate-500">Vi sammenligner kostnader. Kjøpet gjennomfører du hos børsen du velger.</p>
               </div>
             </section>
 
@@ -294,11 +299,11 @@ export default function App({ initialPage }: { initialPage?: Page }) {
     
 
             {/* Preview Section */}
-            <section className="py-14 max-w-5xl mx-auto px-4 space-y-8">
+            <section id="kjop-bitcoin" className="py-14 max-w-5xl mx-auto px-4 space-y-8 scroll-mt-20">
               <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                 <div className="space-y-2">
-                  <h2 className="text-3xl font-display font-bold tracking-tight">Bitcoin pris nå hos {feeRows().length} børser</h2>
-                  <p className="text-slate-500 font-medium">Hentet live fra børsene, med handelsgebyr og spread trukket fra</p>
+                  <h2 className="text-3xl font-display font-bold tracking-tight">Sammenlign børser for å kjøpe Bitcoin</h2>
+                  <p className="text-slate-500 font-medium">Live priser fra {feeRows().length} børser, med handelsgebyr og estimert spread tatt med i beregningen</p>
                 </div>
             
               </div>
@@ -328,26 +333,50 @@ export default function App({ initialPage }: { initialPage?: Page }) {
                   <h2 className="text-xl font-bold text-slate-900">Hvor er det billigst å kjøpe Bitcoin i Norge?</h2>
                   <p className="text-sm text-slate-600 leading-relaxed">{cheapestSummary()}</p>
                   <p className="text-sm text-slate-600 leading-relaxed">
-                    Utenlandske børser har ofte lavest gebyr, men krever valutaveksling og har ikke norsk skatterapport. Se alle{' '}
+                    Sammenlign samme beløp og betalingsmåte. Ved handel i utenlandsk valuta må du også ta med valutaveksling. Les om{' '}
                     <a href={PAGE_PATHS.norway} onClick={(e) => navigateTo('norway', e)} className="text-brand hover:underline">norske kryptobørser</a>.
                   </p>
                 </div>
                 <div className="space-y-3">
                   <h2 className="text-xl font-bold text-slate-900">Hvordan kjøper jeg Bitcoin?</h2>
                   <p className="text-sm text-slate-600 leading-relaxed">
-                    Du <strong>kjøper Bitcoin</strong> ved å opprette konto hos en kryptobørs, verifisere deg med BankID, sette inn norske kroner og legge inn en kjøpsordre. Det tar vanligvis bare noen minutter. Les{' '}
-                    <a href={PAGE_PATHS.overview} onClick={(e) => navigateTo('overview', e)} className="text-brand hover:underline">guiden til å kjøpe Bitcoin trygt</a>, eller følg{' '}
+                    Du <strong>kjøper Bitcoin</strong> ved å velge børs, opprette konto, bekrefte identiteten og sette inn penger.
+                    Kontroller beløpet i BTC og alle kostnader før du bekrefter kjøpet. Verifisering og betalingstid varierer. Les{' '}
+                    <a href={PAGE_PATHS.overview} onClick={(e) => navigateTo('overview', e)} className="text-brand hover:underline">kjøpsguiden steg for steg</a>, eller følg{' '}
                     <a href={PAGE_PATHS.price} onClick={(e) => navigateTo('price', e)} className="text-brand hover:underline">Bitcoin kursen i dag</a>.
                   </p>
                 </div>
                 <div className="space-y-3">
                   <h2 className="text-xl font-bold text-slate-900">Gebyrer, spread og Vipps</h2>
                   <p className="text-sm text-slate-600 leading-relaxed">
-                    Mange børser reklamerer med lave gebyrer, men tar betalt gjennom spread eller innskuddsgebyr ved Vipps og kort. Bankoverføring er nesten alltid billigst. Se{' '}
+                    Vipps og kort kan koste mer enn bankoverføring. Skill mellom betalingsgebyret, gebyret for selve handelen
+                    og eventuell spread i kjøpskursen. Se{' '}
                     <a href={PAGE_PATHS.vipps} onClick={(e) => navigateTo('vipps', e)} className="text-brand hover:underline">hva det koster å kjøpe Bitcoin med Vipps</a>.
                   </p>
                 </div>
               </div>
+
+              <section aria-labelledby="velge-kjopsmate" className="mt-12 space-y-5">
+                <h2 id="velge-kjopsmate" className="text-2xl font-bold text-slate-900">Hvilken måte å kjøpe Bitcoin passer for deg?</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="card-premium p-6 space-y-3">
+                    <h3 className="text-lg font-semibold">Kjøpe med norske kroner</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">Vil du betale i NOK og få hjelp på norsk? Sammenlign Firi, NBX og Bare Bitcoin. Se etter betalingsmåten du ønsker, samlet kostnad og muligheten til å ta ut Bitcoin.</p>
+                    <a href={PAGE_PATHS.norway} className="inline-block font-semibold text-brand hover:underline">Sammenlign norske Bitcoin-børser</a>
+                  </div>
+                  <div className="card-premium p-6 space-y-3">
+                    <h3 className="text-lg font-semibold">Kjøpe for et lite beløp</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">Du trenger ikke kjøpe én hel Bitcoin. Du kan kjøpe en brøkdel, men minstebeløp og faste gebyrer varierer. Kontroller også uttaksgebyret hvis du vil sende til egen lommebok.</p>
+                    <a href="#kalkulator" className="inline-block font-semibold text-brand hover:underline">Beregn kjøpet med ditt beløp</a>
+                  </div>
+                  <div className="card-premium p-6 space-y-3">
+                    <h3 className="text-lg font-semibold">Ditt første Bitcoin-kjøp</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">Usikker på konto, identitetskontroll eller oppbevaring? Kjøpsguiden forklarer prosessen og forskjellen mellom å ha Bitcoin hos børsen og i egen lommebok.</p>
+                    <a href={PAGE_PATHS.overview} className="inline-block font-semibold text-brand hover:underline">Les guiden til ditt første kjøp</a>
+                  </div>
+                </div>
+                <p className="text-sm text-slate-500">Bitcoin kan svinge kraftig i verdi, og du kan tape hele investeringen. En kostnadssammenligning er ikke en sikkerhetsvurdering av børsene. Les om <a href={PAGE_PATHS.about} className="font-semibold text-brand hover:underline">metoden og begrensningene våre</a>.</p>
+              </section>
 
               <nav aria-label="Populære guider" className="mt-12">
                 <h2 className="text-xl font-bold text-slate-900 mb-4">Populære guider</h2>
