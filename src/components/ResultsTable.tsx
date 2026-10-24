@@ -5,6 +5,7 @@ import CountUp from 'react-countup';
 import { CountryIcon, ExchangeIcon } from './icons';
 import { FEES } from '../services/api';
 import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { premiumPercent } from '../utils/pricing';
 
 interface ResultsTableProps {
   results: ComparisonResult[];
@@ -14,7 +15,7 @@ interface ResultsTableProps {
   compact?: boolean;
 }
 
-type SortKey = 'exchange' | 'spotPrice' | 'feePercent' | 'cryptoAmount';
+type SortKey = 'exchange' | 'spotPrice' | 'feePercent' | 'cryptoAmount' | 'effectivePrice' | 'premium';
 
 const PLATFORM_DATA: Record<Exchange, { link: string; description: string }> = {
   [Exchange.Coinbase]: { 
@@ -58,8 +59,8 @@ const PLATFORM_DATA: Record<Exchange, { link: string; description: string }> = {
 export default function ResultsTable({ results, isLoading, error, crypto, compact = false }: ResultsTableProps) {
   const [expandedRow, setExpandedRow] = useState<Exchange | null>(null);
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: 'asc' | 'desc' }>({
-    key: 'cryptoAmount',
-    direction: 'desc'
+    key: compact ? 'effectivePrice' : 'cryptoAmount',
+    direction: compact ? 'asc' : 'desc'
   });
 
   const toggleRow = (exchange: Exchange) => {
@@ -87,6 +88,9 @@ export default function ResultsTable({ results, isLoading, error, crypto, compac
       } else if (sortConfig.key === 'feePercent') {
         valA = a.feeInNok / a.totalCost;
         valB = b.feeInNok / b.totalCost;
+      } else if (sortConfig.key === 'effectivePrice' || sortConfig.key === 'premium') {
+        valA = a.effectivePrice;
+        valB = b.effectivePrice;
       } else {
         valA = a.cryptoAmount;
         valB = b.cryptoAmount;
@@ -159,41 +163,73 @@ export default function ResultsTable({ results, isLoading, error, crypto, compac
   }
 
   if (compact) {
+    const referenceResult = results.find((row) => row.exchange === Exchange.Coinbase);
+    const referencePrice = referenceResult && Number.isFinite(referenceResult.spotPrice) && referenceResult.spotPrice > 0 ? referenceResult.spotPrice : null;
+    const money = (value: number) => value.toLocaleString('nb-NO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const sortButtonClass = (column: SortKey) => `inline-flex items-center gap-1 rounded-sm py-1 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${sortConfig.key === column ? 'text-brand' : 'text-slate-500 hover:text-slate-950'}`;
+    const sortState = (column: SortKey): 'ascending' | 'descending' | 'none' => sortConfig.key === column ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none';
     return (
-      <div id="results-table-compact" className="overflow-x-auto bg-white font-sans">
-        <table className="w-full border-collapse text-[15px]">
-          <caption className="sr-only">Bitcoin-pris per BTC i norske kroner og beregnet handelsgebyr med estimert spread</caption>
-          <thead className="border-b border-slate-200 bg-white text-xs sm:text-[13px] text-slate-500">
-            <tr>
-              <th scope="col" className="w-[46%] pl-2 pr-3 sm:pl-4 py-2 text-left" aria-sort={sortConfig.key === 'exchange' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}>
-                <button type="button" onClick={() => handleSort('exchange')} className={sortButtonClass('exchange')}>Børs <SortIndicator column="exchange" /></button>
-              </th>
-              <th scope="col" className="px-3 sm:px-4 py-2 text-right" aria-sort={sortConfig.key === 'spotPrice' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}>
-                <button type="button" onClick={() => handleSort('spotPrice')} className={sortButtonClass('spotPrice')}>Pris per BTC (NOK) <SortIndicator column="spotPrice" /></button>
-              </th>
-              <th scope="col" className="px-3 sm:px-4 py-2 text-right" aria-sort={sortConfig.key === 'feePercent' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}>
-                <button type="button" onClick={() => handleSort('feePercent')} className={sortButtonClass('feePercent')}>Gebyr + spread <SortIndicator column="feePercent" /></button>
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100 border-b border-slate-200">
-            {sortedResults.map((result, index) => (
-              <tr key={result.exchange} className="group transition-colors hover:bg-[#f7f8fa] focus-within:bg-[#f7f8fa]">
-                <th scope="row" className="pl-2 pr-3 sm:pl-4 py-1.5 text-left font-medium">
-                  <div className="flex items-center gap-2.5 sm:gap-3 whitespace-nowrap">
-                    <span aria-hidden="true" className="hidden sm:block w-4 shrink-0 text-right text-xs font-normal tabular-nums text-slate-400">{index + 1}</span>
-                    <span className="shrink-0"><ExchangeIcon exchange={result.exchange} size={28} /></span>
-                    <a href={PLATFORM_DATA[result.exchange].link} target="_blank" rel="noopener noreferrer" className="rounded-sm text-slate-950 hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40">{result.exchange}</a>
-                    {bestResult?.exchange === result.exchange && <span className="hidden sm:inline rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">Beste pris</span>}
-                  </div>
+      <div id="results-table-compact" className="space-y-3 font-sans">
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 px-1 text-sm">
+          <p className="text-slate-500">Referansekurs · <a href="https://api.coinbase.com/v2/prices/BTC-NOK/spot" target="_blank" rel="noopener noreferrer" className="text-brand hover:underline">Coinbase spot</a></p>
+          <p className="font-medium tabular-nums text-slate-900">{referencePrice ? `${money(referencePrice)} NOK / BTC` : 'Referansekurs utilgjengelig'}</p>
+        </div>
+        <div className="overflow-x-auto rounded-2xl border border-slate-100 bg-white">
+          <table className="w-full min-w-[780px] border-collapse text-sm sm:text-[15px]">
+            <caption className="sr-only">Bitcoin-kurs, kostnad på et kjøp på 10 000 kroner, beregnet kjøpspris per BTC og påslag mot Coinbase sin spotkurs</caption>
+            <thead className="border-b border-slate-100 text-xs text-slate-500">
+              <tr>
+                <th scope="col" className="sticky left-0 z-10 bg-white pl-4 sm:pl-5 pr-3 py-3 text-left" aria-sort={sortState('exchange')}>
+                  <button type="button" onClick={() => handleSort('exchange')} className={sortButtonClass('exchange')}>Børs <SortIndicator column="exchange" /></button>
                 </th>
-                <td className="px-3 sm:px-4 py-1.5 text-right font-medium tabular-nums tracking-[-0.01em] text-slate-950 whitespace-nowrap">{result.spotPrice.toLocaleString('nb-NO', { maximumFractionDigits: 0 })}</td>
-                <td className="px-3 sm:px-4 py-1.5 text-right font-normal tabular-nums text-slate-600 whitespace-nowrap">{((result.feeInNok / result.totalCost) * 100).toLocaleString('nb-NO', { maximumFractionDigits: 2 })} %</td>
+                <th scope="col" className="px-4 py-3 text-right" aria-sort={sortState('spotPrice')}>
+                  <button type="button" onClick={() => handleSort('spotPrice')} className={sortButtonClass('spotPrice')}>Kurs per BTC <SortIndicator column="spotPrice" /></button>
+                </th>
+                <th scope="col" className="px-4 py-3 text-right" aria-sort={sortState('feePercent')}>
+                  <button type="button" onClick={() => handleSort('feePercent')} className={sortButtonClass('feePercent')}>Gebyr på 10 000 kr <SortIndicator column="feePercent" /></button>
+                </th>
+                <th scope="col" className="px-4 py-3 text-right" aria-sort={sortState('effectivePrice')}>
+                  <button type="button" onClick={() => handleSort('effectivePrice')} className={sortButtonClass('effectivePrice')}>Pris inkl. gebyr/spread <SortIndicator column="effectivePrice" /></button>
+                </th>
+                <th scope="col" className="px-4 sm:pr-5 py-3 text-right" aria-sort={sortState('premium')}>
+                  <button type="button" disabled={!referencePrice} onClick={() => handleSort('premium')} className={`${sortButtonClass('premium')} disabled:cursor-not-allowed disabled:opacity-50`}>Påslag mot referanse <SortIndicator column="premium" /></button>
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {sortedResults.map((result) => {
+                const premium = premiumPercent(result.effectivePrice, referencePrice);
+                const displayedPremium = premium === null ? null : Math.round(premium * 100) / 100;
+                const feeRate = result.feeInNok / result.totalCost * 100;
+                return (
+                  <tr key={result.exchange} className="group transition-colors hover:bg-slate-50 focus-within:bg-slate-50">
+                    <th scope="row" className="sticky left-0 z-10 bg-white group-hover:bg-slate-50 group-focus-within:bg-slate-50 pl-4 sm:pl-5 pr-3 py-3 text-left font-normal">
+                      <div className="flex items-center gap-2.5 whitespace-nowrap">
+                        <span className="shrink-0"><ExchangeIcon exchange={result.exchange} size={24} /></span>
+                        <a href={PLATFORM_DATA[result.exchange].link} target="_blank" rel="noopener noreferrer" className="rounded-sm text-base font-normal text-brand hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40">{result.exchange}</a>
+                      </div>
+                    </th>
+                    <td className="px-4 py-3 text-right font-normal tabular-nums text-slate-800 whitespace-nowrap">{money(result.spotPrice)} <span className="text-[10px] text-slate-500">NOK</span></td>
+                    <td className="px-4 py-3 text-right tabular-nums text-slate-600 whitespace-nowrap">
+                      {money(result.feeInNok)} <span className="text-xs">kr</span>
+                      <span className="ml-2 text-xs text-slate-500">({feeRate.toLocaleString('nb-NO', { maximumFractionDigits: 2 })} %)</span>
+                    </td>
+                    <td className={`px-4 py-3 text-right font-medium tabular-nums whitespace-nowrap ${bestResult?.exchange === result.exchange ? 'text-emerald-700' : 'text-slate-900'}`}>{money(result.effectivePrice)} <span className="text-[10px] font-normal text-slate-500">NOK</span></td>
+                    <td className={`px-4 sm:pr-5 py-3 text-right text-base font-normal tabular-nums whitespace-nowrap ${displayedPremium === null || displayedPremium === 0 ? 'text-slate-500' : displayedPremium > 0 ? 'text-rose-600' : 'text-emerald-700'}`}>
+                      {displayedPremium === null ? <span title="Coinbase sin referansekurs kunne ikke hentes">—</span> : `${displayedPremium > 0 ? '+' : displayedPremium < 0 ? '−' : ''}${Math.abs(displayedPremium).toLocaleString('nb-NO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %`}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <p className="px-1 text-xs leading-relaxed text-slate-500">
+          Påslag = (beregnet pris inkl. handelsgebyr og estimert spread / referansekurs − 1) × 100.
+          Positivt tall betyr dyrere enn referansen. Gebyrkolonnen viser kostnad i et kjøpseksempel på 10 000 kr;
+          kurs og totalpris er per BTC. Dette er ikke prosentvis kursendring over tid. Innskudd, uttak og eventuell
+          valutaveksling kommer i tillegg. Noen prisgrunnlag er referanseestimater. <a href="/om-oss" className="text-brand hover:underline">Se beregningsmetoden</a>.
+        </p>
       </div>
     );
   }

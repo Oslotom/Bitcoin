@@ -4,8 +4,8 @@
 import { execFileSync } from 'node:child_process';
 
 const PAGE_SOURCES = {
-  home: ['src/App.tsx', 'src/components/ResultsTable.tsx', 'src/components/FeeOverview.tsx', 'src/components/FAQSection.tsx', 'src/components/ExchangePriceChart.tsx', 'src/data/faqs.ts', 'src/services/api.ts'],
-  price: ['src/components/pages/BitcoinKursPage.tsx'],
+  home: ['src/App.tsx', 'src/components/ResultsTable.tsx', 'src/utils/pricing.ts', 'src/components/FeeOverview.tsx', 'src/components/FAQSection.tsx', 'src/components/ExchangePriceChart.tsx', 'src/data/faqs.ts', 'src/services/api.ts'],
+  price: ['src/components/pages/BitcoinKursPage.tsx', 'src/components/ResultsTable.tsx', 'src/utils/pricing.ts'],
   norway: ['src/components/NorwayExchanges.tsx', 'src/components/FeeOverview.tsx', 'src/services/api.ts'],
   firiNbx: ['src/components/pages/FiriVsNbxPage.tsx', 'src/components/FiriVsNbx.tsx'],
   vipps: ['src/components/pages/VippsPage.tsx', 'src/components/VippsComparisonSection.tsx'],

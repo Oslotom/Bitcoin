@@ -83,6 +83,10 @@ export default function App({ initialPage }: { initialPage?: Page }) {
       const processResult = (exchange: Exchange, priceResult: PromiseSettledResult<number>) => {
         if (priceResult.status === 'fulfilled') {
           const spotPrice = priceResult.value;
+          if (!Number.isFinite(spotPrice) || spotPrice <= 0) {
+            console.warn(`Invalid price for ${exchange}`);
+            return;
+          }
           const feePercentage = FEES[exchange].trade + FEES[exchange].spread;
           const feeInNok = amount * feePercentage;
           const amountAfterFee = amount - feeInNok;
