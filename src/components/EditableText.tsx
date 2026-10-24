@@ -21,7 +21,7 @@ const EditableText: React.FC<EditableTextProps> = ({ contentKey, className, mult
   if (multiline) {
     return (
       <textarea
-        className={`${className} w-full p-2 border-2 border-orange-400 bg-orange-50/50 rounded-md focus:outline-none min-h-[100px]`}
+        className={`${className} w-full p-2 border-2 border-brand bg-brand-soft rounded-md focus:outline-none min-h-[100px]`}
         value={value}
         onChange={(e) => updateContent(contentKey, e.target.value)}
       />
@@ -31,7 +31,7 @@ const EditableText: React.FC<EditableTextProps> = ({ contentKey, className, mult
   return (
     <input
       type="text"
-      className={`${className} w-full p-2 border-2 border-orange-400 bg-orange-50/50 rounded-md focus:outline-none`}
+      className={`${className} w-full p-2 border-2 border-brand bg-brand-soft rounded-md focus:outline-none`}
       value={value}
       onChange={(e) => updateContent(contentKey, e.target.value)}
     />

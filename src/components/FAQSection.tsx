@@ -3,7 +3,7 @@ import { FAQS } from '../data/faqs';
 export default function FAQSection() {
   return (
     <section aria-labelledby="faq-title" className="mt-10 border-t border-slate-100 pt-10 space-y-5">
-      <h2 id="faq-title" className="text-2xl font-display font-bold text-slate-900">Ofte stilte spørsmål om å kjøpe Bitcoin</h2>
+      <h2 id="faq-title" className="section-title">Ofte stilte spørsmål om å kjøpe Bitcoin</h2>
       <div className="divide-y divide-slate-100">
         {FAQS.map((faq) => (
           <details key={faq.question} className="group py-4">

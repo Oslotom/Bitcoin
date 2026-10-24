@@ -20,8 +20,8 @@ export default function BitcoinKursPage({ results, isLoading, error, navigateTo 
     >
       <section>
         <h2>Live Bitcoin pris hos norske og utenlandske børser</h2>
-        <div className="card-premium overflow-hidden not-prose">
-          <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} />
+        <div className="overflow-hidden not-prose">
+          <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} compact />
         </div>
         <p className="text-sm text-slate-500 mt-3">
           Prisene hentes hver gang du åpner siden. Utenlandske børser som oppgir pris i USD eller EUR er regnet om til NOK.

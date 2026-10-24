@@ -29,12 +29,12 @@ export default function FiriVsNbx({ results }: FiriVsNbxProps) {
   if (!firiData || !nbxData) return null;
 
   return (
-    <section id="firi-vs-nbx" className="py-20 border-t border-slate-100 font-table">
-      <div className="text-center space-y-4 mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand/5 text-brand rounded-full text-[10px] font-black uppercase tracking-widest">
+    <section id="firi-vs-nbx" className="py-6 border-t border-slate-200 font-sans">
+      <div className="space-y-3 mb-6">
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand/5 text-brand rounded-full text-[10px] font-semibold uppercase tracking-widest">
           <Scale size={12} /> Sammenligning
         </div>
-        <h2 className="text-4xl font-display font-bold tracking-tight text-slate-900">
+        <h2 className="section-title">
           Firi vs NBX: <span className="text-brand">Hvem er billigst?</span>
         </h2>
         <p className="text-slate-500 text-lg font-medium max-w-2xl mx-auto">
@@ -42,9 +42,9 @@ export default function FiriVsNbx({ results }: FiriVsNbxProps) {
         </p>
       </div>
 
-      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Firi Card */}
-        <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 p-8 space-y-6 relative overflow-hidden">
+        <div className="card-premium p-5 sm:p-6 space-y-6 relative overflow-hidden">
           <div className="flex items-center justify-between">
             <h3 className="text-2xl font-bold text-slate-900">Firi</h3>
             <span className="px-3 py-1 bg-blue-50 text-brand text-[10px] font-bold rounded-full uppercase">Mest populær</span>
@@ -52,18 +52,18 @@ export default function FiriVsNbx({ results }: FiriVsNbxProps) {
           
           <div className="space-y-4">
             <div className="flex justify-between items-end pb-4 border-b border-slate-50">
-              <span className="text-sm text-slate-400 font-bold uppercase tracking-wider">Du får</span>
-              <span className="text-3xl font-display font-bold text-slate-900">{firiData.btcAmount.toFixed(8)} BTC</span>
+              <span className="text-sm text-slate-500 font-medium">Du får</span>
+              <span className="text-xl sm:text-2xl tabular-nums font-semibold text-slate-900">{firiData.btcAmount.toFixed(8)} BTC</span>
             </div>
             
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-slate-500 font-medium">Kurtasje (Handelsgebyr)</span>
-                <span className="font-bold text-rose-500">-{Math.round(firiData.tradeFee)} kr</span>
+                <span className="font-semibold text-slate-700">-{Math.round(firiData.tradeFee)} kr</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-slate-500 font-medium">Estimert spread (Gebyrisk)</span>
-                <span className="font-bold text-rose-400">-{Math.round(firiData.spreadFee)} kr</span>
+                <span className="font-semibold text-slate-700">-{Math.round(firiData.spreadFee)} kr</span>
               </div>
               <div className="flex justify-between text-sm pt-2 border-t border-slate-50">
                 <span className="text-slate-900 font-bold">Totale kostnader</span>
@@ -82,7 +82,7 @@ export default function FiriVsNbx({ results }: FiriVsNbxProps) {
         </div>
 
         {/* NBX Card */}
-        <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 p-8 space-y-6 relative overflow-hidden">
+        <div className="card-premium p-5 sm:p-6 space-y-6 relative overflow-hidden">
           <div className="flex items-center justify-between">
             <h3 className="text-2xl font-bold text-slate-900">NBX</h3>
             <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold rounded-full uppercase">Børsnotert</span>
@@ -90,18 +90,18 @@ export default function FiriVsNbx({ results }: FiriVsNbxProps) {
           
           <div className="space-y-4">
             <div className="flex justify-between items-end pb-4 border-b border-slate-50">
-              <span className="text-sm text-slate-400 font-bold uppercase tracking-wider">Du får</span>
-              <span className="text-3xl font-display font-bold text-slate-900">{nbxData.btcAmount.toFixed(8)} BTC</span>
+              <span className="text-sm text-slate-500 font-medium">Du får</span>
+              <span className="text-xl sm:text-2xl tabular-nums font-semibold text-slate-900">{nbxData.btcAmount.toFixed(8)} BTC</span>
             </div>
             
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-slate-500 font-medium">Kurtasje (Handelsgebyr)</span>
-                <span className="font-bold text-rose-500">-{Math.round(nbxData.tradeFee)} kr</span>
+                <span className="font-semibold text-slate-700">-{Math.round(nbxData.tradeFee)} kr</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-slate-500 font-medium">Estimert spread (Gebyrisk)</span>
-                <span className="font-bold text-rose-400">-{Math.round(nbxData.spreadFee)} kr</span>
+                <span className="font-semibold text-slate-700">-{Math.round(nbxData.spreadFee)} kr</span>
               </div>
               <div className="flex justify-between text-sm pt-2 border-t border-slate-50">
                 <span className="text-slate-900 font-bold">Totale kostnader</span>
@@ -120,7 +120,7 @@ export default function FiriVsNbx({ results }: FiriVsNbxProps) {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto mt-12 p-6 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-4">
+      <div className="w-full mt-6 p-6 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-4">
         <TrendingUp className="text-brand shrink-0" size={24} />
         <p className="text-xs text-slate-600 leading-relaxed font-medium">
           <strong>Konklusjon:</strong> {firiData.btcAmount > nbxData.btcAmount ? 'Firi' : 'NBX'} gir deg akkurat nå litt mer bitcoin for pengene i dette regnestykket. Forskjellen er minimal ({Math.abs(Math.round((firiData.btcAmount - nbxData.btcAmount) * (firiRes?.spotPrice || 0)))} kr), så valget bør også baseres på hvilke funksjoner og brukeropplevelse du foretrekker.

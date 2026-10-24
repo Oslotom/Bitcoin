@@ -18,10 +18,10 @@ export default function ExchangePriceChart({ results, isLoading, error }: Props)
   const largestDifference = rows.length ? rows[rows.length - 1].effectivePrice - cheapest : 0;
 
   return (
-    <section id="prisforskjell" aria-labelledby="prisforskjell-title" className="max-w-5xl mx-auto px-4 py-14 scroll-mt-20">
+    <section id="prisforskjell" aria-labelledby="prisforskjell-title" className="site-container py-10 sm:py-12 scroll-mt-20">
       <div className="card-premium p-5 sm:p-8 space-y-6">
         <div className="space-y-3">
-          <h2 id="prisforskjell-title" className="text-2xl md:text-3xl font-display font-bold text-slate-900">Prisforskjell mellom Bitcoin-børsene</h2>
+          <h2 id="prisforskjell-title" className="section-title">Prisforskjell mellom Bitcoin-børsene</h2>
           <p id="prisforskjell-description" className="text-sm text-slate-600 leading-relaxed">
             Se hva én Bitcoin koster etter beregnet handelsgebyr og estimert spread. Stolpene viser tillegget i kroner
             per BTC sammenlignet med børsen som har lavest beregnet pris. Kortere stolpe betyr mindre prisforskjell.

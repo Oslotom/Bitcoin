@@ -62,7 +62,7 @@ export default function ContactPage() {
 
   if (status === 'success') {
     return (
-      <div className="max-w-xl mx-auto py-16 text-center space-y-8 animate-fade-in">
+      <div className="max-w-xl mx-auto py-16 text-center space-y-6 animate-fade-in">
         <div className="flex justify-center">
           <div className="bg-emerald-50 p-6 rounded-full border border-emerald-100 shadow-sm">
             <CheckCircle2 className="text-emerald-500 w-16 h-16" />
@@ -85,12 +85,12 @@ export default function ContactPage() {
   }
 
   return (
-    <div id="contact-page" className="space-y-16">
-      <div className="card-premium p-8 md:p-16">
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-3">
-              <label htmlFor="name" className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">
+    <div id="contact-page" className="space-y-6">
+      <div className="card-premium p-5 sm:p-8">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="space-y-2">
+              <label htmlFor="name" className="field-label">
                 Fullt navn
               </label>
               <input
@@ -99,11 +99,11 @@ export default function ContactPage() {
                 type="text"
                 required
                 placeholder="Ditt navn"
-                className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-base font-medium focus:outline-none focus:ring-2 focus:ring-brand focus:bg-white transition-all shadow-sm"
+                className="form-control"
               />
             </div>
-            <div className="space-y-3">
-              <label htmlFor="email" className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">
+            <div className="space-y-2">
+              <label htmlFor="email" className="field-label">
                 E-postadresse
               </label>
               <input
@@ -112,20 +112,20 @@ export default function ContactPage() {
                 type="email"
                 required
                 placeholder="din@epost.no"
-                className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-base font-medium focus:outline-none focus:ring-2 focus:ring-brand focus:bg-white transition-all shadow-sm"
+                className="form-control"
               />
             </div>
           </div>
 
-          <div className="space-y-3">
-            <label htmlFor="subject" className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">
+          <div className="space-y-2">
+            <label htmlFor="subject" className="field-label">
               Hva gjelder det?
             </label>
             <div className="relative">
               <select
                 id="subject"
                 name="subject"
-                className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-base font-medium focus:outline-none focus:ring-2 focus:ring-brand focus:bg-white transition-all appearance-none shadow-sm"
+                className="form-control appearance-none pr-12"
               >
                 <option>Generell henvendelse</option>
                 <option>Feil i prisdata</option>
@@ -139,8 +139,8 @@ export default function ContactPage() {
             </div>
           </div>
 
-          <div className="space-y-3">
-            <label htmlFor="message" className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">
+          <div className="space-y-2">
+            <label htmlFor="message" className="field-label">
               Melding
             </label>
             <textarea
@@ -149,7 +149,7 @@ export default function ContactPage() {
               required
               rows={6}
               placeholder="Hva kan vi hjelpe deg med?"
-              className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-base font-medium focus:outline-none focus:ring-2 focus:ring-brand focus:bg-white transition-all resize-none shadow-sm"
+              className="form-control"
             />
           </div>
 
@@ -157,7 +157,7 @@ export default function ContactPage() {
             <button
               type="submit"
               disabled={status === 'loading'}
-              className="btn-primary w-full py-5 text-lg"
+              className="btn-primary w-full"
             >
               {status === 'loading' ? (
                 <>Sender...</>
@@ -171,13 +171,13 @@ export default function ContactPage() {
         </form>
       </div>
 
-      <div className="flex flex-col md:flex-row items-center justify-center gap-12 pt-8">
+      <div className="flex flex-col md:flex-row items-center justify-center gap-6 pt-4">
         <div className="flex items-center gap-5">
-          <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100 shadow-sm">
+          <div className="bg-brand-soft p-4 rounded-2xl border border-blue-100 shadow-sm">
             <MessageSquare className="text-brand" size={24} />
           </div>
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Rask respons</p>
+            <p className="text-sm font-semibold text-slate-700 mb-1">Rask respons</p>
             <p className="text-lg font-bold text-slate-900">Svar innen 24 timer</p>
           </div>
         </div>

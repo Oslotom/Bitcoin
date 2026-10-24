@@ -26,16 +26,16 @@ interface ArticleLayoutProps {
 export default function ArticleLayout({ page, title, intro, related, navigateTo, children }: ArticleLayoutProps) {
   const modified = __PAGE_DATES__[page];
   return (
-    <article className="max-w-3xl mx-auto px-4 pt-20 pb-16 animate-fade-in">
+    <article className="site-container pt-10 sm:pt-14 pb-14 sm:pb-16 animate-fade-in">
       <nav aria-label="Brødsmuler" className="mb-6 text-sm text-slate-500">
         <a href={PAGE_PATHS.home} className="hover:text-brand">Kjøpe Bitcoin</a>
         <span aria-hidden="true"> / </span>
         <span aria-current="page">{PAGE_TITLES[page]?.split(' | ')[0]}</span>
       </nav>
       <header className="space-y-4 mb-10">
-        <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight text-slate-900 leading-[1.1]">{title}</h1>
-        <p className="text-lg text-slate-600 leading-relaxed font-medium">{intro}</p>
-        <p className="text-xs text-slate-400 font-medium">
+        <h1 className="page-title">{title}</h1>
+        <p className="max-w-3xl text-base sm:text-lg text-slate-600 leading-relaxed">{intro}</p>
+        <p className="text-sm text-slate-500">
           Av KjøpeBitcoin.no · Sist oppdatert{' '}
           <time dateTime={modified}>
             {new Date(modified).toLocaleDateString('nb-NO', { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -43,12 +43,12 @@ export default function ArticleLayout({ page, title, intro, related, navigateTo,
         </p>
       </header>
 
-      <div className="space-y-10 text-slate-700 leading-relaxed [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-slate-900 [&_h2]:mb-3 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:text-slate-900 [&_h3]:mb-2 [&_p]:mb-3 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:space-y-2 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2">
+      <div className="article-content">
         {children}
       </div>
 
       <nav aria-label="Relaterte sider" className="mt-16 border-t border-slate-100 pt-8">
-        <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-4">Les også</h2>
+        <h2 className="section-title mb-4">Les også</h2>
         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {related.map((page) => (
             <li key={page}>

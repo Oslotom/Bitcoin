@@ -11,7 +11,7 @@ interface VippsComparisonSectionProps {
 export const FIRI_VIPPS_EXTRA_FEE = 0.039;
 
 const VippsLogo = () => (
-  <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FF5B24] text-xl font-black text-white shadow-sm">
+  <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FF5B24] text-xl font-semibold text-white shadow-sm">
     V
   </div>
 );
@@ -52,8 +52,8 @@ export default function VippsComparisonSection({ results, amount, className = ''
   const btcDifference = bankBtc - vippsBtc;
 
   return (
-    <section className={`card-premium p-8 ${className}`.trim()}>
-      <div className="flex flex-col lg:flex-row gap-12 items-start">
+    <section className={`card-premium p-5 sm:p-6 ${className}`.trim()}>
+      <div className="flex flex-col xl:flex-row gap-6 items-start">
         <div className="flex-1 space-y-6">
           <div className="flex items-center gap-4">
             <VippsLogo />
@@ -61,7 +61,7 @@ export default function VippsComparisonSection({ results, amount, className = ''
               <h3 className="text-2xl font-display font-bold tracking-tight text-slate-900">
                 Kjøp med Vipps
               </h3>
-              <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Direktebetaling</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-slate-500">Direktebetaling</p>
             </div>
           </div>
           <p className="text-base text-slate-600 leading-relaxed font-medium">
@@ -74,31 +74,31 @@ export default function VippsComparisonSection({ results, amount, className = ''
           </div>
         </div>
 
-        <div className="w-full lg:w-96 shrink-0">
-          <div className="overflow-hidden rounded-2xl border border-slate-100 shadow-sm bg-white">
+        <div className="w-full xl:w-96 shrink-0">
+          <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
             <table className="w-full">
               <thead className="bg-slate-50/50 border-b border-slate-100">
                 <tr>
-                  <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-slate-400">Metode</th>
-                  <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-widest text-slate-400">Gebyr</th>
-                  <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-widest text-slate-400">Du får</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500">Metode</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-500">Gebyr</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-500">Du får</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
                 <tr className="hover:bg-slate-50 transition-colors">
                   <td className="px-4 py-4 font-bold text-slate-900 text-sm">Bankoverføring</td>
-                  <td className="px-4 py-4 text-right text-xs text-slate-500 font-mono italic">{Math.round(bankFeeNok)} NOK</td>
-                  <td className="px-4 py-4 text-right text-sm text-slate-900 font-bold font-mono tracking-tight">{bankBtc.toFixed(6)}</td>
+                  <td className="px-4 py-4 text-right text-xs text-slate-500 tabular-nums">{Math.round(bankFeeNok)} NOK</td>
+                  <td className="px-4 py-4 text-right text-sm text-slate-900 font-bold tabular-nums tracking-tight">{bankBtc.toFixed(6)}</td>
                 </tr>
                 <tr className="hover:bg-slate-50 transition-colors">
                   <td className="px-4 py-4 font-bold text-slate-900 text-sm">Vipps Betaling</td>
-                  <td className="px-4 py-4 text-right text-xs text-slate-500 font-mono italic">{Math.round(vippsFeeNok)} NOK</td>
-                  <td className="px-4 py-4 text-right text-sm text-brand font-bold font-mono tracking-tight">{vippsBtc.toFixed(6)}</td>
+                  <td className="px-4 py-4 text-right text-xs text-slate-500 tabular-nums">{Math.round(vippsFeeNok)} NOK</td>
+                  <td className="px-4 py-4 text-right text-sm text-brand font-bold tabular-nums tracking-tight">{vippsBtc.toFixed(6)}</td>
                 </tr>
               </tbody>
             </table>
           </div>
-          {!spotPrice && <p className="mt-3 text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center animate-pulse">Oppdaterer priser...</p>}
+          {!spotPrice && <p className="mt-3 text-[10px] text-slate-500 font-bold uppercase tracking-widest text-center animate-pulse">Oppdaterer priser...</p>}
         </div>
       </div>
     </section>

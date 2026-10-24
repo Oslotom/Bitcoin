@@ -39,20 +39,20 @@ export default function FeeOverview() {
   const example = 10000;
 
   return (
-    <section id="gebyroversikt" className="max-w-5xl mx-auto px-4 py-12 space-y-6">
+    <section id="gebyroversikt" className="w-full py-4 space-y-5">
       <div className="space-y-2">
-        <h2 className="text-3xl font-display font-bold tracking-tight">Gebyroversikt: hva koster det å kjøpe Bitcoin?</h2>
+        <h2 className="section-title">Gebyroversikt: hva koster det å kjøpe Bitcoin?</h2>
         <p className="text-slate-600 leading-relaxed">
           Tabellen viser handelsgebyr og estimert spread for kjøp av Bitcoin med norske kroner, sortert fra billigst til dyrest.
           Kolonnen til høyre viser hva du betaler i gebyr på et kjøp av {example.toLocaleString('nb-NO')} kr.
         </p>
-        <p className="text-xs text-slate-400 font-medium">
+        <p className="text-sm text-slate-500">
           Sist oppdatert: <time dateTime={__PAGE_DATES__.about}>{formatDate(__PAGE_DATES__.about)}</time>
         </p>
       </div>
 
       <div className="card-premium overflow-x-auto">
-        <table className="w-full text-sm font-table">
+        <table className="w-full text-sm font-sans">
           <caption className="sr-only">Gebyrer for kjøp av Bitcoin i Norge per børs</caption>
           <thead className="bg-slate-50 text-left text-slate-500">
             <tr>
