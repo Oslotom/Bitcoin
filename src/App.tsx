@@ -13,6 +13,7 @@ import { ExchangeIcon } from './components/icons';
 import CountUp from 'react-countup';
 import NorwayExchanges from './components/NorwayExchanges';
 import BitcoinCalculator from './components/BitcoinCalculator';
+import ExchangePriceChart from './components/ExchangePriceChart';
 import { getCoinbasePrice, getBinancePrice, getFiriPrice, getKrakenPrice, getNbxPrice, getBareBitcoinPrice, getRevolutPrice, getCryptoComPrice, getBuyBitcoinPrice, FEES } from './services/api';
 import { ComparisonResult, CryptoCurrency, Exchange } from './types';
 import { ExternalLink, Edit2, Save, Menu, X, Zap, Globe, CreditCard } from 'lucide-react';
@@ -317,6 +318,8 @@ export default function App({ initialPage }: { initialPage?: Page }) {
                 <a href="#kalkulator" className="font-semibold text-brand hover:underline">
                   Bruk Bitcoin-kalkulatoren
                 </a>
+                {' · '}
+                <a href="#prisforskjell" className="font-semibold text-brand hover:underline">Se prisforskjellene i grafen</a>
               </p>
             </section>
 
@@ -397,6 +400,7 @@ export default function App({ initialPage }: { initialPage?: Page }) {
 
               <FAQSection />
             </section>
+            <ExchangePriceChart results={results} isLoading={isLoading} error={error} />
           </div>
         )}
 
