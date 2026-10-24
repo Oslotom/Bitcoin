@@ -13,9 +13,10 @@ import { ExchangeIcon } from './components/icons';
 import CountUp from 'react-countup';
 import NorwayExchanges from './components/NorwayExchanges';
 import ExchangePriceChart from './components/ExchangePriceChart';
+import HeroTableIllustration from './components/HeroTableIllustration';
 import { getCoinbasePrice, getBinancePrice, getFiriPrice, getKrakenPrice, getNbxPrice, getBareBitcoinPrice, getRevolutPrice, getCryptoComPrice, getBuyBitcoinPrice, FEES } from './services/api';
 import { ComparisonResult, CryptoCurrency, Exchange } from './types';
-import { ExternalLink, Edit2, Save, Menu, X } from 'lucide-react';
+import { ExternalLink, Edit2, Save, Menu, X, ArrowUpRight, ArrowRight } from 'lucide-react';
 import { useContent } from './contexts/ContentContext';
 import EditableText from './components/EditableText';
 import { motion, AnimatePresence } from 'motion/react';
@@ -283,26 +284,19 @@ export default function App({ initialPage }: { initialPage?: Page }) {
       <main id="main-content" className="flex-1">
         {currentPage === 'home' && (
           <div className="animate-fade-in">
-            {/* Hero Section */}
-            <section className="relative pt-12 sm:pt-16 pb-8 sm:pb-10 overflow-hidden">
-              <div className="site-container text-center space-y-6">
-            
-                
-                <h1 className="page-title">
-                  <span className="text-brand">Kjøpe Bitcoin</span> i Norge{" "}<br />
-                  – sammenlign børser og gebyrer
-                </h1>
-
-                <p className="max-w-3xl mx-auto text-base sm:text-lg text-slate-600 leading-relaxed">
-                  Skal du kjøpe Bitcoin? Sammenlign {feeRows().length} børser, se handelsgebyrer og estimert spread,
-                  og se hvor mye Bitcoin du får i et kjøpseksempel på 10 000 kr. Velg mellom norske tilbydere som Firi, NBX
-                  og Bare Bitcoin eller internasjonale børser som Kraken og Binance.
-                </p>
-                <div className="flex flex-wrap justify-center gap-3">
-                  <a href="#kjop-bitcoin" className="btn-primary px-6 py-3">Sammenlign før du kjøper</a>
-                  <a href={PAGE_PATHS.overview} className="btn-secondary">Slik kjøper du Bitcoin</a>
+            <section className="landing-hero overflow-hidden">
+              <div className="site-container grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] py-12 sm:py-16 lg:py-20">
+                <div className="space-y-6">
+                  <p className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white px-3 py-1.5 text-xs font-medium text-slate-600"><span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-brand" />{feeRows().length} børser. Én oversikt.</p>
+                  <h1 className="hero-heading">Kjøpe Bitcoin<br /><span className="text-brand">i Norge.</span></h1>
+                  <p className="max-w-md text-base sm:text-lg leading-relaxed text-slate-600">Sammenlign kurs og gebyrer.<br className="hidden sm:block" /> Finn ut hvor du får mer for pengene.</p>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <a href="#kjop-bitcoin" className="btn-primary">Sammenlign børser <ArrowRight size={16} /></a>
+                    <a href={PAGE_PATHS.overview} className="inline-flex min-h-11 items-center gap-1.5 px-2 text-sm font-semibold text-slate-600 hover:text-brand">Ny med Bitcoin? <ArrowUpRight size={15} /></a>
+                  </div>
+                  <p className="text-xs text-slate-500">Du velger børs. Vi gjør kostnadene synlige.</p>
                 </div>
-                <p className="text-sm text-slate-500">Vi sammenligner kostnader. Kjøpet gjennomfører du hos børsen du velger.</p>
+                <HeroTableIllustration />
               </div>
             </section>
 
@@ -310,8 +304,8 @@ export default function App({ initialPage }: { initialPage?: Page }) {
             <section id="kjop-bitcoin" className="site-container py-10 sm:py-12 space-y-6 scroll-mt-20">
               <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                 <div className="space-y-2">
-                  <h2 className="section-title">Sammenlign børser for å kjøpe Bitcoin</h2>
-                  <p className="text-slate-500 font-medium">Live priser fra {feeRows().length} børser, med handelsgebyr og estimert spread tatt med i beregningen</p>
+                  <h2 className="section-title">Finn din Bitcoin-børs.</h2>
+                  <p className="text-slate-500 font-medium">Kurs, gebyrer og beregnet kjøpspris – side om side.</p>
                 </div>
             
               </div>
@@ -326,16 +320,10 @@ export default function App({ initialPage }: { initialPage?: Page }) {
             </section>
 
             <section className="site-container pb-10">
-              <nav aria-label="Les mer om kjøp av Bitcoin" className="space-y-4">
-                <h2 className="section-title">Les mer før du kjøper</h2>
-                <ul className="flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-brand">
-                  <li><a href={PAGE_PATHS.overview} className="hover:underline">Kjøpsguide steg for steg</a></li>
-                  <li><a href={PAGE_PATHS.norway} className="hover:underline">Norske kryptobørser</a></li>
-                  <li><a href={PAGE_PATHS.vipps} className="hover:underline">Kjøpe med Vipps</a></li>
-                  <li><a href={PAGE_PATHS.firiNbx} className="hover:underline">Firi eller NBX?</a></li>
-                  <li><a href={PAGE_PATHS.tax} className="hover:underline">Skatt på Bitcoin</a></li>
-                  <li><a href={PAGE_PATHS.about} className="hover:underline">Slik beregner vi kostnadene</a></li>
-                </ul>
+              <nav aria-label="Les mer om kjøp av Bitcoin" className="grid sm:grid-cols-3 gap-3">
+                <a href={PAGE_PATHS.overview} className="resource-link bg-[#f1f4ff]"><span>Kjøpe Bitcoin, steg for steg</span><ArrowUpRight size={19} className="shrink-0 text-brand" /></a>
+                <a href={PAGE_PATHS.norway} className="resource-link bg-[#f0f8f4]"><span>Bli kjent med norske børser</span><ArrowUpRight size={19} className="shrink-0 text-emerald-700" /></a>
+                <a href={PAGE_PATHS.tax} className="resource-link bg-[#fff6ee]"><span>Få oversikt over skatten</span><ArrowUpRight size={19} className="shrink-0 text-amber-700" /></a>
               </nav>
 
               <FAQSection />

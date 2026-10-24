@@ -21,10 +21,9 @@ export default function ExchangePriceChart({ results, isLoading, error }: Props)
     <section id="prisforskjell" aria-labelledby="prisforskjell-title" className="site-container py-10 sm:py-12 scroll-mt-20">
       <div className="card-premium p-5 sm:p-8 space-y-6">
         <div className="space-y-3">
-          <h2 id="prisforskjell-title" className="section-title">Prisforskjell mellom Bitcoin-børsene</h2>
+          <h2 id="prisforskjell-title" className="section-title">Små prosent. Synlig forskjell.</h2>
           <p id="prisforskjell-description" className="text-sm text-slate-600 leading-relaxed">
-            Se hva én Bitcoin koster etter beregnet handelsgebyr og estimert spread. Stolpene viser tillegget i kroner
-            per BTC sammenlignet med børsen som har lavest beregnet pris. Kortere stolpe betyr mindre prisforskjell.
+            Prisforskjell per BTC, inkludert beregnet gebyr og estimert spread. Kortere stolpe er nærmere laveste pris.
           </p>
         </div>
 
@@ -70,9 +69,8 @@ export default function ExchangePriceChart({ results, isLoading, error }: Props)
         )}
 
         <p className="border-t border-slate-100 pt-4 text-xs leading-relaxed text-slate-500">
-          Grafen bruker de samme prisdataene som sammenligningstabellen. Bare børser med en tilgjengelig, gyldig pris
-          er med. Innskudd, uttak og eventuell valutaveksling kommer i tillegg. Prisene kan være hentet på litt ulike
-          tidspunkt, og noen priser kan være referanseestimater. Dette er ikke bindende kjøpstilbud.
+          Samme prisgrunnlag som tabellen. Noen priser er referanseestimater. Innskudd, uttak og valutaveksling kommer
+          i tillegg. Beregningene er ikke bindende kjøpstilbud.
         </p>
       </div>
     </section>

@@ -224,12 +224,15 @@ export default function ResultsTable({ results, isLoading, error, crypto, compac
             </tbody>
           </table>
         </div>
-        <p className="px-1 text-xs leading-relaxed text-slate-500">
+        <details className="px-1 text-xs text-slate-500">
+          <summary className="cursor-pointer font-medium hover:text-brand">Slik regner vi pris og påslag</summary>
+        <p className="mt-2 max-w-3xl leading-relaxed">
           Påslag = (beregnet pris inkl. handelsgebyr og estimert spread / referansekurs − 1) × 100.
           Positivt tall betyr dyrere enn referansen. Gebyrkolonnen viser kostnad i et kjøpseksempel på 10 000 kr;
           kurs og totalpris er per BTC. Dette er ikke prosentvis kursendring over tid. Innskudd, uttak og eventuell
           valutaveksling kommer i tillegg. Noen prisgrunnlag er referanseestimater. <a href="/om-oss" className="text-brand hover:underline">Se beregningsmetoden</a>.
         </p>
+        </details>
       </div>
     );
   }

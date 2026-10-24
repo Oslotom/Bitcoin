@@ -58,6 +58,26 @@
   .field-label { @apply block text-sm font-medium text-slate-700; }
   .form-control { @apply block w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 placeholder:text-slate-400; }
   .form-control:focus { @apply border-brand outline-2 outline-brand/20 outline-offset-0; }
+  .landing-hero { background: #f8f9ff; border-bottom: 1px solid #edf0fc; }
+  .hero-heading { @apply font-semibold text-slate-950; font-size: clamp(2.5rem, 5.5vw, 4.5rem); line-height: 1.06; letter-spacing: -0.055em; }
+  .hero-scene {
+    @apply relative isolate grid place-items-center w-full mx-auto;
+    min-height: 380px;
+    max-width: 470px;
+    border-radius: 32px;
+    background-color: #edf0ff;
+    background-image: radial-gradient(#c4ccef 0.8px, transparent 0.8px);
+    background-size: 18px 18px;
+  }
+  .hero-orbit { position: absolute; width: 240px; height: 240px; border: 1px solid #d1d8f4; border-radius: 50%; z-index: -1; }
+  .hero-board { @apply relative w-[84%] rounded-2xl border border-white bg-white p-5 sm:p-6; transform: rotate(-3deg); box-shadow: 0 18px 55px #364a9520; }
+  .hero-coin { @apply absolute -top-4 right-3 z-10 flex h-16 w-16 items-center justify-center rounded-2xl text-[#b25a21]; background: #ffe3c4; transform: rotate(12deg); box-shadow: 0 6px 0 #efc79b; }
+  .hero-note { @apply absolute bottom-12 right-0 sm:-right-3 z-10 flex items-center gap-2 rounded-xl border border-emerald-100 bg-white px-3 py-2 text-[11px] font-medium text-slate-700; transform: rotate(3deg); box-shadow: 0 8px 22px #283f5410; }
+  .resource-link { @apply flex min-h-20 items-center justify-between gap-3 rounded-2xl border border-slate-100 px-5 py-4 text-sm font-semibold text-slate-800 transition-colors hover:border-brand/30 hover:text-brand; }
+  @media (max-width: 639px) {
+    .hero-scene { min-height: 345px; max-width: 390px; }
+    .hero-note { right: 2px; }
+  }
 }
 
 .animate-fade-in {
