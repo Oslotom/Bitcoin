@@ -11,6 +11,7 @@ interface ResultsTableProps {
   isLoading: boolean;
   error: string | null;
   crypto: CryptoCurrency;
+  compact?: boolean;
 }
 
 type SortKey = 'exchange' | 'spotPrice' | 'feePercent' | 'cryptoAmount';
@@ -54,7 +55,7 @@ const PLATFORM_DATA: Record<Exchange, { link: string; description: string }> = {
   },
 };
 
-export default function ResultsTable({ results, isLoading, error, crypto }: ResultsTableProps) {
+export default function ResultsTable({ results, isLoading, error, crypto, compact = false }: ResultsTableProps) {
   const [expandedRow, setExpandedRow] = useState<Exchange | null>(null);
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: 'asc' | 'desc' }>({
     key: 'cryptoAmount',
@@ -153,6 +154,44 @@ export default function ResultsTable({ results, isLoading, error, crypto }: Resu
       <div className="rounded-2xl border border-slate-100 bg-white p-12 text-center text-slate-400">
         <h3 className="text-lg font-bold text-slate-900 mb-1">Klar til å sammenligne</h3>
         <p className="text-sm">Fyll ut beløp for å se live priser.</p>
+      </div>
+    );
+  }
+
+  if (compact) {
+    return (
+      <div id="results-table-compact" className="overflow-x-auto font-table">
+        <table className="w-full text-sm">
+          <caption className="sr-only">Bitcoin-pris per BTC i norske kroner og beregnet handelsgebyr med estimert spread</caption>
+          <thead className="border-b border-slate-100 bg-slate-50/50 text-xs text-slate-500">
+            <tr>
+              <th scope="col" className="px-3 sm:px-4 py-2 text-left" aria-sort={sortConfig.key === 'exchange' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}>
+                <button type="button" onClick={() => handleSort('exchange')} className="inline-flex items-center font-semibold">Børs <SortIndicator column="exchange" /></button>
+              </th>
+              <th scope="col" className="px-3 sm:px-4 py-2 text-right" aria-sort={sortConfig.key === 'spotPrice' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}>
+                <button type="button" onClick={() => handleSort('spotPrice')} className="inline-flex items-center font-semibold">Pris per BTC (NOK) <SortIndicator column="spotPrice" /></button>
+              </th>
+              <th scope="col" className="px-3 sm:px-4 py-2 text-right" aria-sort={sortConfig.key === 'feePercent' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}>
+                <button type="button" onClick={() => handleSort('feePercent')} className="inline-flex items-center font-semibold">Gebyr + spread <SortIndicator column="feePercent" /></button>
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {sortedResults.map((result) => (
+              <tr key={result.exchange} className="hover:bg-slate-50/80">
+                <th scope="row" className="px-3 sm:px-4 py-2 text-left font-semibold">
+                  <div className="flex items-center gap-2 whitespace-nowrap">
+                    <span className="shrink-0"><ExchangeIcon exchange={result.exchange} size={24} /></span>
+                    <a href={PLATFORM_DATA[result.exchange].link} target="_blank" rel="noopener noreferrer" className="text-slate-900 hover:text-brand hover:underline">{result.exchange}</a>
+                    {bestResult?.exchange === result.exchange && <span className="hidden sm:inline text-[10px] font-semibold text-emerald-700">Beste pris</span>}
+                  </div>
+                </th>
+                <td className="px-3 sm:px-4 py-2 text-right font-semibold tabular-nums text-slate-900 whitespace-nowrap">{result.spotPrice.toLocaleString('nb-NO', { maximumFractionDigits: 0 })}</td>
+                <td className="px-3 sm:px-4 py-2 text-right tabular-nums text-slate-600 whitespace-nowrap">{((result.feeInNok / result.totalCost) * 100).toLocaleString('nb-NO', { maximumFractionDigits: 2 })} %</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     );
   }
