@@ -42,6 +42,11 @@ for (const [, location, modified] of entries) {
     allLinks.add(`${target.origin}${target.pathname}`);
     const file = target.pathname === '/' ? 'index.html' : target.pathname.slice(1);
     assert(existsSync(`dist/${file}`) || existsSync(`dist/${file}.html`), `Broken internal link ${href} on ${location}`);
+    if (target.hash) {
+      const targetFile = existsSync(`dist/${file}`) ? file : `${file}.html`;
+      const fragment = decodeURIComponent(target.hash.slice(1));
+      assert(read(targetFile).includes(`id="${fragment}"`), `Missing anchor ${href} on ${location}`);
+    }
   }
   assert(read('llms-full.txt').includes(`Kilde: ${location}`), `Missing AI text source: ${location}`);
 }

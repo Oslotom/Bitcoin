@@ -92,7 +92,7 @@ export default function NorwayExchanges({ navigateTo }: { navigateTo: NavigateFn
           <li><strong>Uttak:</strong> Undersøk om du kan sende Bitcoin til egen lommebok, samt minstebeløp og gebyr.</li>
           <li><strong>Dokumentasjon:</strong> Sjekk om du kan eksportere handler og få skatteoversikt. Du har selv ansvar for skattemeldingen.</li>
         </ul>
-        <p>Bruk{' '}<InternalLink to="home" navigateTo={navigateTo}>pris- og gebyrsammenligningen på forsiden</InternalLink>{' '}for et regneeksempel med ditt eget beløp, eller les{' '}<InternalLink to="firiNbx" navigateTo={navigateTo}>Firi og NBX sammenlignet</InternalLink>.</p>
+        <p>Bruk{' '}<InternalLink to="home" navigateTo={navigateTo}>pris- og gebyrsammenligningen på forsiden</InternalLink>{' '}for et kjøpseksempel på 10 000 kr, eller les{' '}<InternalLink to="firiNbx" navigateTo={navigateTo}>Firi og NBX sammenlignet</InternalLink>.</p>
       </section>
       <section>
         <h2>Kilder til opplysningene</h2>

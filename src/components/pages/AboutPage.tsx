@@ -1,4 +1,4 @@
-import { feeRows } from '../FeeOverview';
+import FeeOverview, { feeRows } from '../FeeOverview';
 import ContactPage from '../ContactPage';
 import ArticleLayout, { InternalLink, type NavigateFn } from './ArticleLayout';
 
@@ -32,9 +32,11 @@ export default function AboutPage({ navigateTo }: { navigateTo: NavigateFn }) {
         </ul>
         <p>
           Vi sammenligner i dag {exchanges.length} børser: {exchanges.join(', ')}. Se{' '}
-          <InternalLink to="home" navigateTo={navigateTo}>gebyroversikten på forsiden</InternalLink> for tallene vi bruker.
+          gebyroversikten nedenfor for tallene vi bruker, eller <InternalLink to="home" navigateTo={navigateTo}>sammenlign kjøp av Bitcoin</InternalLink> på forsiden.
         </p>
       </section>
+
+      <FeeOverview />
 
       <section>
         <h2>Viktig å vite</h2>

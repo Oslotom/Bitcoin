@@ -47,7 +47,7 @@ export default function VippsPage({ results, navigateTo }: Props) {
         </p>
         <p>
           Sammenlign de totale kostnadene hos alle børsene i{' '}
-          <InternalLink to="home" navigateTo={navigateTo}>priskalkulatoren på forsiden</InternalLink>, eller se{' '}
+          <InternalLink to="home" navigateTo={navigateTo}>prissammenligningen på forsiden</InternalLink>, eller se{' '}
           <InternalLink to="firiNbx" navigateTo={navigateTo}>Firi og NBX side om side</InternalLink>.
         </p>
       </section>

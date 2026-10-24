@@ -3,7 +3,7 @@ import Footer from './components/Footer';
 import ResultsTable from './components/ResultsTable';
 import Overview from './components/Overview';
 import FAQSection from './components/FAQSection';
-import FeeOverview, { feeRows, cheapestSummary } from './components/FeeOverview';
+import { feeRows } from './components/FeeOverview';
 import BitcoinKursPage from './components/pages/BitcoinKursPage';
 import FiriVsNbxPage from './components/pages/FiriVsNbxPage';
 import VippsPage from './components/pages/VippsPage';
@@ -12,11 +12,10 @@ import AboutPage from './components/pages/AboutPage';
 import { ExchangeIcon } from './components/icons';
 import CountUp from 'react-countup';
 import NorwayExchanges from './components/NorwayExchanges';
-import BitcoinCalculator from './components/BitcoinCalculator';
 import ExchangePriceChart from './components/ExchangePriceChart';
 import { getCoinbasePrice, getBinancePrice, getFiriPrice, getKrakenPrice, getNbxPrice, getBareBitcoinPrice, getRevolutPrice, getCryptoComPrice, getBuyBitcoinPrice, FEES } from './services/api';
 import { ComparisonResult, CryptoCurrency, Exchange } from './types';
-import { ExternalLink, Edit2, Save, Menu, X, Zap, Globe, CreditCard } from 'lucide-react';
+import { ExternalLink, Edit2, Save, Menu, X } from 'lucide-react';
 import { useContent } from './contexts/ContentContext';
 import EditableText from './components/EditableText';
 import { motion, AnimatePresence } from 'motion/react';
@@ -262,7 +261,7 @@ export default function App({ initialPage }: { initialPage?: Page }) {
 
                 <p className="max-w-2xl mx-auto text-lg md:text-lg text-slate-600 leading-relaxed font-medium">
                   Skal du kjøpe Bitcoin? Sammenlign {feeRows().length} børser, se handelsgebyrer og estimert spread,
-                  og beregn hvor mye Bitcoin du får for beløpet ditt. Velg mellom norske tilbydere som Firi, NBX
+                  og se hvor mye Bitcoin du får i et kjøpseksempel på 10 000 kr. Velg mellom norske tilbydere som Firi, NBX
                   og Bare Bitcoin eller internasjonale børser som Kraken og Binance.
                 </p>
                 <div className="flex flex-wrap justify-center gap-3">
@@ -272,32 +271,6 @@ export default function App({ initialPage }: { initialPage?: Page }) {
                 <p className="text-sm text-slate-500">Vi sammenligner kostnader. Kjøpet gjennomfører du hos børsen du velger.</p>
               </div>
             </section>
-
-            {/* Quick Features Bar */}
-            <section className="max-w-5xl mx-auto px-1">
-              <div className="bg-white/50 py-2 px-1 flex flex-wrap justify-center gap-x-2 gap-y-2">
-                <div className="flex items-center gap-2.5">
-                  <div className="bg-blue-50 p-1.5 rounded-lg text-brand">
-                    <Zap size={16} fill="currentColor" className="opacity-20" />
-                  </div>
-                  <span className="text-sm font-bold text-slate-700">Live kurs</span>
-                </div>
-                <div className="flex items-center gap-2.5">
-                  <div className="bg-blue-50 p-1.5 rounded-lg text-brand">
-                    <Globe size={16} />
-                  </div>
-                  <span className="text-sm font-bold text-slate-700">{feeRows().length} børser</span>
-                </div>
-                <div className="flex items-center gap-2.5">
-                  <div className="bg-blue-50 p-1.5 rounded-lg text-brand">
-                    <CreditCard size={16} />
-                  </div>
-                  <span className="text-sm font-bold text-slate-700">Se gebyrer</span>
-                </div>
-              </div>
-            </section>
-
-    
 
             {/* Preview Section */}
             <section id="kjop-bitcoin" className="py-14 max-w-5xl mx-auto px-4 space-y-8 scroll-mt-20">
@@ -314,87 +287,20 @@ export default function App({ initialPage }: { initialPage?: Page }) {
               </div>
 
               <p className="text-center text-sm text-slate-500">
-                Vil du regne på et eget beløp?{' '}
-                <a href="#kalkulator" className="font-semibold text-brand hover:underline">
-                  Bruk Bitcoin-kalkulatoren
-                </a>
-                {' · '}
                 <a href="#prisforskjell" className="font-semibold text-brand hover:underline">Se prisforskjellene i grafen</a>
               </p>
             </section>
 
-            <section id="kalkulator" className="max-w-5xl mx-auto px-4 pb-14 scroll-mt-20">
-              <BitcoinCalculator results={results} isLoading={isLoading} />
-            </section>
-
-            <FeeOverview />
-
-            {/* SEO-innhold: forklarende tekst om kjøp av Bitcoin i Norge */}
             <section className="max-w-5xl mx-auto px-4 pb-8">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="space-y-3">
-                  <h2 className="text-xl font-bold text-slate-900">Hvor er det billigst å kjøpe Bitcoin i Norge?</h2>
-                  <p className="text-sm text-slate-600 leading-relaxed">{cheapestSummary()}</p>
-                  <p className="text-sm text-slate-600 leading-relaxed">
-                    Sammenlign samme beløp og betalingsmåte. Ved handel i utenlandsk valuta må du også ta med valutaveksling. Les om{' '}
-                    <a href={PAGE_PATHS.norway} onClick={(e) => navigateTo('norway', e)} className="text-brand hover:underline">norske kryptobørser</a>.
-                  </p>
-                </div>
-                <div className="space-y-3">
-                  <h2 className="text-xl font-bold text-slate-900">Hvordan kjøper jeg Bitcoin?</h2>
-                  <p className="text-sm text-slate-600 leading-relaxed">
-                    Du <strong>kjøper Bitcoin</strong> ved å velge børs, opprette konto, bekrefte identiteten og sette inn penger.
-                    Kontroller beløpet i BTC og alle kostnader før du bekrefter kjøpet. Verifisering og betalingstid varierer. Les{' '}
-                    <a href={PAGE_PATHS.overview} onClick={(e) => navigateTo('overview', e)} className="text-brand hover:underline">kjøpsguiden steg for steg</a>, eller følg{' '}
-                    <a href={PAGE_PATHS.price} onClick={(e) => navigateTo('price', e)} className="text-brand hover:underline">Bitcoin kursen i dag</a>.
-                  </p>
-                </div>
-                <div className="space-y-3">
-                  <h2 className="text-xl font-bold text-slate-900">Gebyrer, spread og Vipps</h2>
-                  <p className="text-sm text-slate-600 leading-relaxed">
-                    Vipps og kort kan koste mer enn bankoverføring. Skill mellom betalingsgebyret, gebyret for selve handelen
-                    og eventuell spread i kjøpskursen. Se{' '}
-                    <a href={PAGE_PATHS.vipps} onClick={(e) => navigateTo('vipps', e)} className="text-brand hover:underline">hva det koster å kjøpe Bitcoin med Vipps</a>.
-                  </p>
-                </div>
-              </div>
-
-              <section aria-labelledby="velge-kjopsmate" className="mt-12 space-y-5">
-                <h2 id="velge-kjopsmate" className="text-2xl font-bold text-slate-900">Hvilken måte å kjøpe Bitcoin passer for deg?</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="card-premium p-6 space-y-3">
-                    <h3 className="text-lg font-semibold">Kjøpe med norske kroner</h3>
-                    <p className="text-sm text-slate-600 leading-relaxed">Vil du betale i NOK og få hjelp på norsk? Sammenlign Firi, NBX og Bare Bitcoin. Se etter betalingsmåten du ønsker, samlet kostnad og muligheten til å ta ut Bitcoin.</p>
-                    <a href={PAGE_PATHS.norway} className="inline-block font-semibold text-brand hover:underline">Sammenlign norske Bitcoin-børser</a>
-                  </div>
-                  <div className="card-premium p-6 space-y-3">
-                    <h3 className="text-lg font-semibold">Kjøpe for et lite beløp</h3>
-                    <p className="text-sm text-slate-600 leading-relaxed">Du trenger ikke kjøpe én hel Bitcoin. Du kan kjøpe en brøkdel, men minstebeløp og faste gebyrer varierer. Kontroller også uttaksgebyret hvis du vil sende til egen lommebok.</p>
-                    <a href="#kalkulator" className="inline-block font-semibold text-brand hover:underline">Beregn kjøpet med ditt beløp</a>
-                  </div>
-                  <div className="card-premium p-6 space-y-3">
-                    <h3 className="text-lg font-semibold">Ditt første Bitcoin-kjøp</h3>
-                    <p className="text-sm text-slate-600 leading-relaxed">Usikker på konto, identitetskontroll eller oppbevaring? Kjøpsguiden forklarer prosessen og forskjellen mellom å ha Bitcoin hos børsen og i egen lommebok.</p>
-                    <a href={PAGE_PATHS.overview} className="inline-block font-semibold text-brand hover:underline">Les guiden til ditt første kjøp</a>
-                  </div>
-                </div>
-                <p className="text-sm text-slate-500">Bitcoin kan svinge kraftig i verdi, og du kan tape hele investeringen. En kostnadssammenligning er ikke en sikkerhetsvurdering av børsene. Les om <a href={PAGE_PATHS.about} className="font-semibold text-brand hover:underline">metoden og begrensningene våre</a>.</p>
-              </section>
-
-              <nav aria-label="Populære guider" className="mt-12">
-                <h2 className="text-xl font-bold text-slate-900 mb-4">Populære guider</h2>
-                <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                  {(['price', 'firiNbx', 'vipps', 'tax'] as Page[]).map((page) => (
-                    <li key={page}>
-                      <a
-                        href={PAGE_PATHS[page]}
-                        onClick={(e) => navigateTo(page, e)}
-                        className="block h-full card-premium px-4 py-3 text-sm font-semibold text-slate-900 hover:text-brand"
-                      >
-                        {PAGE_TITLES[page]?.split(' | ')[0]}
-                      </a>
-                    </li>
-                  ))}
+              <nav aria-label="Les mer om kjøp av Bitcoin" className="space-y-4">
+                <h2 className="text-xl font-bold text-slate-900">Les mer før du kjøper</h2>
+                <ul className="flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-brand">
+                  <li><a href={PAGE_PATHS.overview} className="hover:underline">Kjøpsguide steg for steg</a></li>
+                  <li><a href={PAGE_PATHS.norway} className="hover:underline">Norske kryptobørser</a></li>
+                  <li><a href={PAGE_PATHS.vipps} className="hover:underline">Kjøpe med Vipps</a></li>
+                  <li><a href={PAGE_PATHS.firiNbx} className="hover:underline">Firi eller NBX?</a></li>
+                  <li><a href={PAGE_PATHS.tax} className="hover:underline">Skatt på Bitcoin</a></li>
+                  <li><a href={PAGE_PATHS.about} className="hover:underline">Slik beregner vi kostnadene</a></li>
                 </ul>
               </nav>
 

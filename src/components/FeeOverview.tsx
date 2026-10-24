@@ -47,7 +47,7 @@ export default function FeeOverview() {
           Kolonnen til høyre viser hva du betaler i gebyr på et kjøp av {example.toLocaleString('nb-NO')} kr.
         </p>
         <p className="text-xs text-slate-400 font-medium">
-          Sist oppdatert: <time dateTime={__PAGE_DATES__.home}>{formatDate(__PAGE_DATES__.home)}</time>
+          Sist oppdatert: <time dateTime={__PAGE_DATES__.about}>{formatDate(__PAGE_DATES__.about)}</time>
         </p>
       </div>
 

@@ -11,7 +11,7 @@ const PAGE_SOURCES = {
   vipps: ['src/components/pages/VippsPage.tsx', 'src/components/VippsComparisonSection.tsx'],
   overview: ['src/components/Overview.tsx'],
   tax: ['src/components/pages/TaxPage.tsx'],
-  about: ['src/components/pages/AboutPage.tsx', 'src/components/ContactPage.tsx'],
+  about: ['src/components/pages/AboutPage.tsx', 'src/components/ContactPage.tsx', 'src/components/FeeOverview.tsx', 'src/services/api.ts'],
 };
 
 const git = (args) => {

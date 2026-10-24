@@ -42,7 +42,7 @@ export default function BitcoinKursPage({ results, isLoading, error, navigateTo 
         </ul>
         <p>
           Spotprisen alene sier derfor lite om hva du faktisk betaler. Bruk{' '}
-          <InternalLink to="home" navigateTo={navigateTo}>priskalkulatoren på forsiden</InternalLink> for å se hvor mye Bitcoin du sitter
+          <InternalLink to="home" navigateTo={navigateTo}>prissammenligningen på forsiden</InternalLink> for å se hvor mye Bitcoin du sitter
           igjen med etter beregnet handelsgebyr og estimert spread. Andre kostnader kan komme i tillegg.
         </p>
       </section>
