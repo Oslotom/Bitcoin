@@ -29,8 +29,11 @@ export function getPageDates() {
       const files = [...sources, 'src/routes.ts', ...(page === 'home' ? [] : ['src/components/pages/ArticleLayout.tsx'])];
       // Ucommittede endringer (lokal utvikling) eller manglende historikk -> dagens dato
       const dirty = git(['status', '--porcelain', '--', ...files]);
-      const committed = git(['log', '-1', '--format=%cs', '--', ...files]);
-      return [page, dirty || !committed ? today : committed];
+      // Commit dates include the author's timezone; convert to UTC like the build
+      // clock so a commit just after midnight in Oslo is not "in the future" in CI.
+      const committed = git(['log', '-1', '--format=%cI', '--', ...files]);
+      const committedUtc = committed ? new Date(committed).toISOString().slice(0, 10) : today;
+      return [page, dirty || !committed ? today : committedUtc];
     }),
   );
 }
