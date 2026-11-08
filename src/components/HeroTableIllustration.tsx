@@ -20,7 +20,7 @@ export default function HeroTableIllustration() {
         <div className="flex justify-between pt-4 pb-2 text-[10px] font-medium text-slate-500"><span>Norske børser</span><span>Kostnad / 10 000 kr</span></div>
         <div className="divide-y divide-slate-100">
           {rows.map((row, index) => (
-            <div key={row.exchange} className={`flex items-center justify-between gap-3 py-3.5 ${index === 0 ? 'text-brand' : 'text-slate-700'}`}>
+            <div key={row.exchange} style={{ animationDelay: `${160 + index * 140}ms` }} className={`hero-row flex items-center justify-between gap-3 py-3.5 ${index === 0 ? 'text-brand' : 'text-slate-700'}`}>
               <span className="flex items-center gap-2.5 text-xs font-medium"><ExchangeIcon exchange={row.exchange} size={23} />{row.exchange}</span>
               <span className={`rounded-lg px-2 py-1 text-sm font-semibold tabular-nums ${index === 0 ? 'bg-brand-soft' : ''}`}>{Math.round(10000 * row.total)} kr</span>
             </div>
