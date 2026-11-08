@@ -170,10 +170,6 @@ export default function ResultsTable({ results, isLoading, error, crypto, compac
     const sortState = (column: SortKey): 'ascending' | 'descending' | 'none' => sortConfig.key === column ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none';
     return (
       <div id="results-table-compact" className="space-y-3 font-sans">
-        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 px-1 text-sm">
-          <p className="text-slate-500">Referansekurs · <a href="https://api.coinbase.com/v2/prices/BTC-NOK/spot" target="_blank" rel="noopener noreferrer" className="text-brand hover:underline">Coinbase spot</a></p>
-          <p className="font-medium tabular-nums text-slate-900">{referencePrice ? `${money(referencePrice)} NOK / BTC` : 'Referansekurs utilgjengelig'}</p>
-        </div>
         <div className="overflow-x-auto rounded-2xl border border-slate-100 bg-white">
           <table className="w-full min-w-[780px] border-collapse text-sm sm:text-[15px]">
             <caption className="sr-only">Bitcoin-kurs, kostnad på et kjøp på 10 000 kroner, beregnet kjøpspris per BTC og påslag mot Coinbase sin spotkurs</caption>
@@ -227,7 +223,7 @@ export default function ResultsTable({ results, isLoading, error, crypto, compac
         <details className="px-1 text-xs text-slate-500">
           <summary className="cursor-pointer font-medium hover:text-brand">Slik regner vi pris og påslag</summary>
         <p className="mt-2 max-w-3xl leading-relaxed">
-          Påslag = (beregnet pris inkl. handelsgebyr og estimert spread / referansekurs − 1) × 100.
+          Påslag = (beregnet pris inkl. handelsgebyr og estimert spread / Coinbase sin spotkurs − 1) × 100.
           Positivt tall betyr dyrere enn referansen. Gebyrkolonnen viser kostnad i et kjøpseksempel på 10 000 kr;
           kurs og totalpris er per BTC. Dette er ikke prosentvis kursendring over tid. Innskudd, uttak og eventuell
           valutaveksling kommer i tillegg. Noen prisgrunnlag er referanseestimater. <a href="/om-oss" className="text-brand hover:underline">Se beregningsmetoden</a>.

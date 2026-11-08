@@ -91,7 +91,6 @@ export default function HomePage({ results, isLoading, error, onRetry }: Props) 
           <motion.div className="hero-illustration-wrap" style={{ y: illustrationY, rotate: illustrationRotate }}>
             <HeroTableIllustration />
           </motion.div>
-          <a href="#kjop-bitcoin" className="hero-scroll-cue"><ArrowDown size={14} aria-hidden="true" /> Bla ned. Se forskjellene.</a>
         </div>
       </section>
 
@@ -116,17 +115,12 @@ export default function HomePage({ results, isLoading, error, onRetry }: Props) 
       <section id="kjop-bitcoin" aria-labelledby="comparison-title" className="site-container home-section">
         <div data-reveal className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <p className="section-eyebrow">01 / Sammenlign før du velger</p>
             <h2 id="comparison-title" className="home-section-title">Samme Bitcoin.<br className="sm:hidden" /> Ulike kostnader.</h2>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">Se kurs, gebyr og beregnet kjøpspris side om side. Laveste beregnede kjøpspris vises først.</p>
           </div>
           <span className="comparison-context"><Scale size={15} aria-hidden="true" /> Eksempelkjøp: 10 000 kr</span>
         </div>
         <div className="comparison-panel">
-          <div className="comparison-panel-top">
-            <span className="inline-flex items-center gap-2 font-medium"><span aria-hidden="true" className={`status-dot ${isLoading ? 'is-loading' : ''}`} />{isLoading ? 'Henter prisgrunnlag' : error ? 'Prisgrunnlag utilgjengelig' : `${results.length} av ${rows.length} børser tilgjengelige`}</span>
-            <span>BTC / NOK</span>
-          </div>
           <div className="p-3 sm:p-5">
             {isLoading ? (
               <div role="status" className="comparison-loading">
@@ -136,10 +130,7 @@ export default function HomePage({ results, isLoading, error, onRetry }: Props) 
                 </div>
               </div>
             ) : (
-              <>
-                {!error && results.length > 0 && <p className="mb-3 text-xs text-slate-500 sm:hidden">Sveip tabellen sidelengs for å se alle kostnadene →</p>}
-                <ResultsTable results={results} isLoading={false} error={error} crypto={CryptoCurrency.BTC} compact />
-              </>
+              <ResultsTable results={results} isLoading={false} error={error} crypto={CryptoCurrency.BTC} compact />
             )}
             {error && <div className="mt-4 text-center"><button type="button" className="btn-secondary" onClick={onRetry}><RefreshCw size={15} aria-hidden="true" /> Prøv igjen</button></div>}
           </div>

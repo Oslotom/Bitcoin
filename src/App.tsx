@@ -150,7 +150,7 @@ export default function App({ initialPage }: { initialPage?: Page }) {
   return (
     <div id="app-root" className="min-h-screen bg-white text-slate-900 font-sans">
       {/* Header / Nav */}
-      <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/95 backdrop-blur-sm">
+      <header className="sticky top-0 z-40 w-full border-b border-slate-200">
         <div className="site-container h-16 flex items-center justify-between">
           <a
             href="/"
