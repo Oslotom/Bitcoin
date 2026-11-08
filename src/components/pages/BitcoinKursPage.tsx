@@ -1,5 +1,9 @@
 import ResultsTable from '../ResultsTable';
-import { ComparisonResult, CryptoCurrency } from '../../types';
+import { ComparisonResult, CryptoCurrency, type MarketSnapshot } from '../../types';
+import BitcoinHistory from '../BitcoinHistory';
+import BitcoinConverter from '../BitcoinConverter';
+import MarketStatus from '../MarketStatus';
+import AmountControl from '../AmountControl';
 import ArticleLayout, { InternalLink, type NavigateFn } from './ArticleLayout';
 
 interface Props {
@@ -7,24 +11,31 @@ interface Props {
   isLoading: boolean;
   error: string | null;
   navigateTo: NavigateFn;
+  snapshot: MarketSnapshot;
+  amount: number;
+  onAmountChange: (value: number) => void;
 }
 
-export default function BitcoinKursPage({ results, isLoading, error, navigateTo }: Props) {
+export default function BitcoinKursPage({ results, isLoading, error, navigateTo, snapshot, amount, onAmountChange }: Props) {
   return (
     <ArticleLayout
       page="price"
       title={<>Bitcoin kurs i dag <span className="text-brand">(NOK)</span></>}
-      intro="Her ser du Bitcoin-prisen i norske kroner akkurat nå, hentet direkte fra norske og internasjonale kryptobørser. Prisen varierer litt fra børs til børs – tabellen viser hvor du får mest Bitcoin for pengene."
-      related={['norway', 'firiNbx', 'vipps', 'tax']}
+      intro="Se daterte Bitcoin-priser i norske kroner, historiske målinger og omregning mellom BTC og NOK. Priskilder og beregnede kostnader vises separat."
+      related={['calculator', 'research', 'norway', 'tax']}
       navigateTo={navigateTo}
     >
+      <BitcoinHistory history={snapshot.history} />
+      <BitcoinConverter results={results} />
       <section>
-        <h2>Live Bitcoin pris hos norske og utenlandske børser</h2>
+        <h2>Bitcoin-priser hos norske og utenlandske børser</h2>
+        <AmountControl amount={amount} onChange={onAmountChange} />
+        <MarketStatus snapshot={snapshot} />
         <div className="overflow-hidden not-prose">
           <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} compact />
         </div>
         <p className="text-sm text-slate-500 mt-3">
-          Prisene hentes hver gang du åpner siden. Utenlandske børser som oppgir pris i USD eller EUR er regnet om til NOK.
+          Siden leser en felles, lagret prisfil som oppdateres periodisk. Utenlandske børser som oppgir pris i USD eller EUR er regnet om til NOK. Tidspunkt er oppgitt; dette er ikke en kontinuerlig sanntidsfeed.
         </p>
       </section>
 

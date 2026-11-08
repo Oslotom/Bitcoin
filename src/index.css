@@ -102,6 +102,51 @@
 .section-eyebrow { margin-bottom: 12px; color: #0052ff; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
 .home-section-title { color: var(--home-ink); font-size: clamp(1.8rem, 3.4vw, 2.6rem); line-height: 1.18; font-weight: 600; letter-spacing: -0.045em; }
 .comparison-panel { background: #fff; }
+.amount-control { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
+.amount-input-group { flex: 1 1 240px; max-width: 360px; }
+.amount-input-group label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 500; color: #334155; }
+.amount-input-group > div { display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 10px; background: white; overflow: hidden; }
+.amount-input-group input { width: 100%; min-width: 0; padding: 12px; font-size: 16px; font-variant-numeric: tabular-nums; }
+.amount-input-group input:focus-visible { outline-offset: -3px; }
+.amount-input-group > div > span { padding-right: 12px; color: #64748b; font-size: 12px; }
+.amount-presets { display: flex; flex-wrap: wrap; gap: 8px; }
+.amount-presets button, .history-range { min-height: 42px; padding: 8px 12px; border: 1px solid #dce4f1; border-radius: 9px; background: white; font-size: 12px; color: #475569; cursor: pointer; }
+.amount-presets button[aria-pressed="true"], .history-range[aria-pressed="true"] { border-color: #adc3ff; background: #eff4ff; color: #0052ff; }
+.market-status { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-bottom: 18px; padding-block: 10px; font-size: 11px; line-height: 1.6; color: #64748b; }
+.market-status > p:first-child { display: flex; align-items: flex-start; gap: 7px; max-width: 720px; }
+.market-status svg { flex-shrink: 0; margin-top: 2px; }
+.market-status button { display: inline-flex; align-items: center; gap: 5px; min-height: 36px; margin-left: auto; color: #0052ff; cursor: pointer; }
+.market-status-stale { color: #865b1b; }
+.comparison-desktop { display: none; }
+.comparison-mobile { display: block; }
+.comparison-mobile ol { list-style: none; padding-left: 0; }
+.quote-source { margin-top: 5px; max-width: 240px; text-align: left; font-size: 10px; font-weight: 400; color: #64748b; white-space: normal; }
+.quote-source summary { cursor: pointer; }
+.quote-source > div { display: grid; gap: 8px; padding: 12px; margin-block: 8px; border: 1px solid #e2e8f0; border-radius: 9px; background: #f8fafc; font-size: 11px; line-height: 1.6; }
+.quote-source a { color: #0052ff; text-decoration: underline; }
+.article-content .quote-source p { margin: 0; }
+.history-panel, .converter-panel { padding: 24px; border: 1px solid #e2e8f0; border-radius: 18px; background: white; }
+.history-chart { display: block; width: 100%; height: auto; margin-top: 18px; }
+.article-content .comparison-mobile label { max-width: 100%; }
+.article-content .comparison-mobile ol > li { margin-top: 0; }
+@media (min-width: 1024px) { .comparison-desktop { display: block; } .comparison-mobile { display: none; } }
+@media (max-width: 639px) {
+  .home-hero > .site-container { gap: 18px; padding-top: 32px; padding-bottom: 28px; }
+  .home-hero .hero-copy > p { margin-top: 16px; }
+  .home-hero .hero-copy > div { margin-top: 16px; }
+  .home-hero .hero-illustration-wrap { max-width: 310px; padding: 6px 0 0; }
+  .home-hero .hero-scene { min-height: 285px; border-radius: 22px; }
+  .home-hero .hero-board { padding: 12px; }
+  .home-hero .hero-board > div:first-child { padding-bottom: 10px; }
+  .home-hero .hero-board > div:first-child p:last-child { font-size: 16px; }
+  .home-hero .hero-row { padding-block: 7px; }
+  .home-hero .hero-coin { width: 48px; height: 48px; top: -6px; }
+  .home-hero .hero-note { bottom: 32px; font-size: 9px; padding: 5px 8px; }
+  .home-hero figcaption { bottom: 8px; font-size: 9px; }
+  .home-hero + #kjop-bitcoin { padding-top: 28px; }
+  .history-panel, .converter-panel { padding: 16px; }
+  .amount-input-group { max-width: none; }
+}
 .comparison-loading { min-height: 380px; padding: 18px 8px; }
 .comparison-skeleton-row { display: flex; gap: 20px; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f4f9; padding-bottom: 18px; }
 .comparison-skeleton-row span { width: 22%; height: 12px; border-radius: 5px; background: #eef2f8; }
@@ -182,7 +227,6 @@
   .home-page .site-container { padding-inline: 12px; }
   .home-section { padding-block: 44px; }
   .home-hero .hero-heading { font-size: clamp(2.4rem, 8.8vw, 3.5rem); }
-  .home-hero .hero-scene { min-height: 365px; }
   .cost-story { grid-template-columns: 1fr; padding: 28px 22px; border-radius: 22px; }
   .cost-example { padding: 20px; }
 }

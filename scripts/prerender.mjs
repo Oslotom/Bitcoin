@@ -17,6 +17,11 @@ const SITE_NAME = 'KjøpeBitcoin.no';
 const SSR_DIR = 'dist-ssr';
 const today = new Date().toISOString().slice(0, 10);
 const pageDates = getPageDates();
+const snapshot = JSON.parse(readFileSync('src/data/market-snapshot.json', 'utf8'));
+for (const page of ['home', 'price', 'calculator', 'firiNbx', 'firiBare', 'nbxBare', 'vipps', 'research']) {
+  const observed = snapshot.generatedAt.slice(0, 10);
+  if (observed <= today && observed > pageDates[page]) pageDates[page] = observed;
+}
 
 const { render, PAGE_PATHS, PAGE_TITLES, PAGE_DESCRIPTIONS, ARTICLE_PAGES, ARTICLE_PUBLISHED, REDIRECTS, FAQS, feeRows, norwayExchanges } = await import(
   pathToFileURL(resolve(SSR_DIR, 'entry-server.js')).href
@@ -205,7 +210,7 @@ Innhold sist endret: ${Object.values(pageDates).sort().at(-1)}. Teksteksport gen
 
 - [Metode og prisgrunnlag](${SITE}/om-oss#metode): Formler, referansekurs og begrensninger.
 - [Statisk gebyroversikt](${SITE}/om-oss#gebyroversikt): Modellforutsetninger som også kan leses uten JavaScript.
-- Revolut og BuyBitcoin.com bruker CoinGecko-referanse, og Bare Bitcoin kan bruke den som reserve. Dette er ikke bekreftede kjøpskurser hos disse tilbyderne.
+- Revolut og BuyBitcoin.com bruker Coinbase-referanse. Ved kildefeil kan andre tilbydere også bruke en tydelig merket referanse. Dette er ikke bekreftede kjøpskurser hos disse tilbyderne. Prisgrunnlag og tidspunkt: ${SITE}/data/market-snapshot.json
 - Påslag sammenlignes med Coinbase BTC-NOK spot. Det finnes ikke én universell faktisk Bitcoin-kurs.
 - Endringsdatoer er ikke bekreftelse på at alle gebyrer er kontrollert på nytt.
 
@@ -241,7 +246,7 @@ console.log('Skrev dist/llms.txt');
 // llms-full.txt – hele innholdet, slik at AI-assistenter kan svare uten å hente hver side
 const llmsFull = `# ${SITE_NAME} – fullstendig innhold
 
-> Hele tekstinnholdet på ${SITE_NAME}, generert ${today}. Live priser vises bare på nettsiden; tallene under er gebyrsatser og statisk innhold.
+> Hele tekstinnholdet på ${SITE_NAME}, generert ${today}. Prisgrunnlaget er lagret ${snapshot.generatedAt}. Tabellen er en modellberegning basert på daterte børspriser eller tydelig merkede referanseestimater, ikke bindende tilbud. Kilder og tidspunkt: ${SITE}/data/market-snapshot.json
 
 ${pages
   .map((page) => {

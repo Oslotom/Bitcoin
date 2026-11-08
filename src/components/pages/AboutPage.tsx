@@ -3,64 +3,14 @@ import ContactPage from '../ContactPage';
 import ArticleLayout, { InternalLink, type NavigateFn } from './ArticleLayout';
 
 export default function AboutPage({ navigateTo }: { navigateTo: NavigateFn }) {
-  const exchanges = feeRows().map((row) => row.exchange);
-
-  return (
-    <ArticleLayout
-      page="about"
-      title={<>Om <span className="text-brand">KjøpeBitcoin.no</span></>}
-      intro="KjøpeBitcoin.no er en norsk sammenligningstjeneste som viser priser, beregnede kostnader og praktiske forskjeller ved kjøp av Bitcoin. Vi sammenligner kostnader, men rangerer ikke børsenes sikkerhet."
-      related={['norway', 'overview', 'price', 'tax']}
-      navigateTo={navigateTo}
-    >
-      <section>
-        <h2>Hva vi gjør</h2>
-        <p>
-          Det er store forskjeller på hva det koster å kjøpe Bitcoin hos ulike børser, men gebyrene er ofte vanskelige å
-          sammenligne. Noen tar kurtasje, andre tar betalt gjennom spread, og innskudd med Vipps eller kort koster ekstra.
-          Vi samler prisene på ett sted og regner om alt til én ting: <strong>hvor mye Bitcoin du faktisk får for pengene</strong>.
-        </p>
-      </section>
-
-      <section id="metode" className="scroll-mt-20">
-        <h2>Slik henter og beregner vi prisene</h2>
-        <ul>
-          <li>Vi forsøker å hente priser fra offentlige API-er når du åpner siden. Markedspriser er ikke bindende kjøpstilbud.</li>
-          <li>Revolut og BuyBitcoin.com bruker CoinGecko sin Bitcoin-kurs som referanseestimat. Bare Bitcoin bruker også denne som reserve når egen pris ikke kan hentes.</li>
-          <li>Priser i USD eller EUR regnes om til norske kroner.</li>
-          <li>Vi legger til hver børs sitt handelsgebyr og en estimert spread, og regner ut effektiv pris per Bitcoin.</li>
-          <li>Innskudds- og uttaksgebyrer er ikke med i hovedtabellen, men omtales der de er relevante, for eksempel for Vipps.</li>
-        </ul>
-        <p>
-          Vi sammenligner i dag {exchanges.length} børser: {exchanges.join(', ')}. Se{' '}
-          gebyroversikten nedenfor for tallene vi bruker, eller <InternalLink to="home" navigateTo={navigateTo}>sammenlign kjøp av Bitcoin</InternalLink> på forsiden.
-        </p>
-        <h3>Hva betyr pris og påslag?</h3>
-        <p>Med kurs P og samlet gebyrandel f beregner vi pris per BTC som P / (1 − f). Ved et kjøp på 10 000 kr er beregnet kostnad 10 000 × f, og mengden Bitcoin er 10 000 × (1 − f) / P.</p>
-        <p>Påslag i prosent er (beregnet pris per BTC / Coinbase sin BTC-NOK-spotkurs − 1) × 100. Coinbase er en sammenligningsreferanse, ikke en universell fasit for Bitcoin-kursen. Mangler referansen, viser vi ikke påslag.</p>
-        <p>Gebyrsatsene er modellforutsetninger, og spread er estimert. Kontotype, handelsvolum, betalingsmåte og tidspunkt kan gi andre kostnader. En kjøpskurs kan allerede inneholde spread; å legge til estimert spread kan da overvurdere kostnaden. Laveste beregnede pris er derfor ikke en garanti for billigste handel.</p>
-        <p>Prisgrunnlaget kommer blant annet fra <a href="https://api.coinbase.com/v2/prices/BTC-NOK/spot">Coinbase BTC-NOK</a>, <a href="https://api.firi.com/v2/markets/BTCNOK/ticker">Firi BTCNOK</a> og <a href="https://www.coingecko.com/en/coins/bitcoin">CoinGecko</a>. Datoen på siden viser når innholdet ble endret, ikke når alle gebyrer sist ble bekreftet hos tilbyderne.</p>
-      </section>
-
-      <FeeOverview />
-
-      <section>
-        <h2>Viktig å vite</h2>
-        <p>
-          Innholdet på KjøpeBitcoin.no er generell informasjon og ikke finansiell rådgivning. Kryptovaluta er en volatil
-          investering, og du kan tape pengene du investerer. Gebyrer og vilkår kan endres av børsene – sjekk alltid
-          gjeldende priser hos børsen før du handler.
-        </p>
-      </section>
-
-      <section id="kontakt" className="scroll-mt-20">
-        <h2>Kontakt oss</h2>
-        <p>
-          Har du funnet en feil, spørsmål om annonsering, eller vil du foreslå en børs vi bør ta med? Send oss en melding
-          med skjemaet under, så svarer vi innen 24 timer.
-        </p>
-        <ContactPage />
-      </section>
-    </ArticleLayout>
-  );
+  const exchanges = feeRows().map(row => row.exchange);
+  const analytics = Boolean(import.meta.env.VITE_PLAUSIBLE_DOMAIN && import.meta.env.VITE_PLAUSIBLE_SCRIPT_URL);
+  return <ArticleLayout page="about" title={<>Om <span className="text-brand">KjøpeBitcoin.no</span></>} intro="Kjøpebitcoin.no er ansvarlig for denne sammenligningstjenesten. Vi viser daterte prisgrunnlag, dokumenterte gebyrscenarioer og beregninger for kjøp av Bitcoin. Vi mottar ingen provisjon." related={['calculator', 'research', 'norway', 'tax']} navigateTo={navigateTo}>
+    <section id="redaksjon"><h2>Ansvar, uavhengighet og rettelser</h2><p>Ansvarlig for innhold og beregningsmodell er <strong>Kjøpebitcoin.no</strong>. Vi mottar ingen provisjon fra lenkene til børser. Betaling for plassering inngår ikke i sorteringen; tabellene sorteres etter den beregningen som er valgt.</p><p>Vi oppgir kontotype og kilde for gebyrer. Kontrollert-dato betyr at den oppgitte kilden er lest, ikke at vi har gjennomført en handel eller revidert børsens virksomhet. Satser som ikke er kontrollert, er merket som modellforutsetninger. Vi vurderer ikke børsenes sikkerhet eller om en investering passer for deg.</p><p>Vi bruker tekniske og redaksjonelle verktøy til innhenting, beregning og tekst. Det er kildene og den beskrevne metoden som skal gjøre innholdet etterprøvbart. Feil i satser, beskrivelser og beregninger rettes når de blir avklart. Send gjerne lenke til kilden og hvilket regnestykke som avviker til <a href="mailto:tomhaugeplass@gmail.com" className="text-brand underline">tomhaugeplass@gmail.com</a>.</p></section>
+    <section id="metode"><h2>Slik henter og beregner vi prisene</h2><ul><li>En felles prisfil samles fra offentlige API-er og lagres med kilde og tidspunkt. Den publiseres periodisk; dette er ikke en kontinuerlig sanntidsfeed.</li><li><strong>Kjøpskurs:</strong> en tilgjengelig ask-kurs. Spread er allerede i denne kursen, så vi legger ikke til modellspread en gang til.</li><li><strong>Siste handel:</strong> sist rapporterte handel, som kan være eldre og ikke nødvendigvis er prisen du kan kjøpe til nå.</li><li><strong>Referanseestimat:</strong> en Coinbase-referanse brukt når en tilbyder ikke har tilgjengelig pris, eller når tjenesten ikke har en offentlig kurs. Det er ikke en bekreftet pris hos tilbyderen.</li><li>USD/EUR regnes om til NOK med en datert referansekurs. Vekslingskostnaden din er ikke inkludert. Crypto.coms BTC/USDT-pris modelleres med antakelsen USDT/USD = 1; den kan avvike.</li><li>Ved kildefeil beholdes siste vellykkede pris med sitt opprinnelige tidspunkt. Priser eldre enn 24 timer brukes ikke. Eldre prisfiler merkes tydelig.</li></ul><p>Innhentingen er planlagt omtrent hver halvtime. Kilder og publisering kan være forsinket. Når siden er åpen, sjekkes den felles filen omtrent én gang i minuttet. Tidspunktet på selve prisgrunnlaget er derfor viktigere enn når du åpnet siden.</p><h3>Formelen</h3><p>Med grunnpris P og gebyrandel f er effektiv pris per BTC = P / (1 − f). For beløpet B beregner vi BTC = B × (1 − f) / P. f er handelsgebyr pluss ekstra modellspread der spread ikke allerede er i kursen. Denne forenklede modellen dekker ikke alle tilbydernes faktiske gebyrberegning.</p><p>Innskudd, kort/Vipps, uttak, minimumsgebyrer, volumrabatter, slippage og valutaveksling er ikke med i hovedtabellen. Pro/Advanced-kontoer og enkelkjøp i apper har ulike vilkår. Påslag måles mot Coinbase sin lagrede BTC/NOK-spotkurs, som er en referanse og ikke en fasit for alle markeder.</p><p>Vi sammenligner {exchanges.length} modellscenarioer: {exchanges.join(', ')}. Se <a href="/data/market-snapshot.json" className="text-brand underline">prisfilen med tidsstempler og kildelenker</a>, <InternalLink to="research" navigateTo={navigateTo}>den etterprøvbare prissammenligningen</InternalLink> eller <InternalLink to="calculator" navigateTo={navigateTo}>regn på ditt eget beløp</InternalLink>.</p></section>
+    <FeeOverview />
+    <section id="personvern"><h2>Personvern og trafikkmåling</h2><p>{analytics ? 'Trafikkmåling er konfigurert med Plausible. Målingen brukes til sidevisninger, bruk av verktøy og klikk videre til børser. Respekt for nettleserens Do Not Track og Global Privacy Control er bygget inn.' : 'Ekstern trafikkmåling er ikke aktivert i dette bygget. Beregning av kronebeløp og BTC gjøres i nettleseren.'} Kontaktopplysninger og meldinger fra skjemaet sendes ikke som analysehendelser. Hosting- og eventuelle skjemaleverandører kan behandle tekniske opplysninger for å levere tjenesten.</p><p>Ved henvendelser bruker vi opplysningene du sender til å svare deg. Ikke send BankID-koder, passord, private nøkler eller gjenopprettingsord. På statisk hosting kan kontaktskjemaet åpne en ferdig utfylt e-post som du selv må sende.</p></section>
+    <section><h2>Risiko og begrensninger</h2><p>Kjøpebitcoin.no gir generell informasjon, ikke personlig investerings- eller skatterådgivning. Kryptovaluta kan svinge kraftig i verdi, og du kan tape investeringen. Kontroller pris, vilkår og gjeldende tillatelse hos tilbyderen før du handler.</p></section>
+    <section id="kontakt"><h2>Kontakt oss</h2><p>Har du funnet en feil, vil du foreslå en kilde, eller har du spørsmål om metoden? Bruk skjemaet eller send e-post til <a href="mailto:tomhaugeplass@gmail.com" className="text-brand underline">tomhaugeplass@gmail.com</a>.</p><ContactPage /></section>
+  </ArticleLayout>;
 }

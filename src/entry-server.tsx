@@ -2,8 +2,8 @@
 // slik at Google og AI-crawlere som ikke kjører JavaScript ser hele innholdet.
 import { renderToString } from 'react-dom/server';
 import App from './App';
-import { ContentProvider } from './contexts/ContentContext';
 import { pageFromPath } from './routes';
+import { renderPage } from './pageRegistry';
 
 export { PAGE_PATHS, PAGE_TITLES, PAGE_DESCRIPTIONS, ARTICLE_PAGES, ARTICLE_PUBLISHED, REDIRECTS } from './routes';
 export { FAQS } from './data/faqs';
@@ -12,8 +12,6 @@ export { norwayExchanges } from './components/NorwayExchanges';
 
 export function render(path: string): string {
   return renderToString(
-    <ContentProvider>
-      <App initialPage={pageFromPath(path)} />
-    </ContentProvider>,
+    <App initialPage={pageFromPath(path)} prerenderContent={renderPage(pageFromPath(path))} />,
   );
 }

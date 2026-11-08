@@ -36,7 +36,7 @@ export default function ArticleLayout({ page, title, intro, related, navigateTo,
         <h1 className="page-title">{title}</h1>
         <p className="max-w-3xl text-base sm:text-lg text-slate-600 leading-relaxed">{intro}</p>
         <p className="text-sm text-slate-500">
-          Av KjøpeBitcoin.no · Sist oppdatert{' '}
+          Av <a href="/om-oss#redaksjon" className="text-brand hover:underline">Kjøpebitcoin.no</a> · Innhold sist endret{' '}
           <time dateTime={modified}>
             {new Date(modified).toLocaleDateString('nb-NO', { day: 'numeric', month: 'long', year: 'numeric' })}
           </time>

@@ -20,8 +20,8 @@ export default function ExchangePriceChart({ results, isLoading, error }: Props)
   const [zoomed, setZoomed] = useState(true);
   const rows = CHART_EXCHANGES.map((exchange) => {
     const result = results.find((row) => row.exchange === exchange);
-    const cost = result ? bitcoinCostBreakdown(result.spotPrice, FEES[exchange].trade, FEES[exchange].spread) : null;
-    return { exchange, cost };
+    const cost = result ? bitcoinCostBreakdown(result.spotPrice, result.tradeRate ?? FEES[exchange].trade, result.spreadRate ?? FEES[exchange].spread, result.includedSpreadNok ?? 0) : null;
+    return { exchange, cost, result };
   }).sort((a, b) => (a.cost?.total ?? Infinity) - (b.cost?.total ?? Infinity));
   const available = rows.flatMap((row) => row.cost ? [row.cost] : []);
   const minimumSpot = available.length ? Math.min(...available.map((row) => row.spot)) : 0;
@@ -38,7 +38,7 @@ export default function ExchangePriceChart({ results, isLoading, error }: Props)
           <div className="max-w-xl">
             <p className="section-eyebrow">Prisen, del for del</p>
             <h2 id="prisforskjell-title" className="home-section-title">Hva koster én Bitcoin?</h2>
-            <p id="prisforskjell-description" className="mt-3 text-sm leading-relaxed text-slate-600">Fem utvalgte børser. Hver linje viser grunnpris, beregnet handelsgebyr og estimert spread. Endepunktet viser totalprisen for 1 BTC.</p>
+            <p id="prisforskjell-description" className="mt-3 text-sm leading-relaxed text-slate-600">Fem utvalgte børser. Hver linje viser grunnpris, beregnet handelsgebyr og målt eller estimert spread. Endepunktet viser beregnet totalpris for 1 BTC.</p>
           </div>
           <button type="button" onClick={() => setZoomed((value) => !value)} aria-pressed={zoomed} aria-controls="bitcoin-cost-lines" className="price-scale-toggle"><Maximize2 size={14} aria-hidden="true" /> Zoom på forskjeller <span>{zoomed ? 'På' : 'Av'}</span></button>
         </div>
@@ -46,7 +46,7 @@ export default function ExchangePriceChart({ results, isLoading, error }: Props)
         <ul className="price-legend" aria-label="Farger i grafen">
           <li><span className="price-key price-spot" aria-hidden="true" /> Grunnpris</li>
           <li><span className="price-key price-trade" aria-hidden="true" /> Handelsgebyr</li>
-          <li><span className="price-key price-spread" aria-hidden="true" /> Spread (est.)</li>
+          <li><span className="price-key price-spread" aria-hidden="true" /> Spread (målt/est.)</li>
         </ul>
 
         <figure id="bitcoin-cost-lines" aria-describedby="prisforskjell-description price-axis-note">
@@ -59,10 +59,10 @@ export default function ExchangePriceChart({ results, isLoading, error }: Props)
             <>
               {available.length === 0 && <p role="status" className="mb-5 rounded-xl bg-white p-4 text-sm text-slate-600">{error || 'Priser er ikke tilgjengelige akkurat nå. Prøv å hente prisene på nytt i tabellen.'}</p>}
               <ol className="price-lines" aria-label="Utvalgte børser sortert etter beregnet totalpris per Bitcoin">
-                {rows.map(({ exchange, cost }, index) => (
+                {rows.map(({ exchange, cost, result }, index) => (
                   <li key={exchange} className="price-line-row">
                     <div className="price-line-heading">
-                      <div className="flex items-center gap-2 text-sm font-semibold text-slate-900"><ExchangeIcon exchange={exchange} size={23} />{exchange}{index === 0 && cost && available.length > 1 && <span className="price-lowest">Lavest av de viste</span>}</div>
+                      <div className="flex items-center gap-2 text-sm font-semibold text-slate-900"><ExchangeIcon exchange={exchange} size={23} />{exchange}{index === 0 && cost && available.length > 1 && <span className="price-lowest">Lavest i modellen</span>}</div>
                       <span className="text-sm font-semibold tabular-nums text-slate-900">{cost ? nok(cost.total) : <span className="font-normal text-slate-500">Pris utilgjengelig</span>}</span>
                     </div>
                     {cost ? (
@@ -78,6 +78,7 @@ export default function ExchangePriceChart({ results, isLoading, error }: Props)
                         <details className="price-line-details" name="bitcoin-price-breakdown">
                           <summary>Fordeling<span className="sr-only"> for {exchange}</span><span aria-hidden="true">⌄</span></summary>
                           <dl className="price-line-values">
+                          <div className="text-xs text-slate-500">{result?.sourceKind === 'reference' ? 'Referanseestimat, ikke børspris.' : result?.includedSpreadNok !== undefined ? 'Målt spread er forskjellen fra bid/ask-midtkurs til kjøpskurs. Den er allerede inkludert, ikke lagt til på nytt.' : result?.priceBasis === 'ask' ? 'Kjøpskurs – spread er inkludert, men kan ikke skilles ut med tilgjengelige data.' : 'Siste handel – ekstra spread er modellert.'}</div>
                           <div><dt><span className="price-key price-spot" aria-hidden="true" />Grunnpris</dt><dd>{preciseNok(cost.spot)}</dd></div>
                           <div><dt><span className="price-key price-trade" aria-hidden="true" />Gebyr</dt><dd>{preciseNok(cost.trade)}</dd></div>
                           <div><dt><span className="price-key price-spread" aria-hidden="true" />Spread</dt><dd>{preciseNok(cost.spread)}</dd></div>

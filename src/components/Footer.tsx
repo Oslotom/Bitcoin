@@ -26,8 +26,12 @@ export default function Footer({ setCurrentPage, currentPage }: FooterProps) {
             {[
               { id: 'home', label: 'Kjøpe Bitcoin' },
               { id: 'price', label: 'Bitcoin kurs' },
+              { id: 'calculator', label: 'Bitcoin-kalkulator' },
               { id: 'norway', label: 'Norske børser' },
               { id: 'firiNbx', label: 'Firi vs NBX' },
+              { id: 'firiBare', label: 'Firi vs Bare Bitcoin' },
+              { id: 'nbxBare', label: 'NBX vs Bare Bitcoin' },
+              { id: 'research', label: 'Prisundersøkelse' },
               { id: 'vipps', label: 'Kjøp med Vipps' },
               { id: 'overview', label: 'Guide' },
               { id: 'tax', label: 'Skatt' },
@@ -52,6 +56,7 @@ export default function Footer({ setCurrentPage, currentPage }: FooterProps) {
             <p className="text-xs text-slate-500">
               © {currentYear} Alle rettigheter forbeholdt. Prisene er estimater og kan variere.
             </p>
+            <p className="text-xs text-slate-500">Ansvarlig: <a href="/om-oss#redaksjon" className="text-brand hover:underline">Kjøpebitcoin.no</a>. Ingen provisjon. <a href="/om-oss#personvern" className="hover:underline">Personvern og måling</a>.</p>
           </div>
         </div>
       </div>

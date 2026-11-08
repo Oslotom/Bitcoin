@@ -1,0 +1,226 @@
+{
+  "version": 1,
+  "generatedAt": "2026-11-08T02:39:26.738Z",
+  "quotes": [
+    {
+      "exchange": "Coinbase",
+      "priceNok": 715686.4710527472,
+      "asOf": "2026-11-08T02:39:26.738Z",
+      "sourceUrl": "https://api.coinbase.com/v2/prices/BTC-NOK/spot",
+      "kind": "exchange",
+      "basis": "reference",
+      "spreadIncluded": false
+    },
+    {
+      "exchange": "Firi",
+      "priceNok": 720997.11,
+      "asOf": "2026-11-08T02:39:26.738Z",
+      "sourceUrl": "https://api.firi.com/v2/markets/BTCNOK/ticker",
+      "kind": "exchange",
+      "basis": "ask",
+      "spreadIncluded": true,
+      "includedSpreadNok": 4485.239999999991
+    },
+    {
+      "exchange": "NBX",
+      "priceNok": 720518.64,
+      "asOf": "2026-11-08T01:50:40.526000+00:00",
+      "sourceUrl": "https://api.nbx.com/markets/BTC-NOK/trades",
+      "kind": "exchange",
+      "basis": "last",
+      "spreadIncluded": false
+    },
+    {
+      "exchange": "Bare Bitcoin",
+      "priceNok": 718091.84,
+      "asOf": "2026-11-08T02:39:30.024682112Z",
+      "sourceUrl": "https://api.bb.no/v1/price/nok",
+      "kind": "exchange",
+      "basis": "ask",
+      "spreadIncluded": true,
+      "includedSpreadNok": 797.4199999999837
+    },
+    {
+      "exchange": "Binance",
+      "priceNok": 716160.1935072583,
+      "asOf": "2026-11-08T02:39:26.738Z",
+      "sourceUrl": "https://api.binance.com/api/v3/ticker/bookTicker?symbol=BTCEUR",
+      "kind": "exchange",
+      "basis": "ask",
+      "spreadIncluded": true,
+      "includedSpreadNok": 0.052719977393280715
+    },
+    {
+      "exchange": "Kraken",
+      "priceNok": 715716.3230410976,
+      "asOf": "2026-11-08T02:39:26.738Z",
+      "sourceUrl": "https://api.kraken.com/0/public/Ticker?pair=XBTUSD",
+      "kind": "exchange",
+      "basis": "ask",
+      "spreadIncluded": true,
+      "includedSpreadNok": 0.47309014812344685
+    },
+    {
+      "exchange": "Crypto.com",
+      "priceNok": 716740.3739758572,
+      "asOf": "2026-11-08T02:39:26.738Z",
+      "sourceUrl": "https://api.crypto.com/exchange/v1/public/get-tickers",
+      "kind": "exchange",
+      "basis": "ask",
+      "spreadIncluded": true,
+      "note": "BTC/USDT omregnet med USD/NOK; USDT/USD er antatt 1 og kan avvike.",
+      "includedSpreadNok": 21.47829272755189
+    },
+    {
+      "exchange": "Revolut",
+      "priceNok": 715686.4710527472,
+      "asOf": "2026-11-08T02:39:26.738Z",
+      "sourceUrl": "https://api.coinbase.com/v2/prices/BTC-NOK/spot",
+      "kind": "reference",
+      "basis": "reference",
+      "spreadIncluded": false,
+      "note": "Coinbase-referanse, ikke pris fra denne tilbyderen."
+    },
+    {
+      "exchange": "BuyBitcoin.com",
+      "priceNok": 715686.4710527472,
+      "asOf": "2026-11-08T02:39:26.738Z",
+      "sourceUrl": "https://api.coinbase.com/v2/prices/BTC-NOK/spot",
+      "kind": "reference",
+      "basis": "reference",
+      "spreadIncluded": false,
+      "note": "Coinbase-referanse, ikke pris fra denne tilbyderen."
+    }
+  ],
+  "issues": [],
+  "history": {
+    "sourceUrl": "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=nok&days=30",
+    "asOf": "2026-11-08T02:16:10.079Z",
+    "points": [
+      {
+        "timestamp": 1791586800000,
+        "price": 789016.0618111865
+      },
+      {
+        "timestamp": 1791673200000,
+        "price": 793379.0788007609
+      },
+      {
+        "timestamp": 1791759600000,
+        "price": 799195.6582192683
+      },
+      {
+        "timestamp": 1791846000000,
+        "price": 786688.2369534048
+      },
+      {
+        "timestamp": 1791932400000,
+        "price": 794586.2329154751
+      },
+      {
+        "timestamp": 1792018800000,
+        "price": 776261.1053459197
+      },
+      {
+        "timestamp": 1792105200000,
+        "price": 780373.2518475647
+      },
+      {
+        "timestamp": 1792191600000,
+        "price": 770260.6557528607
+      },
+      {
+        "timestamp": 1792278000000,
+        "price": 766319.2319906463
+      },
+      {
+        "timestamp": 1792364400000,
+        "price": 771459.9421674141
+      },
+      {
+        "timestamp": 1792450800000,
+        "price": 772411.6555571045
+      },
+      {
+        "timestamp": 1792537200000,
+        "price": 781439.0913611354
+      },
+      {
+        "timestamp": 1792623600000,
+        "price": 790721.7047627975
+      },
+      {
+        "timestamp": 1792710000000,
+        "price": 758145.3656098022
+      },
+      {
+        "timestamp": 1792796400000,
+        "price": 752690.1696187756
+      },
+      {
+        "timestamp": 1792882800000,
+        "price": 750816.0298768417
+      },
+      {
+        "timestamp": 1792969200000,
+        "price": 748863.6649637151
+      },
+      {
+        "timestamp": 1793055600000,
+        "price": 744196.8594274432
+      },
+      {
+        "timestamp": 1793142000000,
+        "price": 754358.4383023907
+      },
+      {
+        "timestamp": 1793228400000,
+        "price": 751991.3065663709
+      },
+      {
+        "timestamp": 1793314800000,
+        "price": 729015.4634753271
+      },
+      {
+        "timestamp": 1793401200000,
+        "price": 707873.4773144923
+      },
+      {
+        "timestamp": 1793487600000,
+        "price": 713645.8212769141
+      },
+      {
+        "timestamp": 1793574000000,
+        "price": 727511.3573613955
+      },
+      {
+        "timestamp": 1793660400000,
+        "price": 715367.8639213995
+      },
+      {
+        "timestamp": 1793746800000,
+        "price": 721980.3828119959
+      },
+      {
+        "timestamp": 1793833200000,
+        "price": 749918.7208987816
+      },
+      {
+        "timestamp": 1793919600000,
+        "price": 704395.7529838437
+      },
+      {
+        "timestamp": 1794006000000,
+        "price": 717537.5641371637
+      },
+      {
+        "timestamp": 1794092400000,
+        "price": 716072.2061446469
+      },
+      {
+        "timestamp": 1794104100000,
+        "price": 715336.2513761458
+      }
+    ]
+  }
+}

@@ -5,13 +5,17 @@ import { execFileSync } from 'node:child_process';
 
 const PAGE_SOURCES = {
   home: ['src/App.tsx', 'src/components/HomePage.tsx', 'src/index.css', 'src/components/HeroTableIllustration.tsx', 'src/components/ResultsTable.tsx', 'src/utils/pricing.ts', 'src/components/FeeOverview.tsx', 'src/components/FAQSection.tsx', 'src/components/ExchangePriceChart.tsx', 'src/data/faqs.ts', 'src/services/api.ts'],
-  price: ['src/components/pages/BitcoinKursPage.tsx', 'src/components/ResultsTable.tsx', 'src/utils/pricing.ts'],
+  price: ['src/components/pages/BitcoinKursPage.tsx', 'src/components/ResultsTable.tsx', 'src/components/BitcoinHistory.tsx', 'src/components/BitcoinConverter.tsx', 'src/utils/pricing.ts'],
   norway: ['src/components/NorwayExchanges.tsx', 'src/components/FeeOverview.tsx', 'src/services/api.ts'],
-  firiNbx: ['src/components/pages/FiriVsNbxPage.tsx', 'src/components/FiriVsNbx.tsx'],
+  firiNbx: ['src/components/pages/FiriVsNbxPage.tsx', 'src/components/pages/ExchangeComparisonPage.tsx'],
   vipps: ['src/components/pages/VippsPage.tsx', 'src/components/VippsComparisonSection.tsx'],
   overview: ['src/components/Overview.tsx'],
   tax: ['src/components/pages/TaxPage.tsx'],
   about: ['src/components/pages/AboutPage.tsx', 'src/components/ContactPage.tsx', 'src/components/FeeOverview.tsx', 'src/services/api.ts'],
+  calculator: ['src/components/pages/CalculatorPage.tsx', 'src/components/AmountControl.tsx', 'src/components/BitcoinConverter.tsx', 'src/components/ResultsTable.tsx'],
+  firiBare: ['src/components/pages/ExchangeComparisonPage.tsx'],
+  nbxBare: ['src/components/pages/ExchangeComparisonPage.tsx'],
+  research: ['src/components/pages/PriceResearchPage.tsx'],
 };
 
 const git = (args) => {
@@ -26,7 +30,7 @@ export function getPageDates() {
   const today = new Date().toISOString().slice(0, 10);
   return Object.fromEntries(
     Object.entries(PAGE_SOURCES).map(([page, sources]) => {
-      const files = [...sources, 'src/routes.ts', ...(page === 'home' ? [] : ['src/components/pages/ArticleLayout.tsx'])];
+      const files = [...sources, 'src/routes.ts', 'src/data/exchangeFees.ts', ...(page === 'home' ? [] : ['src/components/pages/ArticleLayout.tsx'])];
       // Ucommittede endringer (lokal utvikling) eller manglende historikk -> dagens dato
       const dirty = git(['status', '--porcelain', '--', ...files]);
       // Commit dates include the author's timezone; convert to UTC like the build

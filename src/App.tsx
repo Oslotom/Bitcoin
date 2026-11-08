@@ -1,31 +1,33 @@
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
 import Footer from './components/Footer';
 import HomePage from './components/HomePage';
-import Overview from './components/Overview';
-import BitcoinKursPage from './components/pages/BitcoinKursPage';
-import FiriVsNbxPage from './components/pages/FiriVsNbxPage';
-import VippsPage from './components/pages/VippsPage';
-import TaxPage from './components/pages/TaxPage';
-import AboutPage from './components/pages/AboutPage';
-import NorwayExchanges from './components/NorwayExchanges';
-import { getCoinbasePrice, getBinancePrice, getFiriPrice, getKrakenPrice, getNbxPrice, getBareBitcoinPrice, getRevolutPrice, getCryptoComPrice, getBuyBitcoinPrice, FEES } from './services/api';
-import { ComparisonResult, CryptoCurrency, Exchange } from './types';
-import { Edit2, Save, Menu, X } from 'lucide-react';
-import { useContent } from './contexts/ContentContext';
+const Overview = lazy(() => import('./components/Overview'));
+const BitcoinKursPage = lazy(() => import('./components/pages/BitcoinKursPage'));
+const FiriVsNbxPage = lazy(() => import('./components/pages/FiriVsNbxPage'));
+const VippsPage = lazy(() => import('./components/pages/VippsPage'));
+const TaxPage = lazy(() => import('./components/pages/TaxPage'));
+const AboutPage = lazy(() => import('./components/pages/AboutPage'));
+const NorwayExchanges = lazy(() => import('./components/NorwayExchanges'));
+import { INITIAL_SNAPSHOT, compareSnapshot, fetchSnapshot } from './services/market';
+import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+const ExchangeComparisonPage = lazy(() => import('./components/pages/ExchangeComparisonPage'));
+const PriceResearchPage = lazy(() => import('./components/pages/PriceResearchPage'));
+const CalculatorPage = lazy(() => import('./components/pages/CalculatorPage'));
 import { PAGE_PATHS, PAGE_TITLES, pageFromPath, type Page } from './routes';
 
 // initialPage settes ved forhåndsrendring på byggetidspunktet (der window ikke finnes)
-export default function App({ initialPage }: { initialPage?: Page }) {
-  const { isEditMode, setIsEditMode, saveContent } = useContent();
-  const [results, setResults] = useState<ComparisonResult[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+export default function App({ initialPage, prerenderContent }: { initialPage?: Page; prerenderContent?: ReactNode }) {
+  const [snapshot, setSnapshot] = useState(INITIAL_SNAPSHOT);
+  const [amount, setAmount] = useState(10000);
+  const [isLoading, setIsLoading] = useState(false);
+  const results = compareSnapshot(snapshot, amount);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<Page>(() => initialPage ?? pageFromPath(window.location.pathname));
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isHeaderScrolled, setIsHeaderScrolled] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const didInitCalculate = useRef(false);
+  const refreshRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     const updateHeader = () => setIsHeaderScrolled(window.scrollY > 16);
@@ -66,83 +68,32 @@ export default function App({ initialPage }: { initialPage?: Page }) {
     };
   }, [isMobileMenuOpen]);
 
-  const handleCalculate = async (amount: number) => {
-    setIsLoading(true);
-    setError(null);
-    setResults([]);
-
-    try {
-      const [coinbasePrice, binancePrice, firiPrice, krakenPrice, nbxPrice, bareBitcoinPrice, revolutPrice, cryptoComPrice, buyBitcoinPrice] = await Promise.allSettled([
-        getCoinbasePrice(CryptoCurrency.BTC),
-        getBinancePrice(CryptoCurrency.BTC),
-        getFiriPrice(),
-        getKrakenPrice(),
-        getNbxPrice(),
-        getBareBitcoinPrice(),
-        getRevolutPrice(),
-        getCryptoComPrice(),
-        getBuyBitcoinPrice(),
-      ]);
-
-      const newResults: ComparisonResult[] = [];
-
-      const processResult = (exchange: Exchange, priceResult: PromiseSettledResult<number>) => {
-        if (priceResult.status === 'fulfilled') {
-          const spotPrice = priceResult.value;
-          if (!Number.isFinite(spotPrice) || spotPrice <= 0) {
-            console.warn(`Invalid price for ${exchange}`);
-            return;
-          }
-          const feePercentage = FEES[exchange].trade + FEES[exchange].spread;
-          const feeInNok = amount * feePercentage;
-          const amountAfterFee = amount - feeInNok;
-          const effectivePrice = spotPrice / (1 - feePercentage);
-          const cryptoAmount = amountAfterFee / spotPrice;
-          newResults.push({
-            exchange,
-            spotPrice,
-            feeInNok,
-            effectivePrice,
-            cryptoAmount,
-            totalCost: amount,
-          });
-        } else {
-          console.error(`Error fetching price for ${exchange}:`, priceResult.reason);
-        }
-      };
-
-      processResult(Exchange.Coinbase, coinbasePrice);
-      processResult(Exchange.Binance, binancePrice);
-      processResult(Exchange.Firi, firiPrice);
-      processResult(Exchange.Kraken, krakenPrice);
-      processResult(Exchange.NBX, nbxPrice);
-      processResult(Exchange.BareBitcoin, bareBitcoinPrice);
-      processResult(Exchange.Revolut, revolutPrice);
-      processResult(Exchange.CryptoCom, cryptoComPrice);
-      processResult(Exchange.BuyBitcoin, buyBitcoinPrice);
-
-      if (newResults.length === 0) {
-        throw new Error('Kunne ikke hente priser fra noen av børsene. Prøv igjen senere.');
-      }
-
-      setResults(newResults);
-    } catch (err: any) {
-      setError(err.message || 'En ukjent feil oppstod.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    const onPopState = () => setCurrentPage(pageFromPath(window.location.pathname));
-    window.addEventListener('popstate', onPopState);
-
-    if (!didInitCalculate.current) {
-      didInitCalculate.current = true;
-      handleCalculate(10000);
-    }
-    return () => window.removeEventListener('popstate', onPopState);
-  }, []);
+    const pricePages: Page[] = ['home', 'price', 'firiNbx', 'firiBare', 'nbxBare', 'vipps', 'research', 'calculator'];
+    if (!pricePages.includes(currentPage)) return;
+    let alive = true;
+    let controller: AbortController | undefined;
+    const refresh = async () => {
+      controller?.abort();
+      const request = new AbortController();
+      controller = request;
+      const timer = window.setTimeout(() => request.abort(), 7000);
+      setIsLoading(true);
+      try {
+        const next = await fetchSnapshot(request.signal);
+        if (alive) { setSnapshot(previous => Date.parse(next.generatedAt) >= Date.parse(previous.generatedAt) ? next : previous); setError(null); }
+      } catch {
+        if (alive && controller === request) setError('Kunne ikke oppdatere prisfilen. Sist lagrede priser vises med tidspunkt.');
+      } finally {
+        window.clearTimeout(timer);
+        if (alive && controller === request) setIsLoading(false);
+      }
+    };
+    refreshRef.current = refresh;
+    void refresh();
+    const interval = window.setInterval(() => { if (document.visibilityState === 'visible') void refresh(); }, 60000);
+    return () => { alive = false; controller?.abort(); window.clearInterval(interval); };
+  }, [currentPage]);
 
   useEffect(() => {
     const title = PAGE_TITLES[currentPage];
@@ -182,6 +133,7 @@ export default function App({ initialPage }: { initialPage?: Page }) {
           <nav className="hidden lg:flex items-center gap-5">
             {[
               { id: 'price', label: 'Bitcoin kurs' },
+              { id: 'calculator', label: 'Kalkulator' },
               { id: 'norway', label: 'Børser i Norge' },
               { id: 'firiNbx', label: 'Firi vs NBX' },
               { id: 'overview', label: 'Guide' },
@@ -253,8 +205,12 @@ export default function App({ initialPage }: { initialPage?: Page }) {
                 {[
                   { id: 'home', label: 'Forside' },
                   { id: 'price', label: 'Bitcoin kurs i dag' },
+                  { id: 'calculator', label: 'Bitcoin-kalkulator' },
                   { id: 'norway', label: 'Bitcoin i Norge' },
                   { id: 'firiNbx', label: 'Firi vs NBX' },
+                  { id: 'firiBare', label: 'Firi vs Bare Bitcoin' },
+                  { id: 'nbxBare', label: 'NBX vs Bare Bitcoin' },
+                  { id: 'research', label: 'Dokumentert prissammenligning' },
                   { id: 'vipps', label: 'Kjøp med Vipps' },
                   { id: 'overview', label: 'Guide & Kunnskap' },
                   { id: 'tax', label: 'Skatt på Bitcoin' },
@@ -287,8 +243,9 @@ export default function App({ initialPage }: { initialPage?: Page }) {
       </AnimatePresence>
 
       <main id="main-content" className="flex-1">
-        {currentPage === 'home' && <HomePage results={results} isLoading={isLoading} error={error} onRetry={() => handleCalculate(10000)} />}
+        {currentPage === 'home' && <HomePage results={results} isLoading={isLoading && results.length === 0} error={results.length ? null : error} snapshot={snapshot} amount={amount} onAmountChange={setAmount} refreshError={error} onRetry={() => refreshRef.current()} />}
 
+          {prerenderContent ?? <Suspense fallback={<div className="site-container py-16" role="status">Laster siden …</div>}>
           {/* Page: Knowledge Overview */}
           {currentPage === 'overview' && <div className="animate-fade-in"><Overview navigateTo={navigateTo} /></div>}
 
@@ -296,32 +253,18 @@ export default function App({ initialPage }: { initialPage?: Page }) {
           {currentPage === 'norway' && <div className="animate-fade-in"><NorwayExchanges navigateTo={navigateTo} /></div>}
 
           {/* Redaksjonelle landingssider */}
-          {currentPage === 'price' && <BitcoinKursPage results={results} isLoading={isLoading} error={error} navigateTo={navigateTo} />}
+          {currentPage === 'price' && <BitcoinKursPage results={results} isLoading={isLoading && results.length === 0} error={results.length ? null : error} snapshot={snapshot} amount={amount} onAmountChange={setAmount} navigateTo={navigateTo} />}
           {currentPage === 'firiNbx' && <FiriVsNbxPage results={results} navigateTo={navigateTo} />}
           {currentPage === 'vipps' && <VippsPage results={results} navigateTo={navigateTo} />}
           {currentPage === 'tax' && <TaxPage navigateTo={navigateTo} />}
           {currentPage === 'about' && <AboutPage navigateTo={navigateTo} />}
+          {currentPage === 'firiBare' && <ExchangeComparisonPage variant="firiBare" results={results} navigateTo={navigateTo} />}
+          {currentPage === 'nbxBare' && <ExchangeComparisonPage variant="nbxBare" results={results} navigateTo={navigateTo} />}
+          {currentPage === 'research' && <PriceResearchPage results={results} asOf={snapshot.generatedAt} navigateTo={navigateTo} />}
+          {currentPage === 'calculator' && <CalculatorPage results={results} snapshot={snapshot} amount={amount} onAmountChange={setAmount} navigateTo={navigateTo} />}
+          </Suspense>}
         </main>
       
-      {/* Edit Mode Button - Bottom Right */}
-      <div className="fixed bottom-4 right-4 z-50">
-        {!isEditMode ? (
-          <button 
-            onClick={() => setIsEditMode(true)}
-            className="flex items-center gap-1 text-[10px] text-slate-400 font-bold uppercase tracking-widest hover:text-slate-600 transition-colors bg-white/80 backdrop-blur-sm px-2 py-1 rounded"
-          >
-            <Edit2 size={10} /> Endre
-          </button>
-        ) : (
-          <button 
-            onClick={saveContent}
-            className="flex items-center gap-1 text-[10px] text-white font-bold uppercase tracking-widest bg-emerald-600 hover:bg-emerald-700 transition-colors px-3 py-1.5 rounded-full shadow-lg"
-          >
-            <Save size={10} /> Lagre endringer
-          </button>
-        )}
-      </div>
-
       <Footer setCurrentPage={navigateTo} currentPage={currentPage} />
     </div>
 );

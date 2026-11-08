@@ -63,4 +63,15 @@ assert(about.includes('id="metode"') && about.includes('id="gebyroversikt"') && 
 assert(read('index.html').includes('href="/om-oss#metode"'), 'Homepage must link to methodology without JavaScript');
 assert(read('llms.txt').includes('referanseestimater') && read('llms-full.txt').includes('Sist endret:'), 'AI text missing provenance or limitations');
 assert(/name="robots" content="noindex"/.test(read('404.html')), '404 must be noindex');
+// Core comparison must be present in the delivered HTML, not just after API calls.
+const snapshot = JSON.parse(read('data/market-snapshot.json'));
+assert.equal(snapshot.version, 1, 'Missing shared market snapshot');
+const hasCurrentQuotes = snapshot.quotes.some(q => Date.now() - Date.parse(q.asOf) <= 24 * 3600000);
+if (hasCurrentQuotes) {
+  assert(read('index.html').includes('id="results-table-compact"') && read('index.html').includes('Du får BTC'), 'Homepage prices are not prerendered');
+  assert(read('bitcoin-kalkulator.html').includes('id="results-table-compact"'), 'Calculator has no initial price data');
+}
+if (snapshot.history.points.length > 1) assert(read('bitcoin-kurs.html').includes('Historiske Bitcoin-målinger'), 'Historical observations missing from HTML');
+assert(about.includes('id="redaksjon"') && about.includes('id="gebyrkilder"') && about.includes('ingen provisjon'), 'Editorial/fee provenance missing');
+assert(!read('index.html').includes('Lagre endringer'), 'Public edit controls must not be rendered');
 console.log(`SEO OK: ${urls.size} pages, unique metadata, canonical URLs, links, sitemap and JSON-LD.`);

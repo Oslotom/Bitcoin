@@ -5,9 +5,9 @@ export function premiumPercent(price: number, reference: number | null): number 
 }
 
 // Fees are deducted from the total paid, matching the comparison table's effectivePrice.
-export function bitcoinCostBreakdown(spot: number, tradeRate: number, spreadRate: number) {
-  if (![spot, tradeRate, spreadRate].every(Number.isFinite) || spot <= 0 || tradeRate < 0 || spreadRate < 0 || tradeRate + spreadRate >= 1) return null;
+export function bitcoinCostBreakdown(spot: number, tradeRate: number, spreadRate: number, includedSpreadNok = 0) {
+  if (![spot, tradeRate, spreadRate, includedSpreadNok].every(Number.isFinite) || spot <= 0 || tradeRate < 0 || spreadRate < 0 || includedSpreadNok < 0 || includedSpreadNok > spot || tradeRate + spreadRate >= 1) return null;
   const total = spot / (1 - (tradeRate + spreadRate));
   if (!Number.isFinite(total)) return null;
-  return { spot, trade: total * tradeRate, spread: total * spreadRate, total };
+  return { spot: spot - includedSpreadNok, trade: total * tradeRate, spread: total * spreadRate + includedSpreadNok, total };
 }

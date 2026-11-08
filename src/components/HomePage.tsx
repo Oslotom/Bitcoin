@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { ArrowDown, ArrowUpRight, BookOpen, Check, ChevronRight, CircleHelp, Layers3, RefreshCw, Wallet } from 'lucide-react';
-import type { ComparisonResult } from '../types';
+import type { ComparisonResult, MarketSnapshot } from '../types';
 import { CryptoCurrency } from '../types';
 import { PAGE_PATHS } from '../routes';
 import HeroTableIllustration from './HeroTableIllustration';
@@ -9,12 +9,18 @@ import ResultsTable from './ResultsTable';
 import ExchangePriceChart from './ExchangePriceChart';
 import FAQSection from './FAQSection';
 import { feeRows } from './FeeOverview';
+import AmountControl from './AmountControl';
+import MarketStatus from './MarketStatus';
 
 interface Props {
   results: ComparisonResult[];
   isLoading: boolean;
   error: string | null;
   onRetry: () => void;
+  snapshot: MarketSnapshot;
+  amount: number;
+  onAmountChange: (value: number) => void;
+  refreshError?: string | null;
 }
 
 const guides = [
@@ -23,7 +29,7 @@ const guides = [
   { href: PAGE_PATHS.tax, icon: Wallet, number: '03', category: 'Ha oversikten', title: 'Ta skatten fra starten.', description: 'Få oversikt over hva du må dokumentere, og hva som skal rapporteres.', color: 'peach' },
 ];
 
-export default function HomePage({ results, isLoading, error, onRetry }: Props) {
+export default function HomePage({ results, isLoading, error, onRetry, snapshot, amount, onAmountChange, refreshError }: Props) {
   const root = useRef<HTMLDivElement>(null);
   const hero = useRef<HTMLElement>(null);
   const reducedMotion = useReducedMotion();
@@ -64,7 +70,7 @@ export default function HomePage({ results, isLoading, error, onRetry }: Props) 
         <div className="site-container relative grid items-center gap-12 py-14 sm:py-20 lg:grid-cols-[1.1fr_1fr] lg:gap-14 lg:py-24">
           <div className="hero-copy">
             <h1 id="home-title" className="hero-heading">Kjøpe Bitcoin.<br /><span className="hero-title-accent">Med mer oversikt.</span></h1>
-            <p className="mt-6 max-w-md text-base leading-relaxed text-slate-600 sm:text-lg">Skal du kjøpe Bitcoin? Sammenlign kurs og beregnede kostnader hos {rows.length} børser. Finn forskjellene før du velger.</p>
+            <p className="mt-6 max-w-md text-base leading-relaxed text-slate-600 sm:text-lg">Skal du kjøpe Bitcoin? Sammenlign daterte priser og beregnede kostnader hos {rows.length} børser. Se hva du kan få for beløpet ditt.</p>
             <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-600">
               <span className="inline-flex items-center gap-1.5"><Check size={14} className="text-brand" aria-hidden="true" /> Priser i norske kroner</span>
               <span className="inline-flex items-center gap-1.5"><Check size={14} className="text-brand" aria-hidden="true" /> Gebyrer synliggjort</span>
@@ -78,6 +84,8 @@ export default function HomePage({ results, isLoading, error, onRetry }: Props) 
 
       <section id="kjop-bitcoin" aria-labelledby="comparison-title" className="site-container home-section">
         <h2 id="comparison-title" className="sr-only">Sammenlign Bitcoin-priser</h2>
+        <AmountControl amount={amount} onChange={onAmountChange} />
+        <MarketStatus snapshot={snapshot} error={refreshError} onRetry={onRetry} />
         <div className="comparison-panel">
           <div>
             {isLoading ? (
@@ -148,6 +156,12 @@ export default function HomePage({ results, isLoading, error, onRetry }: Props) 
             </a>
           ))}
         </div>
+        <nav aria-label="Flere verktøy og sammenligninger" className="mt-6 flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium text-brand">
+          <a href={PAGE_PATHS.calculator}>Bitcoin-kalkulator →</a>
+          <a href={PAGE_PATHS.firiBare}>Firi vs Bare Bitcoin →</a>
+          <a href={PAGE_PATHS.nbxBare}>NBX vs Bare Bitcoin →</a>
+          <a href={PAGE_PATHS.research}>Dokumentert prissammenligning →</a>
+        </nav>
       </section>
 
       <section id="sporsmal" className="home-faq-area" aria-label="Spørsmål om Bitcoin">

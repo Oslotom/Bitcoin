@@ -9,7 +9,9 @@
     "start": "NODE_ENV=production node dist/server.cjs",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
-    "seo:check": "node scripts/check-seo.mjs"
+    "seo:check": "node scripts/check-seo.mjs",
+    "data:update": "node scripts/update-market-data.mjs",
+    "test": "tsx --test scripts/*.test.ts scripts/*.test.mjs"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",

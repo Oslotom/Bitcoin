@@ -1,5 +1,6 @@
 import { FEES } from '../services/api';
 import { Exchange } from '../types';
+import { FEE_EVIDENCE } from '../data/exchangeFees';
 
 declare const __PAGE_DATES__: Record<string, string>;
 
@@ -47,7 +48,7 @@ export default function FeeOverview() {
           Kolonnen til høyre viser beregnet kostnad på et kjøp av {example.toLocaleString('nb-NO')} kr, ikke et bekreftet tilbud fra børsen.
         </p>
         <p className="text-sm text-slate-500">
-          Sist oppdatert: <time dateTime={__PAGE_DATES__.about}>{formatDate(__PAGE_DATES__.about)}</time>
+          Innhold sist endret: <time dateTime={__PAGE_DATES__.about}>{formatDate(__PAGE_DATES__.about)}</time>. Kontrollert dato for hver gebyrkilde står nedenfor.
         </p>
       </div>
 
@@ -58,7 +59,7 @@ export default function FeeOverview() {
             <tr>
               <th scope="col" className="px-4 py-3 font-semibold">Børs</th>
               <th scope="col" className="px-4 py-3 font-semibold">Handelsgebyr</th>
-              <th scope="col" className="px-4 py-3 font-semibold">Spread (est.)</th>
+              <th scope="col" className="px-4 py-3 font-semibold">Ekstra spread i modellen</th>
               <th scope="col" className="px-4 py-3 font-semibold">Totalt</th>
               <th scope="col" className="px-4 py-3 font-semibold text-right">Gebyr på {example.toLocaleString('nb-NO')} kr</th>
             </tr>
@@ -69,6 +70,7 @@ export default function FeeOverview() {
                 <th scope="row" className="px-4 py-3 text-left font-bold text-slate-900">
                   {row.exchange}
                   {row.norwegian && <span className="ml-2 text-[10px] font-bold uppercase text-brand">Norsk</span>}
+                  {!FEE_EVIDENCE[row.exchange].tradeVerified && <span className="block text-xs font-normal text-amber-800">Ubekreftet modellsats</span>}
                 </th>
                 <td className="px-4 py-3 text-slate-600">{formatPercent(row.trade)}</td>
                 <td className="px-4 py-3 text-slate-600">{formatPercent(row.spread)}</td>
@@ -82,11 +84,17 @@ export default function FeeOverview() {
         </table>
       </div>
 
+      <div id="gebyrkilder" className="space-y-3">
+        <h3 className="font-semibold text-slate-900">Kilder, scenario og kontroll</h3>
+        <p className="text-sm text-slate-600">Satser gjelder ulike produkter. En Pro/Advanced-konto er ikke det samme som enkelkjøp i en app. Tall uten bekreftet kilde er tydelig merket og skal ikke leses som et faktisk tilbud.</p>
+        {rows.map(row => { const evidence = FEE_EVIDENCE[row.exchange]; return <details key={row.exchange} className="border-b border-slate-100 pb-3 text-sm"><summary className="cursor-pointer text-slate-900">{row.exchange} · {evidence.checkedAt ? `kontrollert ${formatDate(evidence.checkedAt)}` : 'ikke kontrollert'}</summary><p className="mt-2 text-slate-600">{evidence.accountType}. {evidence.note}</p><a className="text-brand hover:underline" href={evidence.sourceUrl} target="_blank" rel="noopener noreferrer">Les tilbyderens priser og vilkår</a></details>; })}
+      </div>
+
       <div className="space-y-2 text-sm text-slate-600 leading-relaxed">
         <h3 className="font-bold text-slate-900">Slik beregner vi prisene</h3>
         <p>
           Prisgrunnlaget kommer fra børsenes API-er eller referanseestimater, omregnet til norske kroner. Vi legger til handelsgebyret og en
-          estimert spread for hver børs, og regner ut hvor mye Bitcoin du faktisk sitter igjen med. Innskuddsgebyrer
+          estimert spread der den ikke allerede er inkludert i kjøpskursen. Vi beregner hvor mye Bitcoin du kan sitte igjen med i det valgte scenarioet. Innskuddsgebyrer
           (f.eks. ved Vipps eller kort) og uttaksgebyrer kommer i tillegg og er ikke med i tallene over. Gebyrene kan endres
           av børsene – sjekk alltid prisen hos børsen før du handler.
         </p>

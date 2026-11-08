@@ -7,7 +7,15 @@ import {getPageDates} from './scripts/page-dates.mjs';
 export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), {
+      name: 'search-verification',
+      transformIndexHtml() {
+        return [
+          ['google-site-verification', env.VITE_GOOGLE_SITE_VERIFICATION],
+          ['msvalidate.01', env.VITE_BING_SITE_VERIFICATION],
+        ].filter(([, value]) => value && /^[a-zA-Z0-9_-]+$/.test(value)).map(([name, content]) => ({ tag: 'meta', attrs: { name, content }, injectTo: 'head' as const }));
+      },
+    }],
     base: '/',
     define: {
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),

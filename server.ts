@@ -1,5 +1,4 @@
 import express from "express";
-import axios from "axios";
 import path from "path";
 import { Resend } from 'resend';
 import { PAGE_PATHS, REDIRECTS } from './src/routes';
@@ -12,52 +11,6 @@ async function startServer() {
   console.log(`Starting server in ${isProduction ? "production" : "development"} mode...`);
 
   app.use(express.json());
-
-  app.use((req, res, next) => {
-    const host = req.get("host");
-    if (host && host.startsWith("www.")) {
-      const newHost = host.slice(4);
-      return res.redirect(301, `${req.protocol}://${newHost}${req.originalUrl}`);
-    }
-    console.log(`${req.method} ${req.url}`);
-    next();
-  });
-
-  // Proxy for NBX API
-  app.get("/api/proxy/nbx", async (req, res) => {
-    try {
-      const response = await axios.get("https://api.nbx.com/tickers");
-      res.json(response.data);
-    } catch (error) {
-      console.error("Error proxying NBX API:", error);
-      res.status(500).json({ error: "Failed to fetch NBX data" });
-    }
-  });
-
-  // Proxy for Bare Bitcoin API
-  app.get("/api/proxy/bare-bitcoin", async (req, res) => {
-    try {
-      const response = await axios.get("https://api.bb.no/v1/price/nok");
-      res.json(response.data);
-    } catch (error) {
-      console.error("Error proxying Bare Bitcoin API:", error);
-      res.status(500).json({ error: "Failed to fetch Bare Bitcoin data" });
-    }
-  });
-
-  // Proxy for CoinGecko price API
-  app.get("/api/proxy/coingecko", async (req, res) => {
-    try {
-      const { ids, vs_currencies } = req.query;
-      const response = await axios.get("https://api.coingecko.com/api/v3/simple/price", {
-        params: { ids, vs_currencies }
-      });
-      res.json(response.data);
-    } catch (error) {
-      console.error("Error proxying CoinGecko API:", error);
-      res.status(500).json({ error: "Failed to fetch CoinGecko data" });
-    }
-  });
 
   // Contact form API
   app.post("/api/contact", async (req, res) => {
@@ -90,7 +43,7 @@ async function startServer() {
         });
         console.log("E-post sendt via Resend.");
       } else {
-        console.warn("RESEND_API_KEY mangler. E-post ble ikke sendt, men forespørsel er logget.");
+        return res.status(503).json({ error: "E-post er ikke konfigurert. Bruk e-postlenken på siden." });
       }
 
       res.status(200).json({ status: "ok", message: "Meldingen er mottatt." });
@@ -153,15 +106,6 @@ async function startServer() {
       }
     }));
 
-    // Redirect apex to www (samme kanoniske vertsnavn som GitHub Pages bruker)
-    app.use((req, res, next) => {
-      const host = req.get("host");
-      if (host && host.startsWith("xn--")) {
-        return res.redirect(301, `https://www.xn--kjpebitcoin-hgb.no${req.originalUrl}`);
-      }
-      next();
-    });
-    
     // Handle SPA routing
     app.get("*", (req, res) => {
       const url = req.url.split('?')[0]; // Ignore query params
