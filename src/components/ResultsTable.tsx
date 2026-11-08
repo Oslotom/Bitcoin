@@ -85,7 +85,10 @@ export default function ResultsTable({ results, isLoading, error }: Props) {
       <div className="comparison-mobile">
         <label className="mb-4 flex items-center justify-between gap-4 text-xs text-slate-500">Sorter børser<select className="rounded-lg border border-slate-200 bg-white px-2 py-2 text-slate-800" value={sort.key} onChange={e => setSort({ key: e.target.value as SortKey, direction: e.target.value === 'cryptoAmount' ? 'desc' : 'asc' })}>{headings.map(h => <option key={h.key} value={h.key}>{h.label}</option>)}</select></label>
         <ol className="divide-y divide-slate-100">{sorted.map(r => <li key={r.exchange} className="py-4 first:pt-0">
-          <div>{exchangeButton(r, 'mobile')}</div>
+          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+            {exchangeButton(r, 'mobile')}
+            <strong className="ml-auto whitespace-nowrap text-sm font-semibold tabular-nums text-slate-900" aria-label={`Beregnet mengde Bitcoin: ${btc(r.cryptoAmount)} BTC`}>{btc(r.cryptoAmount)} BTC</strong>
+          </div>
           <dl className="mt-3 text-xs"><div className="text-right"><dt className="text-slate-500">Gebyr + ekstra spread</dt><dd className="mt-1 tabular-nums text-slate-900">{money(r.feeInNok)} kr <span className="text-slate-500">({(r.feeInNok / r.totalCost * 100).toLocaleString('nb-NO', { maximumFractionDigits: 2 })} %)</span></dd></div></dl>
           <div id={`${detailId(r.exchange, 'mobile')}-details`} role="region" aria-labelledby={`${detailId(r.exchange, 'mobile')}-button`} hidden={expandedExchange !== r.exchange}><ExchangeDetails result={r} /></div>
         </li>)}</ol>
