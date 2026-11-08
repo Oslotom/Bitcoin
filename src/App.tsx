@@ -1,24 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import Footer from './components/Footer';
-import ResultsTable from './components/ResultsTable';
+import HomePage from './components/HomePage';
 import Overview from './components/Overview';
-import FAQSection from './components/FAQSection';
-import { feeRows } from './components/FeeOverview';
 import BitcoinKursPage from './components/pages/BitcoinKursPage';
 import FiriVsNbxPage from './components/pages/FiriVsNbxPage';
 import VippsPage from './components/pages/VippsPage';
 import TaxPage from './components/pages/TaxPage';
 import AboutPage from './components/pages/AboutPage';
-import { ExchangeIcon } from './components/icons';
-import CountUp from 'react-countup';
 import NorwayExchanges from './components/NorwayExchanges';
-import ExchangePriceChart from './components/ExchangePriceChart';
-import HeroTableIllustration from './components/HeroTableIllustration';
 import { getCoinbasePrice, getBinancePrice, getFiriPrice, getKrakenPrice, getNbxPrice, getBareBitcoinPrice, getRevolutPrice, getCryptoComPrice, getBuyBitcoinPrice, FEES } from './services/api';
 import { ComparisonResult, CryptoCurrency, Exchange } from './types';
-import { ExternalLink, Edit2, Save, Menu, X, ArrowUpRight, ArrowRight } from 'lucide-react';
+import { Edit2, Save, Menu, X } from 'lucide-react';
 import { useContent } from './contexts/ContentContext';
-import EditableText from './components/EditableText';
 import { motion, AnimatePresence } from 'motion/react';
 import { PAGE_PATHS, PAGE_TITLES, pageFromPath, type Page } from './routes';
 
@@ -282,57 +275,7 @@ export default function App({ initialPage }: { initialPage?: Page }) {
       </AnimatePresence>
 
       <main id="main-content" className="flex-1">
-        {currentPage === 'home' && (
-          <div className="animate-fade-in">
-            <section className="landing-hero overflow-hidden">
-              <div className="site-container grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] py-12 sm:py-16 lg:py-20">
-                <div className="space-y-6">
-                  <p className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white px-3 py-1.5 text-xs font-medium text-slate-600"><span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-brand" />{feeRows().length} børser. Én oversikt.</p>
-                  <h1 className="hero-heading">Kjøpe Bitcoin<br /><span className="text-brand">i Norge.</span></h1>
-                  <p className="max-w-md text-base sm:text-lg leading-relaxed text-slate-600">Sammenlign kurs og gebyrer.<br className="hidden sm:block" /> Finn ut hvor du får mer for pengene.</p>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <a href="#kjop-bitcoin" className="btn-primary">Sammenlign børser <ArrowRight size={16} /></a>
-                    <a href={PAGE_PATHS.overview} className="inline-flex min-h-11 items-center gap-1.5 px-2 text-sm font-semibold text-slate-600 hover:text-brand">Ny med Bitcoin? <ArrowUpRight size={15} /></a>
-                  </div>
-                  <p className="text-xs text-slate-500">Du velger børs. Vi gjør kostnadene synlige.</p>
-                </div>
-                <HeroTableIllustration />
-              </div>
-            </section>
-
-            {/* Preview Section */}
-            <section id="kjop-bitcoin" className="site-container py-10 sm:py-12 space-y-6 scroll-mt-20">
-              <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                <div className="space-y-2">
-                  <h2 className="section-title">Finn din Bitcoin-børs.</h2>
-                  <p className="text-slate-500 font-medium">Kurs, gebyrer og beregnet kjøpspris – side om side.</p>
-                </div>
-            
-              </div>
-              
-              <div className="overflow-hidden">
-                <ResultsTable results={results} isLoading={isLoading} error={error} crypto={CryptoCurrency.BTC} compact />
-              </div>
-
-              <p className="text-center text-sm text-slate-500">
-                <a href="#prisforskjell" className="font-semibold text-brand hover:underline">Se prisforskjellene i grafen</a>
-                {' · '}<a href="/om-oss#metode" className="hover:underline">Metode og prisgrunnlag</a>
-                {' · '}<a href="/om-oss#gebyroversikt" className="hover:underline">Gebyrer uten live-kurs</a>
-              </p>
-            </section>
-
-            <section className="site-container pb-10">
-              <nav aria-label="Les mer om kjøp av Bitcoin" className="grid sm:grid-cols-3 gap-3">
-                <a href={PAGE_PATHS.overview} className="resource-link bg-[#f1f4ff]"><span>Kjøpe Bitcoin, steg for steg</span><ArrowUpRight size={19} className="shrink-0 text-brand" /></a>
-                <a href={PAGE_PATHS.norway} className="resource-link bg-[#f0f8f4]"><span>Bli kjent med norske børser</span><ArrowUpRight size={19} className="shrink-0 text-emerald-700" /></a>
-                <a href={PAGE_PATHS.tax} className="resource-link bg-[#fff6ee]"><span>Få oversikt over skatten</span><ArrowUpRight size={19} className="shrink-0 text-amber-700" /></a>
-              </nav>
-
-              <FAQSection />
-            </section>
-            <ExchangePriceChart results={results} isLoading={isLoading} error={error} />
-          </div>
-        )}
+        {currentPage === 'home' && <HomePage results={results} isLoading={isLoading} error={error} onRetry={() => handleCalculate(10000)} />}
 
           {/* Page: Knowledge Overview */}
           {currentPage === 'overview' && <div className="animate-fade-in"><Overview navigateTo={navigateTo} /></div>}
