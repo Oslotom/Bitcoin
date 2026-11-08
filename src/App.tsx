@@ -23,8 +23,20 @@ export default function App({ initialPage }: { initialPage?: Page }) {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<Page>(() => initialPage ?? pageFromPath(window.location.pathname));
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isHeaderScrolled, setIsHeaderScrolled] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const didInitCalculate = useRef(false);
+
+  useEffect(() => {
+    const updateHeader = () => setIsHeaderScrolled(window.scrollY > 16);
+    updateHeader();
+    window.addEventListener('scroll', updateHeader, { passive: true });
+    window.addEventListener('pageshow', updateHeader);
+    return () => {
+      window.removeEventListener('scroll', updateHeader);
+      window.removeEventListener('pageshow', updateHeader);
+    };
+  }, []);
 
   useEffect(() => {
     if (!isMobileMenuOpen) return;
@@ -150,7 +162,7 @@ export default function App({ initialPage }: { initialPage?: Page }) {
   return (
     <div id="app-root" className="min-h-screen bg-white text-slate-900 font-sans">
       {/* Header / Nav */}
-      <header className="sticky top-0 z-40 w-full border-b border-slate-200">
+      <header className="site-header sticky top-0 z-40 w-full" data-scrolled={isHeaderScrolled}>
         <div className="site-container h-16 flex items-center justify-between">
           <a
             href="/"

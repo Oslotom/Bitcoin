@@ -1,15 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { ArrowDown, ArrowUpRight, BookOpen, Check, ChevronRight, CircleHelp, Layers3, RefreshCw, Scale, ShieldCheck, Wallet } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, BookOpen, Check, ChevronRight, CircleHelp, Layers3, RefreshCw, Scale, Wallet } from 'lucide-react';
 import type { ComparisonResult } from '../types';
-import { CryptoCurrency, Exchange } from '../types';
+import { CryptoCurrency } from '../types';
 import { PAGE_PATHS } from '../routes';
 import HeroTableIllustration from './HeroTableIllustration';
 import ResultsTable from './ResultsTable';
 import ExchangePriceChart from './ExchangePriceChart';
 import FAQSection from './FAQSection';
 import { feeRows } from './FeeOverview';
-import { ExchangeIcon } from './icons';
 
 interface Props {
   results: ComparisonResult[];
@@ -17,13 +16,6 @@ interface Props {
   error: string | null;
   onRetry: () => void;
 }
-
-const sections = [
-  { id: 'kjop-bitcoin', label: 'Sammenlign' },
-  { id: 'prisforskjell', label: 'Prisforskjeller' },
-  { id: 'slik-velger-du', label: 'Slik velger du' },
-  { id: 'sporsmal', label: 'Spørsmål og svar' },
-];
 
 const guides = [
   { href: PAGE_PATHS.overview, icon: BookOpen, number: '01', category: 'Kom i gang', title: 'Ditt første Bitcoin-kjøp.', description: 'Fra konto og innskudd til kjøp og oppbevaring. Ett steg om gangen.', color: 'blue' },
@@ -35,7 +27,6 @@ export default function HomePage({ results, isLoading, error, onRetry }: Props) 
   const root = useRef<HTMLDivElement>(null);
   const hero = useRef<HTMLElement>(null);
   const reducedMotion = useReducedMotion();
-  const [activeSection, setActiveSection] = useState('');
   const { scrollYProgress } = useScroll();
   const { scrollYProgress: heroProgress } = useScroll({ target: hero, offset: ['start start', 'end start'] });
   const illustrationY = useTransform(heroProgress, [0, 1], [0, reducedMotion ? 0 : 55]);
@@ -62,16 +53,7 @@ export default function HomePage({ results, isLoading, error, onRetry }: Props) 
     }, { threshold: 0.12 });
     root.current?.querySelectorAll('[data-reveal]').forEach((element) => revealObserver.observe(element));
 
-    const sectionObserver = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) setActiveSection(entry.target.id);
-      }
-    }, { rootMargin: '-130px 0px -45% 0px' });
-    sections.forEach(({ id }) => {
-      const element = document.getElementById(id);
-      if (element) sectionObserver.observe(element);
-    });
-    return () => { revealObserver.disconnect(); sectionObserver.disconnect(); };
+    return () => revealObserver.disconnect();
   }, []);
 
   return (
@@ -94,30 +76,9 @@ export default function HomePage({ results, isLoading, error, onRetry }: Props) 
         </div>
       </section>
 
-      <div className="exchange-strip">
-        <div className="site-container flex flex-wrap items-center justify-center gap-x-7 gap-y-4 py-6 sm:justify-between">
-          <p className="text-xs text-slate-500">Blant børsene vi sammenligner</p>
-          {[Exchange.Firi, Exchange.NBX, Exchange.BareBitcoin, Exchange.Kraken].map((exchange) => (
-            <span key={exchange} className="flex items-center gap-2 text-sm font-semibold text-slate-700"><ExchangeIcon exchange={exchange} size={22} />{exchange}</span>
-          ))}
-        </div>
-      </div>
-
-      <nav aria-label="På denne siden" className="home-section-nav">
-        <div className="site-container flex gap-1 overflow-x-auto py-2">
-          {sections.map(({ id, label }) => (
-            <a key={id} href={`#${id}`} aria-current={activeSection === id ? 'location' : undefined} className="section-nav-link">{label}</a>
-          ))}
-          <a href="/om-oss#metode" className="section-nav-method"><ShieldCheck size={14} aria-hidden="true" /> Slik beregner vi</a>
-        </div>
-      </nav>
-
       <section id="kjop-bitcoin" aria-labelledby="comparison-title" className="site-container home-section">
-        <div data-reveal className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
-            <h2 id="comparison-title" className="home-section-title">Samme Bitcoin.<br className="sm:hidden" /> Ulike kostnader.</h2>
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">Se kurs, gebyr og beregnet kjøpspris side om side. Laveste beregnede kjøpspris vises først.</p>
-          </div>
+        <h2 id="comparison-title" className="sr-only">Sammenlign Bitcoin-priser</h2>
+        <div className="mb-4 flex justify-end">
           <span className="comparison-context"><Scale size={15} aria-hidden="true" /> Eksempelkjøp: 10 000 kr</span>
         </div>
         <div className="comparison-panel">
