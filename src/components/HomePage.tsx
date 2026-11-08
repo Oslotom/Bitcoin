@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { ArrowDown, ArrowUpRight, BookOpen, Check, ChevronRight, CircleHelp, Layers3, RefreshCw, Scale, Wallet } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, BookOpen, Check, ChevronRight, CircleHelp, Layers3, RefreshCw, Wallet } from 'lucide-react';
 import type { ComparisonResult } from '../types';
 import { CryptoCurrency } from '../types';
 import { PAGE_PATHS } from '../routes';
@@ -78,11 +78,8 @@ export default function HomePage({ results, isLoading, error, onRetry }: Props) 
 
       <section id="kjop-bitcoin" aria-labelledby="comparison-title" className="site-container home-section">
         <h2 id="comparison-title" className="sr-only">Sammenlign Bitcoin-priser</h2>
-        <div className="mb-4 flex justify-end">
-          <span className="comparison-context"><Scale size={15} aria-hidden="true" /> Eksempelkjøp: 10 000 kr</span>
-        </div>
         <div className="comparison-panel">
-          <div className="p-3 sm:p-5">
+          <div>
             {isLoading ? (
               <div role="status" className="comparison-loading">
                 <p className="mb-6 text-sm text-slate-500">Henter kurs og beregner kostnader …</p>

@@ -165,17 +165,17 @@ export default function ResultsTable({ results, isLoading, error, crypto, compac
   if (compact) {
     const referenceResult = results.find((row) => row.exchange === Exchange.Coinbase);
     const referencePrice = referenceResult && Number.isFinite(referenceResult.spotPrice) && referenceResult.spotPrice > 0 ? referenceResult.spotPrice : null;
-    const money = (value: number) => value.toLocaleString('nb-NO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const money = (value: number) => value.toLocaleString('nb-NO', { maximumFractionDigits: 0 });
     const sortButtonClass = (column: SortKey) => `inline-flex items-center gap-1 rounded-sm py-1 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${sortConfig.key === column ? 'text-brand' : 'text-slate-500 hover:text-slate-950'}`;
     const sortState = (column: SortKey): 'ascending' | 'descending' | 'none' => sortConfig.key === column ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none';
     return (
       <div id="results-table-compact" className="space-y-3 font-sans">
-        <div className="overflow-x-auto rounded-2xl border border-slate-100 bg-white">
+        <div className="overflow-x-auto bg-white">
           <table className="w-full min-w-[780px] border-collapse text-sm sm:text-[15px]">
             <caption className="sr-only">Bitcoin-kurs, kostnad på et kjøp på 10 000 kroner, beregnet kjøpspris per BTC og påslag mot Coinbase sin spotkurs</caption>
             <thead className="border-b border-slate-100 text-xs text-slate-500">
               <tr>
-                <th scope="col" className="sticky left-0 z-10 bg-white pl-4 sm:pl-5 pr-3 py-3 text-left" aria-sort={sortState('exchange')}>
+                <th scope="col" className="sticky left-0 z-10 bg-white pl-1 pr-3 py-3 text-left" aria-sort={sortState('exchange')}>
                   <button type="button" onClick={() => handleSort('exchange')} className={sortButtonClass('exchange')}>Børs <SortIndicator column="exchange" /></button>
                 </th>
                 <th scope="col" className="px-4 py-3 text-right" aria-sort={sortState('spotPrice')}>
@@ -199,7 +199,7 @@ export default function ResultsTable({ results, isLoading, error, crypto, compac
                 const feeRate = result.feeInNok / result.totalCost * 100;
                 return (
                   <tr key={result.exchange} className="group transition-colors hover:bg-slate-50 focus-within:bg-slate-50">
-                    <th scope="row" className="sticky left-0 z-10 bg-white group-hover:bg-slate-50 group-focus-within:bg-slate-50 pl-4 sm:pl-5 pr-3 py-3 text-left font-normal">
+                    <th scope="row" className="sticky left-0 z-10 bg-white group-hover:bg-slate-50 group-focus-within:bg-slate-50 pl-1 pr-3 py-3 text-left font-normal">
                       <div className="flex items-center gap-2.5 whitespace-nowrap">
                         <span className="shrink-0"><ExchangeIcon exchange={result.exchange} size={24} /></span>
                         <a href={PLATFORM_DATA[result.exchange].link} target="_blank" rel="noopener noreferrer" className="rounded-sm text-base font-normal text-brand hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40">{result.exchange}</a>
