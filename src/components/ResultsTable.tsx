@@ -84,12 +84,12 @@ export default function ResultsTable({ results, isLoading, error }: Props) {
     <div id="results-table-compact" className="space-y-3 font-sans">
       <div className="comparison-mobile">
         <label className="mb-4 flex items-center justify-between gap-4 text-xs text-slate-500">Sorter børser<select className="rounded-lg border border-slate-200 bg-white px-2 py-2 text-slate-800" value={sort.key} onChange={e => setSort({ key: e.target.value as SortKey, direction: e.target.value === 'cryptoAmount' ? 'desc' : 'asc' })}>{headings.map(h => <option key={h.key} value={h.key}>{h.label}</option>)}</select></label>
-        <ol className="divide-y divide-slate-100">{sorted.map(r => <li key={r.exchange} className="py-4 first:pt-0">
+        <ol className="divide-y divide-slate-100">{sorted.map(r => <li key={r.exchange} className="py-1 first:pt-0">
           <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
             {exchangeButton(r, 'mobile')}
             <strong className="ml-auto whitespace-nowrap text-sm font-semibold tabular-nums text-slate-900" aria-label={`Beregnet mengde Bitcoin: ${btc(r.cryptoAmount)} BTC`}>{btc(r.cryptoAmount)} BTC</strong>
           </div>
-          <dl className="mt-3 text-xs"><div className="text-right"><dt className="text-slate-500">Gebyr + ekstra spread</dt><dd className="mt-1 tabular-nums text-slate-900">{money(r.feeInNok)} kr <span className="text-slate-500">({(r.feeInNok / r.totalCost * 100).toLocaleString('nb-NO', { maximumFractionDigits: 2 })} %)</span></dd></div></dl>
+
           <div id={`${detailId(r.exchange, 'mobile')}-details`} role="region" aria-labelledby={`${detailId(r.exchange, 'mobile')}-button`} hidden={expandedExchange !== r.exchange}><ExchangeDetails result={r} /></div>
         </li>)}</ol>
       </div>
@@ -99,12 +99,12 @@ export default function ResultsTable({ results, isLoading, error }: Props) {
           <thead className="border-b border-slate-100 text-xs text-slate-500"><tr>{headings.map(h => <th key={h.key} scope="col" aria-sort={sort.key === h.key ? sort.direction === 'asc' ? 'ascending' : 'descending' : 'none'} className={`px-3 py-3 font-medium ${h.key === 'exchange' ? 'pl-1 text-left' : 'text-right'}`}><button type="button" onClick={() => setKey(h.key)} className={`inline-flex items-center gap-1 py-1 ${sort.key === h.key ? 'text-brand' : 'hover:text-slate-900'}`}>{h.label}{icon(h.key)}</button></th>)}</tr></thead>
           <tbody className="divide-y divide-slate-100">{sorted.map(r => {
             const premium = premiumPercent(r.effectivePrice, reference);
-            return <Fragment key={r.exchange}><tr className="exchange-summary-row cursor-pointer hover:bg-slate-50" onClick={event => { if (!(event.target as HTMLElement).closest('button, a, input, select, summary')) toggleExchange(r.exchange); }}><th scope="row" className="pl-1 pr-3 py-3 text-left font-normal">{exchangeButton(r, 'desktop')}</th>
-              <td className="px-3 py-3 text-right tabular-nums whitespace-nowrap">{money(r.spotPrice)} <span className="text-[10px] text-slate-500">NOK</span></td>
-              <td className="px-3 py-3 text-right tabular-nums whitespace-nowrap">{money(r.feeInNok)} kr <span className="text-xs text-slate-500">({(r.feeInNok / r.totalCost * 100).toLocaleString('nb-NO', { maximumFractionDigits: 2 })} %)</span></td>
-              <td className="px-3 py-3 text-right tabular-nums whitespace-nowrap">{btc(r.cryptoAmount)}</td>
-              <td className="px-3 py-3 text-right font-medium tabular-nums whitespace-nowrap">{money(r.effectivePrice)} <span className="text-[10px] font-normal text-slate-500">NOK</span></td>
-              <td className="px-3 py-3 text-right tabular-nums whitespace-nowrap">{premium === null ? '—' : `${premium > 0 ? '+' : ''}${premium.toLocaleString('nb-NO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %`}</td>
+            return <Fragment key={r.exchange}><tr className="exchange-summary-row cursor-pointer hover:bg-slate-50" onClick={event => { if (!(event.target as HTMLElement).closest('button, a, input, select, summary')) toggleExchange(r.exchange); }}><th scope="row" className="pl-1 pr-3 py-1 text-left font-normal">{exchangeButton(r, 'desktop')}</th>
+              <td className="px-3 py-1 text-right tabular-nums whitespace-nowrap">{money(r.spotPrice)} <span className="text-[10px] text-slate-500">NOK</span></td>
+              <td className="px-3 py-1 text-right tabular-nums whitespace-nowrap">{money(r.feeInNok)} kr <span className="text-xs text-slate-500">({(r.feeInNok / r.totalCost * 100).toLocaleString('nb-NO', { maximumFractionDigits: 2 })} %)</span></td>
+              <td className="px-3 py-1 text-right tabular-nums whitespace-nowrap">{btc(r.cryptoAmount)}</td>
+              <td className="px-3 py-1 text-right font-medium tabular-nums whitespace-nowrap">{money(r.effectivePrice)} <span className="text-[10px] font-normal text-slate-500">NOK</span></td>
+              <td className="px-3 py-1 text-right tabular-nums whitespace-nowrap">{premium === null ? '—' : `${premium > 0 ? '+' : ''}${premium.toLocaleString('nb-NO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %`}</td>
             </tr><tr className="exchange-detail-row" hidden={expandedExchange !== r.exchange}><td colSpan={headings.length}><div id={`${detailId(r.exchange, 'desktop')}-details`} role="region" aria-labelledby={`${detailId(r.exchange, 'desktop')}-button`}><ExchangeDetails result={r} /></div></td></tr></Fragment>;
           })}</tbody>
         </table>
