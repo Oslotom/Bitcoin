@@ -68,7 +68,7 @@ const snapshot = JSON.parse(read('data/market-snapshot.json'));
 assert.equal(snapshot.version, 1, 'Missing shared market snapshot');
 const hasCurrentQuotes = snapshot.quotes.some(q => Date.now() - Date.parse(q.asOf) <= 24 * 3600000);
 if (hasCurrentQuotes) {
-  assert(read('index.html').includes('id="results-table-compact"') && read('index.html').includes('Du får BTC'), 'Homepage prices are not prerendered');
+  assert(read('index.html').includes('id="results-table-compact"') && read('index.html').includes('Beregnet Bitcoin-kjøp for'), 'Homepage prices are not prerendered');
   assert(read('bitcoin-kalkulator.html').includes('id="results-table-compact"'), 'Calculator has no initial price data');
 }
 if (snapshot.history.points.length > 1) assert(read('bitcoin-kurs.html').includes('Historiske Bitcoin-målinger'), 'Historical observations missing from HTML');

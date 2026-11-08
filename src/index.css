@@ -119,6 +119,25 @@
 .market-status-stale { color: #865b1b; }
 .comparison-desktop { display: none; }
 .comparison-mobile { display: block; }
+.exchange-toggle { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding-block: 4px; border-radius: 5px; color: #0052ff; font-size: 14px; font-weight: 500; text-align: left; cursor: pointer; }
+.exchange-toggle > svg:last-child { flex-shrink: 0; transition: transform 180ms ease; }
+.exchange-toggle[aria-expanded="true"] > svg:last-child { transform: rotate(180deg); }
+.exchange-toggle:hover { color: #0045db; }
+.exchange-detail-row[hidden] { display: none; }
+.exchange-detail-row > td { padding: 0; }
+.exchange-details { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; margin-block: 12px 20px; padding: 22px; border-radius: 14px; background: #f6f8fc; }
+.exchange-details > div { min-width: 0; }
+.exchange-details-title { margin-bottom: 14px; font-size: 13px; font-weight: 600; color: #172f59; }
+.exchange-fee-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 16px; }
+.exchange-fee-grid dt { font-size: 11px; line-height: 1.6; color: #64748b; }
+.exchange-fee-grid dd { margin-top: 4px; font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; color: #172f59; }
+.exchange-fee-grid dd span { color: #64748b; font-size: 11px; font-weight: 400; }
+.exchange-details-source { display: grid; align-content: start; gap: 10px; font-size: 12px; line-height: 1.7; color: #536580; }
+.exchange-details-source .exchange-details-title { margin-bottom: 0; }
+.exchange-details-source a { color: #0052ff; text-decoration: underline; }
+.exchange-details-source .exchange-visit-link { width: fit-content; color: white; text-decoration: none; margin-top: 4px; }
+.article-content .exchange-details p { margin-bottom: 0; }
+@media (max-width: 1023px) { .exchange-details { grid-template-columns: minmax(0, 1fr); padding: 16px; gap: 20px; } }
 .comparison-mobile ol { list-style: none; padding-left: 0; }
 .quote-source { margin-top: 5px; max-width: 240px; text-align: left; font-size: 10px; font-weight: 400; color: #64748b; white-space: normal; }
 .quote-source summary { cursor: pointer; }
