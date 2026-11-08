@@ -90,11 +90,8 @@
 .reading-progress { position: fixed; inset: 0 0 auto; height: 3px; background: #0052ff; transform-origin: left; z-index: 60; pointer-events: none; }
 .home-hero { position: relative; isolation: isolate; overflow: clip; background: linear-gradient(125deg, #fbfcff 15%, #eef3ff 72%, #f5f1ff); }
 .hero-glow { position: absolute; width: min(65vw, 700px); aspect-ratio: 1; right: -15%; top: -40%; border-radius: 50%; background: radial-gradient(circle, #c9d9ff80, transparent 67%); pointer-events: none; z-index: -1; }
-.hero-eyebrow { display: inline-flex; align-items: center; gap: 9px; padding: 7px 12px; border: 1px solid #dce5fc; border-radius: 100px; background: #ffffffb3; color: #365383; font-size: 12px; font-weight: 500; }
-.eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: #0052ff; box-shadow: 0 0 0 4px #0052ff0c; }
 .home-hero .hero-heading { font-size: clamp(2.6rem, 4.9vw, 4.1rem); line-height: 1.1; letter-spacing: -0.055em; }
 .hero-title-accent { color: #0052ff; }
-.hero-cta { box-shadow: 0 6px 16px #0052ff24; }
 .hero-illustration-wrap { min-width: 0; padding: 12px 0; }
 .home-hero .hero-scene { background-color: #e8eeff80; background-image: radial-gradient(#b5c3e9 0.7px, transparent 0.7px); border: 1px solid #ffffffc9; box-shadow: inset 0 0 55px #ffffff70; }
 .hero-scroll-cue { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; color: #60708d; }
@@ -139,8 +136,7 @@
 .home-closing { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--home-line); }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .guide-card:hover { transform: translateY(-6px); box-shadow: 0 14px 30px #1425490c; border-color: #a5bde8; }
-  .hero-cta svg, .guide-card svg { transition: transform 250ms; }
-  .hero-cta:hover svg { transform: translateX(3px); }
+  .guide-card svg { transition: transform 250ms; }
   .guide-card:hover > span:last-child svg { transform: translate(2px, -2px); }
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -155,6 +151,7 @@
   .cost-story { gap: 32px; padding: 32px; }
 }
 @media (max-width: 639px) {
+  .home-page .site-container { padding-inline: 12px; }
   .home-section { padding-block: 44px; }
   .home-hero .hero-heading { font-size: clamp(2.4rem, 8.8vw, 3.5rem); }
   .home-hero .hero-scene { min-height: 365px; }

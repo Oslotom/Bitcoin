@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { ArrowDown, ArrowRight, ArrowUpRight, BookOpen, Check, ChevronRight, CircleHelp, Layers3, RefreshCw, Scale, ShieldCheck, Wallet } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, BookOpen, Check, ChevronRight, CircleHelp, Layers3, RefreshCw, Scale, ShieldCheck, Wallet } from 'lucide-react';
 import type { ComparisonResult } from '../types';
 import { CryptoCurrency, Exchange } from '../types';
 import { PAGE_PATHS } from '../routes';
@@ -81,13 +81,8 @@ export default function HomePage({ results, isLoading, error, onRetry }: Props) 
         <div aria-hidden="true" className="hero-glow" />
         <div className="site-container relative grid items-center gap-12 py-14 sm:py-20 lg:grid-cols-[1.1fr_1fr] lg:gap-14 lg:py-24">
           <div className="hero-copy">
-            <p className="hero-eyebrow"><span className="eyebrow-dot" aria-hidden="true" /> Bitcoin i Norge, litt enklere.</p>
-            <h1 id="home-title" className="hero-heading mt-6">Kjøpe Bitcoin.<br /><span className="hero-title-accent">Med mer oversikt.</span></h1>
+            <h1 id="home-title" className="hero-heading">Kjøpe Bitcoin.<br /><span className="hero-title-accent">Med mer oversikt.</span></h1>
             <p className="mt-6 max-w-md text-base leading-relaxed text-slate-600 sm:text-lg">Skal du kjøpe Bitcoin? Sammenlign kurs og beregnede kostnader hos {rows.length} børser. Finn forskjellene før du velger.</p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <a href="#kjop-bitcoin" className="btn-primary hero-cta">Sammenlign børser <ArrowRight size={17} aria-hidden="true" /></a>
-              <a href={PAGE_PATHS.overview} className="btn-secondary bg-white/60">Slik kommer du i gang <ArrowUpRight size={16} aria-hidden="true" /></a>
-            </div>
             <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-600">
               <span className="inline-flex items-center gap-1.5"><Check size={14} className="text-brand" aria-hidden="true" /> Priser i norske kroner</span>
               <span className="inline-flex items-center gap-1.5"><Check size={14} className="text-brand" aria-hidden="true" /> Gebyrer synliggjort</span>
