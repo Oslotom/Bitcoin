@@ -1,4 +1,9 @@
-import type { ComparisonResult } from '../types';
+import { useState } from 'react';
+import { ArrowUpRight, Maximize2 } from 'lucide-react';
+import { Exchange, type ComparisonResult } from '../types';
+import { FEES } from '../services/api';
+import { bitcoinCostBreakdown } from '../utils/pricing';
+import { ExchangeIcon } from './icons';
 
 interface Props {
   results: ComparisonResult[];
@@ -6,72 +11,90 @@ interface Props {
   error: string | null;
 }
 
+// An editorial selection, not a ranking by volume or market share.
+export const CHART_EXCHANGES = [Exchange.Firi, Exchange.NBX, Exchange.BareBitcoin, Exchange.Kraken, Exchange.Binance];
 const nok = (value: number) => `${value.toLocaleString('nb-NO', { maximumFractionDigits: 0 })} kr`;
-const percent = (value: number) => `${value.toLocaleString('nb-NO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %`;
+const preciseNok = (value: number) => `${value.toLocaleString('nb-NO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} kr`;
 
 export default function ExchangePriceChart({ results, isLoading, error }: Props) {
-  const rows = results
-    .filter((result) => Number.isFinite(result.effectivePrice) && result.effectivePrice > 0)
-    .slice()
-    .sort((a, b) => a.effectivePrice - b.effectivePrice);
-  const cheapest = rows[0]?.effectivePrice ?? 0;
-  const largestDifference = rows.length ? rows[rows.length - 1].effectivePrice - cheapest : 0;
+  const [zoomed, setZoomed] = useState(true);
+  const rows = CHART_EXCHANGES.map((exchange) => {
+    const result = results.find((row) => row.exchange === exchange);
+    const cost = result ? bitcoinCostBreakdown(result.spotPrice, FEES[exchange].trade, FEES[exchange].spread) : null;
+    return { exchange, cost };
+  }).sort((a, b) => (a.cost?.total ?? Infinity) - (b.cost?.total ?? Infinity));
+  const available = rows.flatMap((row) => row.cost ? [row.cost] : []);
+  const minimumSpot = available.length ? Math.min(...available.map((row) => row.spot)) : 0;
+  const maximumTotal = available.length ? Math.max(...available.map((row) => row.total)) : 1;
+  const axisStart = zoomed ? minimumSpot * 0.997 : 0;
+  const axisEnd = maximumTotal * 1.001;
+  const axisRange = axisEnd - axisStart;
+  const ticks = Array.from({ length: 5 }, (_, i) => axisStart + axisRange * i / 4);
 
   return (
     <section id="prisforskjell" aria-labelledby="prisforskjell-title" className="site-container py-10 sm:py-12 scroll-mt-20">
-      <div className="card-premium p-5 sm:p-8 space-y-6">
-        <div className="space-y-3">
-          <h2 id="prisforskjell-title" className="section-title">Små prosent. Synlig forskjell.</h2>
-          <p id="prisforskjell-description" className="text-sm text-slate-600 leading-relaxed">
-            Prisforskjell per BTC, inkludert beregnet gebyr og estimert spread. Kortere stolpe er nærmere laveste pris.
-          </p>
+      <div className="price-breakdown space-y-7">
+        <div className="flex flex-wrap items-end justify-between gap-5">
+          <div className="max-w-xl">
+            <p className="section-eyebrow">Prisen, del for del</p>
+            <h2 id="prisforskjell-title" className="home-section-title">Hva koster én Bitcoin?</h2>
+            <p id="prisforskjell-description" className="mt-3 text-sm leading-relaxed text-slate-600">Fem utvalgte børser. Hver linje viser grunnpris, beregnet handelsgebyr og estimert spread. Endepunktet viser totalprisen for 1 BTC.</p>
+          </div>
+          <button type="button" onClick={() => setZoomed((value) => !value)} aria-pressed={zoomed} aria-controls="bitcoin-cost-lines" className="price-scale-toggle"><Maximize2 size={14} aria-hidden="true" /> Zoom på forskjeller <span>{zoomed ? 'På' : 'Av'}</span></button>
         </div>
 
-        {isLoading ? (
-          <p role="status" className="rounded-xl bg-slate-50 p-6 text-sm text-slate-500">Henter priser til grafen …</p>
-        ) : rows.length < 2 ? (
-          <p role="status" className="rounded-xl bg-slate-50 p-6 text-sm text-slate-500">
-            {error || 'Vi trenger priser fra minst to børser for å vise en prisforskjell. Prøv å laste siden på nytt.'}
-          </p>
-        ) : (
-          <figure aria-describedby="prisforskjell-description" className="space-y-6">
-            <figcaption className="flex flex-wrap justify-between gap-3 rounded-xl bg-slate-50 px-4 py-3 text-sm">
-              <span className="font-semibold text-slate-900">Lavest beregnet pris: {rows[0].exchange}</span>
-              <span className="text-slate-600">{nok(cheapest)} per BTC</span>
-            </figcaption>
-            <ol className="space-y-5" aria-label="Børser sortert fra lavest til høyest beregnet pris">
-              {rows.map((row) => {
-                const difference = row.effectivePrice - cheapest;
-                const premium = difference / cheapest * 100;
-                const width = largestDifference > 0 ? difference / largestDifference * 100 : 0;
-                return (
-                  <li key={row.exchange} className="space-y-2">
-                    <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-sm">
-                      <span className="font-semibold text-slate-900">{row.exchange}</span>
-                      <span className="text-slate-600">{nok(row.effectivePrice)} per BTC</span>
-                    </div>
-                    <div aria-hidden="true" className="h-4 overflow-hidden rounded-full bg-slate-100">
-                      <div className={`h-full rounded-full ${difference === 0 ? 'bg-emerald-500' : 'bg-brand'}`} style={{ width: `${width}%`, minWidth: '3px' }} />
-                    </div>
-                    <p className={`text-xs ${difference === 0 ? 'text-emerald-700 font-semibold' : 'text-slate-500'}`}>
-                      {difference === 0 ? 'Lavest pris i denne sammenligningen' : `+${nok(difference)} per BTC · ${percent(premium)} dyrere enn laveste pris`}
-                    </p>
-                  </li>
-                );
-              })}
-            </ol>
-            <p className="text-sm text-slate-600">
-              {largestDifference === 0
-                ? 'Alle tilgjengelige børser har samme beregnede pris akkurat nå.'
-                : `Forskjellen mellom laveste og høyeste beregnede pris er ${nok(largestDifference)} per BTC (${percent(largestDifference / cheapest * 100)}).`}
-            </p>
-          </figure>
-        )}
+        <ul className="price-legend" aria-label="Farger i grafen">
+          <li><span className="price-key price-spot" aria-hidden="true" /> Grunnpris</li>
+          <li><span className="price-key price-trade" aria-hidden="true" /> Handelsgebyr</li>
+          <li><span className="price-key price-spread" aria-hidden="true" /> Spread (est.)</li>
+        </ul>
 
-        <p className="border-t border-slate-100 pt-4 text-xs leading-relaxed text-slate-500">
-          Samme prisgrunnlag som tabellen. Noen priser er referanseestimater. Innskudd, uttak og valutaveksling kommer
-          i tillegg. Beregningene er ikke bindende kjøpstilbud.
-        </p>
+        <figure id="bitcoin-cost-lines" aria-describedby="prisforskjell-description price-axis-note">
+          {isLoading ? (
+            <div role="status" className="space-y-7 py-3">
+              <p className="text-sm text-slate-500">Henter priser til grafen …</p>
+              <div aria-hidden="true" className="space-y-8">{CHART_EXCHANGES.map((exchange) => <div key={exchange} className="price-line-skeleton" />)}</div>
+            </div>
+          ) : (
+            <>
+              {available.length === 0 && <p role="status" className="mb-5 rounded-xl bg-white p-4 text-sm text-slate-600">{error || 'Priser er ikke tilgjengelige akkurat nå. Prøv å hente prisene på nytt i tabellen.'}</p>}
+              <ol className="price-lines" aria-label="Utvalgte børser sortert etter beregnet totalpris per Bitcoin">
+                {rows.map(({ exchange, cost }, index) => (
+                  <li key={exchange} className="price-line-row">
+                    <div className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+                      <div className="flex items-center gap-2 text-sm font-semibold text-slate-900"><ExchangeIcon exchange={exchange} size={23} />{exchange}{index === 0 && cost && available.length > 1 && <span className="price-lowest">Lavest av de viste</span>}</div>
+                      <span className="text-sm font-semibold tabular-nums text-slate-900">{cost ? nok(cost.total) : <span className="font-normal text-slate-500">Pris utilgjengelig</span>}</span>
+                    </div>
+                    {cost ? (
+                      <>
+                        <div className="price-line-track" aria-hidden="true">
+                          <div className="price-line-segments" style={{ width: `${(cost.total - axisStart) / axisRange * 100}%` }}>
+                            <span className="price-spot" style={{ flexGrow: cost.spot - axisStart }} />
+                            <span className="price-trade" style={{ flexGrow: cost.trade }} />
+                            <span className="price-spread" style={{ flexGrow: cost.spread }} />
+                            <span className="price-endpoint" />
+                          </div>
+                        </div>
+                        <dl className="price-line-values">
+                          <div><dt><span className="price-key price-spot" aria-hidden="true" />Grunnpris</dt><dd>{preciseNok(cost.spot)}</dd></div>
+                          <div><dt><span className="price-key price-trade" aria-hidden="true" />Gebyr</dt><dd>{preciseNok(cost.trade)}</dd></div>
+                          <div><dt><span className="price-key price-spread" aria-hidden="true" />Spread</dt><dd>{preciseNok(cost.spread)}</dd></div>
+                        </dl>
+                      </>
+                    ) : <div className="price-unavailable" aria-hidden="true" />}
+                  </li>
+                ))}
+              </ol>
+              {available.length > 0 && <div className="price-axis" aria-hidden="true">{ticks.map((value, i) => <span key={i}>{nok(value)}</span>)}</div>}
+            </>
+          )}
+          <figcaption id="price-axis-note" className="mt-5 text-xs leading-relaxed text-slate-500">{zoomed ? `Zoomvisning: prisaksen starter ${available.length && !isLoading ? `ved ${nok(axisStart)}` : 'over null'}. Den første delen av grunnprisen er utelatt for å gjøre gebyrene synlige. Slå av zoom for å vise hele prisen fra 0 kr.` : 'Hele prisen vises fra 0 kr. Alle linjene bruker samme skala; små gebyrer kan være vanskelige å se, men beløpene står under hver linje.'}</figcaption>
+        </figure>
+
+        <div className="flex flex-wrap items-start justify-between gap-4 border-t border-slate-200 pt-5 text-xs leading-relaxed text-slate-500">
+          <p className="max-w-2xl">Samme gebyrmodell som tabellen. Grunnprisen kan være en børspris eller et referanseestimat. Innskudd, uttak og valutaveksling kommer i tillegg. Tallene er beregninger, ikke bindende kjøpstilbud.</p>
+          <a href="/om-oss#metode" className="inline-flex min-h-8 items-center gap-1 font-medium text-brand">Se beregningen <ArrowUpRight size={13} aria-hidden="true" /></a>
+        </div>
       </div>
     </section>
   );
