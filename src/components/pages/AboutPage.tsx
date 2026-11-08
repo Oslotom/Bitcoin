@@ -22,10 +22,11 @@ export default function AboutPage({ navigateTo }: { navigateTo: NavigateFn }) {
         </p>
       </section>
 
-      <section>
+      <section id="metode" className="scroll-mt-20">
         <h2>Slik henter og beregner vi prisene</h2>
         <ul>
-          <li>Prisene hentes live fra børsenes offentlige API-er hver gang du besøker siden.</li>
+          <li>Vi forsøker å hente priser fra offentlige API-er når du åpner siden. Markedspriser er ikke bindende kjøpstilbud.</li>
+          <li>Revolut og BuyBitcoin.com bruker CoinGecko sin Bitcoin-kurs som referanseestimat. Bare Bitcoin bruker også denne som reserve når egen pris ikke kan hentes.</li>
           <li>Priser i USD eller EUR regnes om til norske kroner.</li>
           <li>Vi legger til hver børs sitt handelsgebyr og en estimert spread, og regner ut effektiv pris per Bitcoin.</li>
           <li>Innskudds- og uttaksgebyrer er ikke med i hovedtabellen, men omtales der de er relevante, for eksempel for Vipps.</li>
@@ -34,6 +35,11 @@ export default function AboutPage({ navigateTo }: { navigateTo: NavigateFn }) {
           Vi sammenligner i dag {exchanges.length} børser: {exchanges.join(', ')}. Se{' '}
           gebyroversikten nedenfor for tallene vi bruker, eller <InternalLink to="home" navigateTo={navigateTo}>sammenlign kjøp av Bitcoin</InternalLink> på forsiden.
         </p>
+        <h3>Hva betyr pris og påslag?</h3>
+        <p>Med kurs P og samlet gebyrandel f beregner vi pris per BTC som P / (1 − f). Ved et kjøp på 10 000 kr er beregnet kostnad 10 000 × f, og mengden Bitcoin er 10 000 × (1 − f) / P.</p>
+        <p>Påslag i prosent er (beregnet pris per BTC / Coinbase sin BTC-NOK-spotkurs − 1) × 100. Coinbase er en sammenligningsreferanse, ikke en universell fasit for Bitcoin-kursen. Mangler referansen, viser vi ikke påslag.</p>
+        <p>Gebyrsatsene er modellforutsetninger, og spread er estimert. Kontotype, handelsvolum, betalingsmåte og tidspunkt kan gi andre kostnader. En kjøpskurs kan allerede inneholde spread; å legge til estimert spread kan da overvurdere kostnaden. Laveste beregnede pris er derfor ikke en garanti for billigste handel.</p>
+        <p>Prisgrunnlaget kommer blant annet fra <a href="https://api.coinbase.com/v2/prices/BTC-NOK/spot">Coinbase BTC-NOK</a>, <a href="https://api.firi.com/v2/markets/BTCNOK/ticker">Firi BTCNOK</a> og <a href="https://www.coingecko.com/en/coins/bitcoin">CoinGecko</a>. Datoen på siden viser når innholdet ble endret, ikke når alle gebyrer sist ble bekreftet hos tilbyderne.</p>
       </section>
 
       <FeeOverview />

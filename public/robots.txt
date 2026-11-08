@@ -1,7 +1,8 @@
 User-agent: *
 Allow: /
 
-# AI-søk og AI-assistenter: eksplisitt velkommen, slik at siden kan siteres i svar
+# Søke- og brukerboter får tilgang. Dette garanterer ikke indeksering eller sitering.
+# GPTBot og ClaudeBot gjelder modelltrening, ikke plassering i søkeresultater.
 User-agent: GPTBot
 User-agent: OAI-SearchBot
 User-agent: ChatGPT-User

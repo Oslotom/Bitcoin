@@ -47,6 +47,8 @@ const htmlToMarkdown = (html) => {
         return text ? `[${text}](${new URL(decodeEntities(href), SITE).href})` : '';
       })
       .replace(/<h([1-4])[^>]*>([\s\S]*?)<\/h\1>/g, (_, level, text) => `\n\n${'#'.repeat(Number(level))} ${text.replace(/<[^>]+>/g, '').trim()}\n\n`)
+      .replace(/<summary[^>]*>/g, '\n\n')
+      .replace(/<\/summary>/g, '\n\n')
       .replace(/<li[^>]*>/g, '\n- ')
       .replace(/<tr[^>]*>/g, '\n| ')
       .replace(/<\/t[hd]>/g, ' | ')
@@ -195,9 +197,17 @@ console.log('Skrev dist/sitemap.xml');
 const fees = feeRows();
 const llms = `# ${SITE_NAME}
 
-> ${SITE_NAME} er en norsk, uavhengig sammenligningstjeneste for kjøp av Bitcoin i Norge. Siden viser live Bitcoin-kurs i norske kroner (NOK) fra norske og internasjonale kryptobørser, og regner ut hvor mye Bitcoin du faktisk får etter handelsgebyr og spread.
+> ${SITE_NAME} sammenligner kjøp av Bitcoin i Norge med markedspriser, modellgebyrer og estimert spread. Noen priser er referanseestimater. Beregningene er ikke bindende kjøpstilbud eller en vurdering av børsenes sikkerhet.
 
-Sist oppdatert: ${today}
+Innhold sist endret: ${Object.values(pageDates).sort().at(-1)}. Teksteksport generert: ${today}.
+
+## Metode og begrensninger
+
+- [Metode og prisgrunnlag](${SITE}/om-oss#metode): Formler, referansekurs og begrensninger.
+- [Statisk gebyroversikt](${SITE}/om-oss#gebyroversikt): Modellforutsetninger som også kan leses uten JavaScript.
+- Revolut og BuyBitcoin.com bruker CoinGecko-referanse, og Bare Bitcoin kan bruke den som reserve. Dette er ikke bekreftede kjøpskurser hos disse tilbyderne.
+- Påslag sammenlignes med Coinbase BTC-NOK spot. Det finnes ikke én universell faktisk Bitcoin-kurs.
+- Endringsdatoer er ikke bekreftelse på at alle gebyrer er kontrollert på nytt.
 
 ## Sider
 
@@ -211,9 +221,9 @@ ${pages
 
 - [Alle sider som tekst](${SITE}/llms-full.txt): Innhold med kildelenker. Gebyrer og spread er sammenligningsestimater, ikke bindende tilbud.
 
-## Gebyrer for kjøp av Bitcoin (sortert fra billigst)
+## Modellerte kostnader for kjøp av Bitcoin (sortert etter sats)
 
-Handelsgebyr + estimert spread. Innskudds- og uttaksgebyrer kommer i tillegg.
+Handelsgebyr i modellen + estimert spread. Valutaveksling, innskudd og uttak kommer i tillegg. Dette er ikke en rangering av faktiske kjøpstilbud. Kilde og begrensninger: ${SITE}/om-oss#metode
 
 | Børs | Norsk | Handelsgebyr | Spread (est.) | Totalt | Gebyr på 10 000 kr |
 |---|---|---|---|---|---|
@@ -236,7 +246,7 @@ const llmsFull = `# ${SITE_NAME} – fullstendig innhold
 ${pages
   .map((page) => {
     const url = page === 'home' ? `${SITE}/` : `${SITE}${PAGE_PATHS[page]}`;
-    return `---\n\nKilde: ${url}\n\n${markdownByPage[page]}`;
+    return `---\n\nKilde: ${url}\nSist endret: ${pageDates[page] ?? today}\n\n${markdownByPage[page]}`;
   })
   .join('\n\n')}
 `;

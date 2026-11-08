@@ -316,6 +316,8 @@ export default function App({ initialPage }: { initialPage?: Page }) {
 
               <p className="text-center text-sm text-slate-500">
                 <a href="#prisforskjell" className="font-semibold text-brand hover:underline">Se prisforskjellene i grafen</a>
+                {' · '}<a href="/om-oss#metode" className="hover:underline">Metode og prisgrunnlag</a>
+                {' · '}<a href="/om-oss#gebyroversikt" className="hover:underline">Gebyrer uten live-kurs</a>
               </p>
             </section>
 

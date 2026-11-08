@@ -43,8 +43,8 @@ export default function FeeOverview() {
       <div className="space-y-2">
         <h2 className="section-title">Gebyroversikt: hva koster det å kjøpe Bitcoin?</h2>
         <p className="text-slate-600 leading-relaxed">
-          Tabellen viser handelsgebyr og estimert spread for kjøp av Bitcoin med norske kroner, sortert fra billigst til dyrest.
-          Kolonnen til høyre viser hva du betaler i gebyr på et kjøp av {example.toLocaleString('nb-NO')} kr.
+          Tabellen viser modellens handelsgebyr og estimerte spread, sortert etter samlet sats.
+          Kolonnen til høyre viser beregnet kostnad på et kjøp av {example.toLocaleString('nb-NO')} kr, ikke et bekreftet tilbud fra børsen.
         </p>
         <p className="text-sm text-slate-500">
           Sist oppdatert: <time dateTime={__PAGE_DATES__.about}>{formatDate(__PAGE_DATES__.about)}</time>
@@ -85,7 +85,7 @@ export default function FeeOverview() {
       <div className="space-y-2 text-sm text-slate-600 leading-relaxed">
         <h3 className="font-bold text-slate-900">Slik beregner vi prisene</h3>
         <p>
-          Live-prisene hentes direkte fra børsenes offentlige API-er i norske kroner. Vi legger til handelsgebyret og en
+          Prisgrunnlaget kommer fra børsenes API-er eller referanseestimater, omregnet til norske kroner. Vi legger til handelsgebyret og en
           estimert spread for hver børs, og regner ut hvor mye Bitcoin du faktisk sitter igjen med. Innskuddsgebyrer
           (f.eks. ved Vipps eller kort) og uttaksgebyrer kommer i tillegg og er ikke med i tallene over. Gebyrene kan endres
           av børsene – sjekk alltid prisen hos børsen før du handler.

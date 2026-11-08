@@ -52,5 +52,15 @@ for (const [, location, modified] of entries) {
 }
 for (const url of urls) assert(allLinks.has(url), `Orphan page: ${url}`);
 assert(read('robots.txt').includes(`Sitemap: ${site}/sitemap.xml`), 'robots.txt points to the wrong sitemap');
+// Prevent accidental blocking of search/user retrieval independently of training bots.
+const robotGroups = read('robots.txt').split(/\r?\n\s*\r?\n/);
+for (const bot of ['OAI-SearchBot', 'ChatGPT-User', 'Claude-SearchBot', 'Claude-User']) {
+  const group = robotGroups.find((text) => text.split(/\r?\n/).some((line) => line.trim().toLowerCase() === `user-agent: ${bot.toLowerCase()}`));
+  assert(group && /^Allow:\s*\/\s*$/m.test(group) && !/^Disallow:\s*\S+/m.test(group), `AI retrieval blocked: ${bot}`);
+}
+const about = read('om-oss.html');
+assert(about.includes('id="metode"') && about.includes('id="gebyroversikt"') && about.includes('<table'), 'Missing static method/fee evidence');
+assert(read('index.html').includes('href="/om-oss#metode"'), 'Homepage must link to methodology without JavaScript');
+assert(read('llms.txt').includes('referanseestimater') && read('llms-full.txt').includes('Sist endret:'), 'AI text missing provenance or limitations');
 assert(/name="robots" content="noindex"/.test(read('404.html')), '404 must be noindex');
 console.log(`SEO OK: ${urls.size} pages, unique metadata, canonical URLs, links, sitemap and JSON-LD.`);
