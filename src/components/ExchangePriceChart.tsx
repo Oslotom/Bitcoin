@@ -61,12 +61,12 @@ export default function ExchangePriceChart({ results, isLoading, error }: Props)
               <ol className="price-lines" aria-label="Utvalgte børser sortert etter beregnet totalpris per Bitcoin">
                 {rows.map(({ exchange, cost }, index) => (
                   <li key={exchange} className="price-line-row">
-                    <div className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+                    <div className="price-line-heading">
                       <div className="flex items-center gap-2 text-sm font-semibold text-slate-900"><ExchangeIcon exchange={exchange} size={23} />{exchange}{index === 0 && cost && available.length > 1 && <span className="price-lowest">Lavest av de viste</span>}</div>
                       <span className="text-sm font-semibold tabular-nums text-slate-900">{cost ? nok(cost.total) : <span className="font-normal text-slate-500">Pris utilgjengelig</span>}</span>
                     </div>
                     {cost ? (
-                      <>
+                      <div className="price-line-visual">
                         <div className="price-line-track" aria-hidden="true">
                           <div className="price-line-segments" style={{ width: `${(cost.total - axisStart) / axisRange * 100}%` }}>
                             <span className="price-spot" style={{ flexGrow: cost.spot - axisStart }} />
@@ -75,20 +75,23 @@ export default function ExchangePriceChart({ results, isLoading, error }: Props)
                             <span className="price-endpoint" />
                           </div>
                         </div>
-                        <dl className="price-line-values">
+                        <details className="price-line-details" name="bitcoin-price-breakdown">
+                          <summary>Fordeling<span className="sr-only"> for {exchange}</span><span aria-hidden="true">⌄</span></summary>
+                          <dl className="price-line-values">
                           <div><dt><span className="price-key price-spot" aria-hidden="true" />Grunnpris</dt><dd>{preciseNok(cost.spot)}</dd></div>
                           <div><dt><span className="price-key price-trade" aria-hidden="true" />Gebyr</dt><dd>{preciseNok(cost.trade)}</dd></div>
                           <div><dt><span className="price-key price-spread" aria-hidden="true" />Spread</dt><dd>{preciseNok(cost.spread)}</dd></div>
-                        </dl>
-                      </>
-                    ) : <div className="price-unavailable" aria-hidden="true" />}
+                          </dl>
+                        </details>
+                      </div>
+                    ) : <div className="price-line-visual"><div className="price-unavailable" aria-hidden="true" /></div>}
                   </li>
                 ))}
               </ol>
               {available.length > 0 && <div className="price-axis" aria-hidden="true">{ticks.map((value, i) => <span key={i}>{nok(value)}</span>)}</div>}
             </>
           )}
-          <figcaption id="price-axis-note" className="mt-5 text-xs leading-relaxed text-slate-500">{zoomed ? `Zoomvisning: prisaksen starter ${available.length && !isLoading ? `ved ${nok(axisStart)}` : 'over null'}. Den første delen av grunnprisen er utelatt for å gjøre gebyrene synlige. Slå av zoom for å vise hele prisen fra 0 kr.` : 'Hele prisen vises fra 0 kr. Alle linjene bruker samme skala; små gebyrer kan være vanskelige å se, men beløpene står under hver linje.'}</figcaption>
+          <figcaption id="price-axis-note" className="mt-5 text-xs leading-relaxed text-slate-500">{zoomed ? `Zoomvisning: prisaksen starter ${available.length && !isLoading ? `ved ${nok(axisStart)}` : 'over null'}. Den første delen av grunnprisen er utelatt for å gjøre gebyrene synlige. Slå av zoom for å vise hele prisen fra 0 kr.` : 'Hele prisen vises fra 0 kr. Alle linjene bruker samme skala; små gebyrer kan være vanskelige å se.'} Velg «Fordeling» for å se delbeløpene.</figcaption>
         </figure>
 
         <div className="flex flex-wrap items-start justify-between gap-4 border-t border-slate-200 pt-5 text-xs leading-relaxed text-slate-500">
